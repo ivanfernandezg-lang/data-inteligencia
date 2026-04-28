@@ -1,0 +1,15 @@
+=== Summary ===,=== Detailed Accuracy By Class ===
+"Correctly Classified Instances 249
+84.1216 %
+Incorrectly Classified Instances 47
+15.8784 %
+Kappa statistic 0.6791
+Mean absolute error 0.227
+Root mean squared error 0.3354
+Relative absolute error 45.7027 %
+Root relative squared error 67.2958 %
+Total Number of Instances 296","TP Rate FP Rate Precision Recall F-Measure ROC Area Class
+0.875 0.199 0.838 0.875 0.856 0.915 <50
+0.801 0.125 0.845 0.801 0.823 0.915 >50_1
+Weighted Avg.
+0.841 0.165 0.841 0.841 0.841 0.915"

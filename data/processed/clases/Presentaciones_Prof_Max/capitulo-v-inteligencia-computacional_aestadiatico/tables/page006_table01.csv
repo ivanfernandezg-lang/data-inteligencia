@@ -1,0 +1,16 @@
+Nº,Nombre,Característica,Nº,Nombre,Característica
+1,age,Edad (años),8,thalach,Infartos previos
+2,sex,"Sexo (0,1)",9,exang,"Angina inducida
+por ejercicio (0,1)"
+3,cp,Dolor Pectoral (1-4),10,oldpeak,"Depresión segm.
+ST, por ejercicio"
+4,trestbps,"Presión Sanguínea
+(mmHg)",11,slope,"Pendiente segm.
+ST por ejerc. (1-3)"
+5,chol,Colesterol Sérico (mg/dl),12,ca,"Nº vasos
+coloreados por
+fluoroscopia (0-3)"
+6,fbs,"Glucosa ayunas (0,1)",13,thal,"Defectos cardiacos
+en ejercicio (1-3)"
+7,restecg,ECG reposo (0-2),14,num,"Diagnostico de
+enfermedad (0,1)"

@@ -1,0 +1,30 @@
+"Logistic Regression with ridge parameter of 1.0E-8
+Coefficients...",Odds Ratios...
+"Class
+Variable <50
+==========================
+sex -1.0866
+cp=typ_angina 0.6388
+cp=asympt -1.0063
+cp=non_anginal 0.7719
+cp=atyp_angina 0.3582
+trestbps -0.0188
+exang -1.1993
+ca -1.2246
+thal=fixed_defect 0.1175
+thal=normal 0.8214
+thal=reversable_defect -0.8838
+Intercept 4.6312","Class
+Variable <50
+========================
+sex 0.3374
+cp=typ_angina 1.8942
+cp=asympt 0.3656
+cp=non_anginal 2.1638
+cp=atyp_angina 1.4308
+trestbps 0.9814
+exang 0.3014
+ca 0.2939
+thal=fixed_defect 1.1247
+thal=normal 2.2737
+thal=reversable_defect 0.4132"

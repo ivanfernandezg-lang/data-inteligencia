@@ -1,0 +1,16 @@
+T,Carac. 1,Carac. 2,Carac. 3,Carac. 4,Carac. 5
+Obj.,Forma,Área,Tono,Sombra,Clase
+1,Cuadrado,4 cm2,Blanco,Si,Clase 1
+2,Cuadrado,5 cm2,Negro,Si,Clase 2
+3,Cuadrado,"5,5 cm2",Negro,No,Clase 2
+4,Cuadrado,"3,9 cm2",Negro,No,Clase 2
+5,Cuadrado,"3,8 cm2",Blanco,No,Clase 1
+6,Triángulo,"3,9 cm2",Negro,Si,Clase 1
+7,Triángulo,"4,6 cm2",Negro,No,Clase 1
+8,Triángulo,"3,6 cm2",Blanco,Si,Clase 1
+9,Triángulo,"4,2 cm2",Blanco,No,Clase 1
+10,Círculo,"3,8 cm2",Negro,Si,Clase 2
+11,Círculo,"3,7 cm2",Blanco,Si,Clase 2
+12,Círculo,4 cm2,Negro,No,Clase 1
+13,Círculo,"3,7 cm2",Negro,No,Clase 1
+14,Círculo,"3,8 cm2",Negro,No,Clase 1

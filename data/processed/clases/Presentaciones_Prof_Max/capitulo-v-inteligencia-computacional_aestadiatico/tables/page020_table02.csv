@@ -1,0 +1,24 @@
+Nombre,Significado,Probab.,Estimación
+"Sensibilidad
+(Prop. VP)","Frecuencia de los positivos de la
+clase C",p[T+|C],VP/(VP+FN)
+"Pro. Fal. Neg.
+(Prop. FN)","Frecuencia de los negativos de la
+clase C",p[T-|C],FN/(VP+FN)
+"Especificidad
+(Prop.VN)","Frecuencia de los negativos de la
+clase C",p[T-C| ],VN/(FP+VN)
+"Pro. Fal. Pos.
+(Prop. FP)","Frecuencia de los Positivos de la
+clase C",p[T+|C ],FP/(FP+VN)
+"Valor Predictivo
+Positivo (VPP)","Frecuencia de la clase C con
+resultados positivos del Sis.",p[C |T+],"Requiere P[C]
+VP/(VP+FP)
+Requiere P[C]"
+"Valor Predictivo
+Negativo (VPN)","Frecuencia de la clase C con
+resultados negativos del Sis.",p [C |T-],VN/(FN+VN)
+Prevalencia,"Frecuencia de la clase C en la
+población total (U)",P[C],"Evaluación
+Independiente"
