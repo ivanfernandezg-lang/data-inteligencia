@@ -1,2 +1,38 @@
-# requirements.txt — Inteligencia Computacional
+# requirements.txt — Inteligencia Computacional (Magíster USACH)
 # Instalar con: pip install -r requirements.txt
+
+# Núcleo científico
+numpy>=1.26
+scipy>=1.11
+pandas>=2.1
+sympy>=1.12
+
+# Machine Learning clásico
+scikit-learn>=1.4
+xgboost>=2.0
+mlxtend>=0.23           # Reglas de asociación: apriori, fpgrowth
+
+# Estadística
+statsmodels>=0.14
+pingouin>=0.5
+
+# Redes neuronales (descomentar lo que uses)
+# tensorflow>=2.15
+# keras>=3.0
+# torch>=2.2
+
+# Visualización
+matplotlib>=3.8
+seaborn>=0.13
+plotly>=5.18
+
+# Notebooks
+jupyterlab>=4.0
+ipywidgets>=8.1
+
+# PDFs y libros
+pymupdf>=1.24            # Usado por pdf_extractor.py y book_explorer.py
+
+# Utilidades
+tqdm>=4.66
+python-dotenv>=1.0

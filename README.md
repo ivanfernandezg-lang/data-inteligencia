@@ -1,136 +1,165 @@
-# Inteligencia Computacional
+# Inteligencia Computacional — Magíster USACH
 
-Repositorio de estudio, análisis y proyectos del ramo \*\*\*\* — Magíster USACH.
+Repositorio de estudio, análisis y proyectos del ramo **Inteligencia Computacional** del Magíster en Ingeniería de la **Universidad de Santiago de Chile (USACH)**. Profesor referente: **Max Chacón**; equipo: Gonzalo Acuña (NN), José (modelamiento), Mario (bioinformática).
 
-## Estructura del proyecto
+> Documento base del curso: [`data/raw/Documentacion Oficial/introduccion.md`](data/raw/Documentacion%20Oficial/introduccion.md)
+> Roadmap de estudio: [`documentation/aprendizaje/ROADMAP.md`](documentation/aprendizaje/ROADMAP.md)
+
+## Propósito
+
+- Centralizar **clases, libros, papers, ejercicios y datasets** del ramo.
+- Procesar PDFs (clases del Prof. Chacón) a **Markdown + tablas + imágenes**.
+- Resolver **PEP1, PEP2 y trabajo final**, además de **laboratorios L1–L5** (en parejas, mismo dataset todo el semestre).
+- Mantener **memoria compartida** del agente "Profe Inteligencia Computacional" en `.copilot/memoria/`.
+
+## Estructura
 
 ```
 data-inteligencia/
-├── .copilot
-│   └── memoria/
+├── .copilot/memoria/        # Memoria compartida (Git): inventario, conceptos, progreso
 ├── .github/
-│   ├── agents/
-│   └── copilot-instructions.md
-├── .vscode/
-│   └── settings.json
+│   ├── copilot-instructions.md   # Contexto general del proyecto para Copilot
+│   └── agents/profe-inteligencia.agent.md  # Agente tutor del curso
 ├── data/
-│   ├── exports/  # Datos para reportes o entregas
-│   ├── processed/  # Datos procesados
-│   └── raw/
-│       ├── clases/  # PDFs de presentaciones de clase
-│       ├── datasets/  # Datasets para ejercicios y proyectos
-│       ├── docs/  # Fuentes de información y links
-│       └── papers/  # Papers y artículos de referencia
+│   ├── raw/
+│   │   ├── Documentacion Oficial/   # introduccion.md (programa)
+│   │   ├── clases/Presentaciones_Prof_Max/  # Capítulos I–VII oficiales
+│   │   ├── clases/registro-clases/  # Registros y notas de clase
+│   │   ├── apuntes/                 # Inferencia, ACP
+│   │   ├── ayudantias/2026/         # Ayudantías 2026
+│   │   ├── Ejercicios/              # Guías y PEPs anteriores
+│   │   ├── Laboratorios/            # Material L1–L5
+│   │   ├── Libros/                  # ⚠️ Bibliografía pesada (Bishop, Hastie, Han, Bonelli)
+│   │   ├── papers/                  # Papers
+│   │   ├── Presentaciones/          # Complementarias (ACP, DW, Series)
+│   │   ├── Resumenes/               # Manuales
+│   │   ├── Cursos/  Codigo/  datasets/  docs/  examenes/  Tareas/
+│   ├── processed/                   # Salidas de pdf_extractor / book_explorer
+│   └── exports/                     # Entregas
 ├── documentation/
-│   ├── investigacion/  # Investigación bibliográfica
-│   │   ├── md/
-│   │   └── mmd/
-│   ├── proyectos/  # Documentación por proyecto
-│   │   ├── md/
-│   │   └── mmd/
-│   ├── reports/  # Informes y entregas
-│   │   └── md/
-│   ├── resumen-clases/  # Resúmenes por clase
-│   │   └── md/
-│   └── README.md
+│   ├── aprendizaje/                 # Guías de estudio + ROADMAP.md
+│   ├── tareas/                      # Plantillas + tareas en progreso/resueltas
+│   ├── resumen-clases/              # Resúmenes
+│   ├── investigacion/               # Trabajo final (Unidades 8–10)
+│   ├── proyectos/                   # Documentación de proyectos
+│   └── reports/                     # Informes formales (laboratorios)
 ├── notebooks/
-│   ├── ejercicios/  # Ejercicios resueltos
-│   │   └── README.md
-│   ├── exploratory/  # EDA y análisis exploratorio
-│   │   └── README.md
-│   └── reports/  # Notebooks de entrega
-│       └── README.md
-├── proyectos/  # Código de proyectos y trabajos
-│   └── README.md
+│   ├── ejercicios/  exploratory/  reports/
+├── proyectos/                       # Código de proyectos integradores
 ├── scripts/
-│   ├── analysis/  # Scripts de análisis y modelos
-│   │   └── README.md
-│   ├── etl/  # Procesamiento de datos
-│   │   └── README.md
-│   └── utils/  # Funciones reutilizables
-│       ├── MANUAL_RAPIDO.md
-│       ├── pdf_extractor.py
-│       ├── README.md
-│       └── update_structure.py
-├── tests/  # Tests de validación
-│   └── README.md
-├── .gitignore
+│   ├── analysis/  etl/
+│   └── utils/
+│       ├── pdf_extractor.py         # Extracción universal de PDFs
+│       ├── book_explorer.py         # 🆕 Lectura eficiente de libros pesados
+│       ├── task_manager.py          # Gestión de tareas/laboratorios
+│       └── update_structure.py      # Sincroniza árbol en docs
+├── tests/                           # Tests
 ├── README.md
 └── requirements.txt
 ```
 
-## Descripción de carpetas
+## Programa del Curso
 
-### `data/`
+10 unidades, 17 semanas (38h teoría + 16h laboratorio).
 
-Almacena datos en distintas etapas:
+| Unidad | Tema                                   | Horas | Evaluación |
+| ------ | -------------------------------------- | ----- | ---------- |
+| 1      | Introducción                           | 3     | PEP 1      |
+| 2      | Análisis de Componentes Principales    | 3     | PEP 1      |
+| 3      | Reglas de asociación                   | 4     | PEP 1      |
+| 4      | Análisis de agrupamientos              | 4     | PEP 1      |
+| 5      | Evaluación Estadística                 | 2     | PEP 2      |
+| 6      | Clasificación Bayesiana                | 5     | PEP 2      |
+| 7      | Árboles de decisión                    | 5     | PEP 2      |
+| 8      | El paradigma Conexionista              | 2     | Trabajo    |
+| 9      | Retro-propagación del Error            | 4     | Trabajo    |
+| 10     | Redes neuronales con retroalimentación | 6     | Trabajo    |
 
-- **raw/clases**: PDFs y presentaciones originales de clase.
-- **raw/papers**: Artículos científicos y papers de referencia.
-- **raw/datasets**: Datasets descargados para ejercicios o proyectos.
-- **raw/docs**: Fuentes de información, links y referencias web.
-- **processed**: Datos limpios, normalizados y listos para análisis.
-- **exports**: Archivos generados para entregas, reportes o presentaciones.
+**Notas:**
+$NT = (\text{PEP1} + \text{PEP2} + \text{Trabajo})/3$ &nbsp;|&nbsp; $NL = \overline{L1..L5}$ &nbsp;|&nbsp; $\text{Final} = 0.6\,NT + 0.4\,NL$
 
-### `notebooks/`
-
-Jupyter Notebooks organizados por propósito:
-
-- **exploratory**: Análisis exploratorio de datos, visualizaciones.
-- **ejercicios**: Resolución de ejercicios y problemas de clase.
-- **reports**: Notebooks finales pulidos para presentar o entregar.
-
-### `scripts/`
-
-Scripts de automatización y análisis:
-
-- **analysis**: Scripts de optimización, modelos y análisis numérico.
-- **utils**: Funciones reutilizables (helpers, formateo, etc.).
-- **etl**: Procesamiento de datos (lectura, limpieza, transformación).
-
-### `documentation/`
-
-Documentación organizada por tema → tipo de archivo:
-
-- **reports/**: Informes finales y entregas formales.
-- **resumen-clases/**: Apuntes y resúmenes de cada clase.
-- **investigacion/**: Revisión bibliográfica, estado del arte.
-- **proyectos/**: Documentación técnica de cada proyecto.
-
-> Convención: cada carpeta temática contiene `md/` (Markdown) y opcionalmente `mmd/` (diagramas Mermaid).
-
-### `proyectos/`
-
-Código fuente de trabajos y proyectos. Cada proyecto tiene su propia subcarpeta.
-
-### `tests/`
-
-Tests para validar funciones y scripts de análisis.
-
-## Materiales de clase
-
-Los PDFs de las presentaciones están en `data/raw/clases/`:
-
-| #   | Archivo                                          | Tema                                       |
-| --- | ------------------------------------------------ | ------------------------------------------ |
-| 1   | `1- Introducción.pdf`                            | Introducción                               |
-| 2   | `2 - Optimización.pdf`                           | Optimización                               |
-| 3   | `3- Métodos para  optimización irrestricta.pdf`  | Métodos para optimización irrestricta      |
-| 3   | `3- Optimización con restricciones.pdf`          | Optimización con restricciones             |
-| 4   | `4. Optimización convexa.pdf`                    | Optimización convexa                       |
-| 6   | `6- PNL metodos con restricciones.pdf`           | PNL metodos con restricciones              |
-| 7   | `7- Optimización combinatorial.pdf`              | Optimización combinatorial                 |
-| —   | `Optimizacion en Ingenieria Magister MI- MV.pdf` | Optimizacion en Ingenieria Magister MI- MV |
-| —   | `Presentación curso.pdf`                         | Presentación curso                         |
+Aprobación: Final ≥ 4.0 y promedio (NT + NL) ≥ 5.0.
 
 ## Quick Start
 
-```bash
-# Crear entorno virtual Python
+```powershell
+# Crear entorno virtual e instalar dependencias
 python -m venv .venv
-source .venv/bin/activate  # macOS/Linux
+.\.venv\Scripts\Activate.ps1     # Windows PowerShell
 pip install -r requirements.txt
 
-# Ejecutar notebooks
+# Lanzar JupyterLab
 jupyter lab
 ```
+
+## Flujo de Trabajo
+
+### 1. Procesar capítulos del Prof. Chacón
+
+```powershell
+python scripts/utils/pdf_extractor.py "data/raw/clases/Presentaciones_Prof_Max" --format md --all
+```
+
+Genera `data/processed/<slug>/` con `texto.md`, `tables/*.csv`, `images/page*.png`, `info.json`.
+
+### 2. Explorar libros pesados sin cargarlos completos
+
+```powershell
+# Resumen rápido (páginas, tamaño, ¿tiene TOC?)
+python scripts/utils/book_explorer.py "data/raw/Libros/" --info
+
+# Tabla de contenidos embebida
+python scripts/utils/book_explorer.py "data/raw/Libros/Pattern-Recognition-and-Machine-Learning-Bishop.pdf" --toc --save
+
+# Primeras N páginas (portada, índice impreso)
+python scripts/utils/book_explorer.py "data/raw/Libros/Pattern-Recognition-and-Machine-Learning-Bishop.pdf" --first-pages 25 --save
+
+# Búsqueda de un término (regex, página + snippet)
+python scripts/utils/book_explorer.py "data/raw/Libros/Pattern-Recognition-and-Machine-Learning-Bishop.pdf" --search "principal component" --save
+
+# Outline completo (TOC + primeras líneas de cada sección)
+python scripts/utils/book_explorer.py "data/raw/Libros/Pattern-Recognition-and-Machine-Learning-Bishop.pdf" --outline-md --save
+```
+
+> ⚠️ **Nunca leer un libro completo** desde el agente. Usar siempre `book_explorer.py`.
+
+### 3. Crear y resolver laboratorios
+
+```powershell
+python scripts/utils/task_manager.py create --type laboratorio --id L-01 --name "PCA sobre dataset biomédico"
+python scripts/utils/task_manager.py list
+```
+
+Cada laboratorio sigue las **7 fases**: Contexto → Datos → Método → Implementación → Evaluación → Comparación → Conclusiones.
+
+### 4. Sincronizar estructura en documentación
+
+```powershell
+python scripts/utils/update_structure.py
+```
+
+## Memoria del Agente
+
+Versionada en Git en `.copilot/memoria/`:
+
+- `inventario-material.md` — catálogo de material (clases, libros, ejercicios, papers).
+- `conceptos-clave.md` — mapa de conceptos por unidad, fórmulas y relaciones.
+- `progreso-estudiante.md` — temas vistos, dudas, laboratorios entregados, sesiones.
+
+El agente **Profe Inteligencia Computacional** (`.github/agents/profe-inteligencia.agent.md`) lee y actualiza estos archivos en cada sesión significativa.
+
+## Bibliografía Principal
+
+Disponible en `data/raw/Libros/`:
+
+- **Bishop** — _Pattern Recognition and Machine Learning_ (Springer, 2006)
+- **Hastie, Tibshirani, Friedman** — _The Elements of Statistical Learning_ (Springer, 2ª ed., 2011)
+- **Han, Kamber, Pei** — _Data Mining: Concepts and Techniques_ (3rd ed.)
+- **Hernández, Ramírez, Ferri** — _Introducción a la Minería de Datos_ (Pearson, 2004)
+- **Haykin** — _Neural Networks and Learning Machines_ (Prentice Hall, 3ª ed., 2008)
+- **Suykens et al.** — _Artificial Neural Networks for Modelling and Control of Non-linear Systems_ (Kluwer, 2010)
+- **Bonelli** — _Inteligencia Computacional_ (libro oficial, traducido)
+
+## Licencia y uso
+
+Repositorio personal/académico de estudio. No redistribuir libros sujetos a copyright.
