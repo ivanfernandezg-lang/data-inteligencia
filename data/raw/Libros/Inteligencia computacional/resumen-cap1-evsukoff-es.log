@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.26)  29 APR 2026 13:49
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.26)  29 APR 2026 14:24
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -219,8 +219,12 @@ Package hyperref Info: Option `colorlinks' set `true' on input line 21.
  (c:/texlive/2026/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2026-02-18 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count305
+) (./resumen-cap1-evsukoff-es.aux
+LaTeX Info: Redefining \. on input line 11.
+LaTeX Info: Redefining \% on input line 11.
+Package babel Info: 'spanish' activates 'spanish' shorthands.
+(babel)             Reported on input line 11.
 )
-No file resumen-cap1-evsukoff-es.aux.
 \openout1 = `resumen-cap1-evsukoff-es.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 31.
@@ -243,8 +247,7 @@ LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 31.
 LaTeX Font Info:    ... okay on input line 31.
 LaTeX Info: Redefining \. on input line 31.
 LaTeX Info: Redefining \% on input line 31.
-Package babel Info: 'spanish' activates 'spanish' shorthands.
-(babel)             Reported on input line 31.
+
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -321,6 +324,7 @@ File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
 \everyMPtoPDFconversion=\toks26
 )) (c:/texlive/2026/texmf-dist/tex/latex/graphics/mathcolor.ltx))
 Package hyperref Info: Link coloring ON on input line 31.
+ (./resumen-cap1-evsukoff-es.out) (./resumen-cap1-evsukoff-es.out)
 \@outlinefile=\write3
 \openout3 = `resumen-cap1-evsukoff-es.out'.
 
@@ -340,21 +344,14 @@ LaTeX Info: Redefining \% on input line 11.
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-03-20>
  ***********
-
-
-Package rerunfilecheck Warning: File `resumen-cap1-evsukoff-es.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `resumen-cap1-evsukoff-es.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  D41D8CD98F00B204E9800998ECF8427E;0.
+Package rerunfilecheck Info: File `resumen-cap1-evsukoff-es.out' has not changed.
+(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 12699 strings out of 467349
- 202989 string characters out of 5419856
- 681753 words of memory out of 5000000
- 41571 multiletter control sequences out of 15000+600000
+ 12707 strings out of 467349
+ 203245 string characters out of 5419856
+ 681838 words of memory out of 5000000
+ 41573 multiletter control sequences out of 15000+600000
  641347 words of font info for 110 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  69i,5n,79p,1093b,472s stack positions out of 10000i,1000n,20000p,200000b,200000s
