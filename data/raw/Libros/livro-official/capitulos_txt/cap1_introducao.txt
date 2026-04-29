@@ -1,0 +1,609 @@
+1    INTRODUÇÃO 
+A capacidade de uma máquina exibir um comportamento inteligente foi objeto de re-
+flexão filosófica durante muito tempo. Na década de 1920, Wittgenstein abordou o 
+tema a partir da questão “pode uma máquina pensar?” A sua conclusão foi que, assim 
+como a consciência, pensar é uma capacidade inerentemente humana [483]. Em 1950, 
+tendo em vista a dificuldade de definir “pensar” e “inteligência”, Alan Turing propôs um 
+teste para verificar se um computador pode exibir um comportamento inteligente 
+[529]. O teste de Turing1 é proposto como um jogo em que um avaliador isolado numa 
+sala é colocado em contato com um interlocutor em outra sala, que pode ser humano 
+ou computador. Se o avaliador não puder identificar se o interlocutor é um computa-
+dor, então pode-se concluir que o computador tem um comportamento inteligente.  
+A inteligência artificial como área de pesquisa surgiu alguns anos mais tarde, como uma 
+proposta de integração de lógica, ciência da computação e neurofisiologia para o de-
+senvolvimento de máquinas inteligentes. No início da década de 1960, as duas princi-
+pais correntes para o desenvolvimento de inteligência artificial eram chamadas de sim-
+bolistas e conexionistas. A corrente simbolista era formada por lógicos matemáticos 
+que desenvolveram os primeiros provadores de teoremas. Na corrente conexionista, o 
+objetivo era simular o processamento cerebral com neurônios artificiais. Os resultados 
+iniciais do algoritmo de aprendizado do Perceptron [457] geraram grande expectativa 
+com a possibilidade de construção de cérebros artificiais, mas sua limitação como clas-
+sificador linear não permitia o ajuste de modelos mais complexos. 
+
+Ao longo da década de 1970, os computadores mainframe se difundiram como produ-
+tos para a automação do processamento de dados em organizações. Os provadores de 
+teorema evoluíram para os sistemas especialistas, que continham um motor de racio-
+cínio que processava o conhecimento representado por um conjunto de regras e fatos. 
+Logo ficou claro que a aquisição do conhecimento dos especialistas não era uma tarefa 
+trivial, o que fomentou o interesse por técnicas de aprendizado de máquina (machine 
+learning) para sínteses de modelos diretamente a partir de dados. O algoritmo ID3 de 
+indução de árvores de decisão foi apresentado em 1986 por Quinlan. O ID3 tinha a ca-
+pacidade de abstrair um conjunto de regras lógicas a partir de dados de variáveis no-
+minais. O artigo inaugurou a revista Machine Learning [445]. 
+Os modelos conexionistas retornariam com grande impacto em 1986 a partir da publi-
+cação de artigo na revista Nature [464] que apresentava um algoritmo de treinamento 
+de redes neurais de múltiplas camadas baseado na retropropagação do erro através 
+das camadas. Os resultados mostravam a capacidade do método na solução de proble-
+mas complexos de reconhecimento de padrões, como a identificação de dígitos manus-
+critos. As redes neurais se desenvolveram rapidamente devido a sua capacidade de 
+ajuste de modelos não lineares computacionalmente robustos, com bons resultados em 
+diversas aplicações. Na década de 1980, a introdução do IBM PC marca o início da di-
+fusão de computadores pessoais para o grande público e empresas de pequeno porte. 
+Nas décadas de 1980 e 1990, houve grande avanço na área de inteligência artificial, 
+com o desenvolvimento de novos paradigmas computacionais como os sistemas fuzzy, 
+redes neurais e máquinas de vetor de suporte. A integração destes modelos em abor-
+dagens híbridas, incluindo a utilização de algoritmos evolucionários para otimização, 
+foi chamada de computação macia (soft computing) ou inteligência computacional 
+(computational intelligence). Atualmente, a inteligência computacional inclui também 
+métodos estatísticos e de aprendizado de máquina.2 
+Na década de 1990, os computadores pessoais já haviam se tornado um produto de uso 
+comum e, na virada para o ano 2000, aproximadamente 30% da população dos EUA e 
+da Europa estava conectada à internet.3 A expectativa com o desenvolvimento da in-
+ternet foi enorme no final da década de 1990, o que resultou na chamada bolha da in-
+ternet,4 que estourou em 2000 e provocou a queda das cotações das ações negociadas 
+na bolsa de tecnologia NASDAQ. A partir da bolha “.com”, a competição ficou mais in-
+tensa e a internet se tornou um mercado mais maduro, dominado por grandes players.  
+
+Ao longo da década de 1990, o termo mineração de dados (data mining) começou a 
+se difundir como um conjunto de técnicas que incluem estatística, aprendizado de má-
+quina, inteligência computacional, bancos de dados, entre outras, para o desenvolvi-
+mento de modelos a partir de dados. Em 1997, surgiu a primeira plataforma de código 
+livre de mineração de dados, o Weka,5 desenvolvido na Universidade de Waikato, Nova 
+Zelândia, tornando-se uma referência no mundo acadêmico. A partir de 2000, cada vez 
+mais softwares comerciais e bibliotecas oferecem novos algoritmos.6 Ao longo da dé-
+cada de 2000, as plataformas começaram a se apresentar no mercado como soluções 
+de inteligência analítica [329], com foco em análise de dados e alinhamento dos resul-
+tados com os objetivos do negócio. 
+A redução de custos de armazenamento, o desenvolvimento dos processadores e a in-
+ternet alavancaram o processo de coleta e armazenamento de bases de dados. O co-
+meço do século XXI marca o início da predominância do armazenamento de dados em 
+formato digital sobre as tecnologias analógicas. O tráfego de dados na internet aumen-
+tou exponencialmente com a disseminação de dispositivos móveis a partir de 2007. Em 
+2010, o termo big data aparece como uma buzzword para definir o conjunto de tecno-
+logias para coletar, armazenar, processar, analisar e visualizar grandes bases de dados. 
+A internet permite a oferta de produtos e serviços a um número virtualmente ilimitado 
+de usuários numa rede livre de escala [29]. Nos últimos anos, novos modelos de negó-
+cios ou novas versões de negócios tradicionais escaláveis globalmente mudaram a vida 
+de milhares de pessoas. Empresas como IBM, Apple, Microsoft, Google, Amazon e Face-
+book utilizam extensivamente algoritmos de inteligência computacional em seus negó-
+cios. Novos negócios prosperam rapidamente em todas as áreas com a evolução da tec-
+nologia de sensores e o desenvolvimento da internet das coisas. 
+A partir de 2012 modelos de redes neurais profundas* [212][333] têm obtido excelen-
+tes resultados em problemas complexos de reconhecimento de padrões. Os modelos 
+são processados em hardware massivamente paralelo com unidades de processa-
+mento gráfico (GPUs), que têm alta capacidade de processamento e baixo consumo de 
+energia em relação aos processadores convencionais (CPUs). Modelos de redes neurais 
+profundas em problemas de visão computacional e processamento de linguagem natu-
+ 
+* Deep neural networks. 
+
+ral têm obtido resultados comparáveis, e até superiores, aos de humanos. Estes resul-
+tados têm gerado grande expectativa em relação ao potencial de inteligência computa-
+cional para ciência de dados. O assunto é vasto e tem se expandido rapidamente. Este 
+livro corresponde a uma formação básica no tema incluindo aplicações desenvolvidas 
+em diferentes áreas.  
+Este capítulo apresenta uma introdução dos principais tipos de problemas em aplica-
+ções reais que serão abordados no livro. A seguir, um resumo da bibliografia e das prin-
+cipais ferramentas disponíveis, tanto comerciais como de código aberto. 
+1.1 Ciência de Dados 
+No método científico clássico, hipóteses teóricas levam ao desenvolvimento de mode-
+los, que devem ser verificados pela observação do fenômeno. Nas ciências exatas, o mo-
+delo é representado por fórmulas matemáticas que codificam o conhecimento sobre o 
+fenômeno [451]. O notável desenvolvimento da computação no século XX permitiu a 
+modelagem e simulação de fenômenos altamente complexos, gerando enormes avan-
+ços na representação da realidade e na sua utilização para a tomada de decisões. 
+Os parâmetros dos modelos devem ser ajustados por dados observados para que o mo-
+delo seja efetivamente a representação da realidade. No entanto, esses dados, mesmo 
+quando obtidos em condições experimentais controladas, contêm erros e incertezas 
+devidos a imperfeições nos instrumentos e, principalmente, à dificuldade ou impossi-
+bilidade da observação do fenômeno modelado [419]. 
+A realidade, muitas vezes, é bem mais complexa que qualquer teoria e, em alguns casos, 
+não há um modelo físico capaz de descrever adequadamente um determinado fenô-
+meno. A ciência de dados é um conjunto de métodos para coleta, armazenamento, pro-
+cessamento, análise e visualização de dados. O objetivo é o desenvolvimento de mode-
+los diretamente a partir de dados, sem hipóteses teóricas. Em geral, os dados são obti-
+dos de forma não controlada, sem o planejamento de experimentos ou o conhecimento 
+da representatividade da amostra. 
+Os dados observados correspondem sempre a uma amostra do processo, obtida em 
+condições específicas que determinam a sua validade. Um modelo obtido a partir de 
+
+uma amostra é uma representação dos dados da amostra e, portanto, uma representa-
+ção indireta do processo real que produziu os dados. A validade do modelo é sempre 
+limitada pela qualidade da amostra. 
+A ciência de dados (data science) se situa na intercessão do conhecimento de mate-
+mática, estatística, computação e engenharia com o conhecimento do domínio e dos 
+dados de cada aplicação. A ubiquidade dos dados na era digital faz a ciência de dados 
+ter aplicações em todos os setores, além de ser utilizada cada vez mais em problemas 
+de ciências humanas, naturais e biológicas [295]. 
+A integração de diversas disciplinas necessárias para lidar com grandes bases de dados 
+era chamada de mineração de dados durante a década de 1990, mas passou a ser co-
+nhecida como ciência de dados principalmente a partir de 2010. Os dois termos são 
+utilizados frequentemente com o significado similar. Podemos considerar que ciência 
+de dados se refere ao conhecimento necessário, enquanto mineração de dados se refere 
+ao processo de desenvolvimento de modelos a partir de dados. 
+A descoberta de conhecimento de bases de dados (KDD)*, ou simplesmente, mineração 
+de dados, é um processo cíclico, de forma que, se os objetivos não forem atingidos, uma 
+nova iteração deve ser realizada, refinando os resultados ou utilizando novos da-
+dos/ferramentas. A Figura 1.1 ilustra o processo de mineração de dados com seus pos-
+síveis ciclos e iterações. 
+ 
+Figura 1.1: O processo de mineração de dados. 
+ 
+* Knowledge Discovering in Databases 
+
+A coleta e o armazenamento de dados, que aparece condensada na Figura 1.1, é um 
+elemento extremamente importante do processo, principalmente para grandes corpo-
+rações, que têm uma infraestrutura complexa de tecnologia da informação (TI). O pro-
+cesso começa com a seleção de um subconjunto de dados para ser utilizado para o 
+ajuste de modelos. Esse conjunto de dados, chamado de conjunto de treinamento, é 
+uma amostra considerada válida, podendo ser, dependendo do caso, a própria base de 
+dados. Os dados do conjunto de treinamento são utilizados para o desenvolvimento do 
+modelo. Durante o processo de construção do modelo, o conjunto de dados é particio-
+nado para o ajuste de parâmetros e a validação dos resultados.  
+A etapa de seleção de dados inclui o importante processo de escolha/seleção de variá-
+veis, que pode ser feita a partir do conhecimento de especialistas ou de forma automá-
+tica. Uma base de dado frequentemente possui valores ausentes e valores extremos ou 
+outliers, que devem ser removidos para não prejudicar o ajuste do modelo. 
+O entendimento da aplicação e a clareza nos objetivos finais a serem atingidos são fun-
+damentais para o sucesso de uma aplicação e a participação de especialistas do domí-
+nio é muito importante. O cientista de dados deve identificar os requisitos da aplicação, 
+desenvolver e avaliar os resultados dos modelos, escolher o(s) modelo(s) mais ade-
+quado e coordenar a sua implantação. 
+O entendimento dos dados é realizado a partir da caracterização estatística e de técni-
+cas de visualização. Esta etapa é importante para o desenvolvimento do modelo e será 
+discutida no Capítulo 2. O pré-processamento dos dados com as principais técnicas de 
+transformação linear também são apresentadas no Capítulo 2. 
+A principal etapa da mineração de dados é a geração dos modelos. Grande parte do 
+conteúdo deste livro é orientada para o desenvolvimento e a análise dos resultados de 
+modelos. Nos Capítulos 3 ao 6 são abordados os fundamentos estatísticos dos proble-
+mas de regressão, classificação e análise de agrupamentos. Os Capítulos 7 a 9 apresen-
+tam os principais métodos não lineares de inteligência computacional. 
+É importante avaliar corretamente o desempenho do modelo antes que a solução seja 
+implantada. A qualidade dos modelos é avaliada através de estatísticas de validação, 
+cujo objetivo é verificar se os requisitos da modelagem foram atingidos. Diversas esta-
+tísticas evidenciam diferentes características dos modelos e serão discutidas na parte 
+de fundamentos. 
+
+A próxima seção apresenta os principais tipos de modelos que serão tratados neste 
+livro. Na prática os problemas nem sempre se apresentam de forma clara. É importante 
+entender corretamente as características dos problemas típicos para poder desenvol-
+ver uma solução específica num caso mais complexo. 
+1.2 Tipos de Modelos 
+A palavra “modelo” é utilizada em diversas áreas com conceitos diferentes e é impor-
+tante definir claramente o que se entende por um modelo. O dicionário Aurélio7 define 
+modelo como algo “que serve como objeto de imitação” ou, no contexto matemático, 
+como uma “representação matemática de um fenômeno”. Neste livro, um modelo é uma 
+representação simplificada de um sistema ou processo real obtida a partir dos dados 
+da amostra. Os modelos de ciência de dados representam apenas a porção do processo 
+que foi capturada pelos dados. Essa constatação, apesar de óbvia, é muito importante 
+pois o modelo pode não ser capaz de predizer corretamente o comportamento que não 
+está representado nos dados de treinamento.  
+Um modelo, entendido como representação matemática de um processo real, pode ser 
+classificado segundo a natureza do conhecimento empregado para a sua construção 
+como modelo de conhecimento ou modelo de comportamento. Nos modelos de co-
+nhecimento (ou analíticos), as relações que descrevem o comportamento do sistema 
+são escritas a partir das leis fundamentais da física ou do conhecimento humano. Nos 
+modelos de comportamento (ou de entrada/saída), as relações que descrevem o com-
+portamento do sistema são obtidas diretamente através da observação dos dados de 
+entrada e saída. Os modelos de ciência de dados são essencialmente modelos de com-
+portamento, embora o conhecimento do especialista do domínio e o conhecimento do 
+analista sejam essenciais para o desenvolvimento de bons modelos. 
+As aplicações em ciência de dados são orientadas a problemas preditivos ou descriti-
+vos. Os problemas preditivos utilizam dados observados em variáveis de saída (variá-
+veis dependentes), cujos valores são preditos pelo modelo a partir das variáveis de en-
+trada (variáveis independentes). Nesse caso, o modelo realiza uma aproximação do 
+mapeamento de entrada e saída observado. Nos problemas descritivos não há variáveis 
+de saída e o objetivo do modelo é uma representação dos dados de entrada. Os modelos 
+preditivos são ajustados por algoritmos de aprendizado supervisionado, enquanto 
+
+modelos descritivos são ajustados por algoritmos de aprendizado não supervisio-
+nado. Há também algoritmos de aprendizado por reforço, em que o modelo é ajus-
+tado diretamente através de sua interação com o ambiente. Esta abordagem é muito 
+utilizada em problemas de controle e para o treinamento de agentes inteligentes. 
+Os problemas preditivos usuais são a classificação e a regressão. Na classificação, tam-
+bém chamada de classificação supervisionada ou reconhecimento de padrões, a variá-
+vel de saída é uma classe, em geral uma variável discreta e não ordenada. Na regressão, 
+a variável de saída é numérica, em geral um número real. Os dois problemas são, na 
+verdade, similares e os modelos de inteligência computacional podem ser utilizados 
+para a solução de ambos. 
+Em problemas descritivos, o objetivo do modelo é realizar uma descrição do conjunto 
+de dados. Os principais problemas descritivos são análise de agrupamentos e regras de 
+associação. A análise de agrupamentos, também chamada de classificação não supervi-
+sionada ou segmentação, utiliza diversos algoritmos para encontrar grupos de regis-
+tros similares em grandes bases de dados. Algoritmos de regras de associação são 
+muito utilizados em problemas descritivos cujo objetivo é encontrar itens que se rela-
+cionam na base de dados, como na análise de cestas de mercado e sistemas de reco-
+mendação. Recentemente, novos algoritmos de aprendizado não supervisionado têm 
+surgido como aprendizado da representação em que o objetivo do modelo é produ-
+zir uma representação da entrada. 
+As técnicas de combinação de modelos, chamadas de ensemble, permitem o aumento 
+do desempenho de modelos [150][475][604]. Em problemas preditivos, os melhores 
+resultados do Prêmio Netflix8 e outras competições de ciência de dados9 são obtidos 
+com ensembles. 
+A seguir, apresentamos uma descrição sucinta dos problemas que serão tratados neste 
+livro, mostrando alguns exemplos de conjuntos de dados bastante conhecidos.  
+1.2.1 Regressão 
+O objetivo da regressão ou aproximação de funções é um modelo de sistema ou pro-
+cesso capaz de realizar uma estimativa do valor da variável de saída numérica a partir 
+das variáveis de entrada. A regressão é uma tarefa preditiva e a avaliação da precisão 
+
+é feita em função do erro de predição, ou seja, a diferença entre o valor predito e o valor 
+correto. O erro de predição é utilizado para o ajuste do modelo. 
+O problema de regressão linear é clássico na estatística, com diversas aplicações em 
+engenharia e ciências. Na regressão linear, a variável de saída é calculada como uma 
+combinação linear das variáveis de entrada ou de funções das variáveis de entrada cha-
+madas de “regressores” ou de características (features). Além de eficiente, o modelo 
+linear permite a análise de diversas características do problema. A regressão linear é 
+explorada no Capítulo 3, sua extensão para a modelagem de séries temporais e siste-
+mas dinâmicos é apresentada no Capítulo 4. 
+A Figura 1.2 mostra um exemplo de problema de regressão linear monovariável. O mo-
+delo (em vermelho) é ajustado a partir dos dados da amostra (em azul) e deve ser o 
+mais próximo possível da relação alvo (em preto). Em geral, não se conhece precisa-
+mente o comportamento estatístico do processo além dos dados da amostra, de modo 
+que não se pode afirmar se o modelo ajustado representa o processo (relação alvo) ou 
+é apenas um modelo daquela amostra. 
+ 
+Figura 1.2: Problema de regressão linear. 
+Em muitos processos reais, o relacionamento entre as variáveis de entrada e saída é 
+não linear. Nesse caso, o modelo é válido para as condições em que a amostra foi reali-
+zada. Se o processo tem um comportamento muito instável, como, por exemplo, o mer-
+cado financeiro, a validade de um modelo expira rapidamente e um modelo ajustado 
+com dados históricos não consegue prever adequadamente o futuro. No caso de mode-
+los não lineares, a predição de um valor muito diferente dos dados de entrada-saída 
+
+utilizados no conjunto de treinamento pode resultar em valores incorretos, pois o mo-
+delo foi ajustado para a amostra, que representa um determinado domínio. 
+Os problemas de regressão e de classificação têm muitas características em comum, 
+uma vez que um modelo de classificação pode ser visto como um modelo de aproxima-
+ção de funções discriminantes, como descrito a seguir. 
+1.2.2 Classificação 
+O objetivo da classificação é um modelo, chamado de classificador, capaz de classificar 
+uma observação em uma das diferentes classes predefinidas a partir de valores das 
+variáveis de entrada, que representam as características ou atributos da observação. O 
+modelo representa o relacionamento entre os atributos e a classe, que é a variável de 
+saída. A classificação é uma tarefa preditiva, pois o modelo deve ser capaz de predizer 
+a classe para um novo registro previamente desconhecido, isto é, um registro não uti-
+lizado no conjunto de treinamento. A avaliação de um modelo de classificação é reali-
+zada principalmente em função da sua precisão na predição da classe correta. 
+O conjunto de dados das flores Iris é certamente o exemplo mais conhecido e estudado 
+em ciência de dados. O problema consiste em predizer a categoria de flores Iris, mos-
+tradas na Figura 1.3, a partir dos valores de comprimento e largura das pétalas e sépa-
+las. O conjunto de dados tem, portanto, quatro variáveis numéricas de entrada e uma 
+variável de saída, cujos valores são as três classes possíveis. O conjunto de dados apre-
+senta 50 instâncias para cada classe e foi utilizado pela primeira vez por Fisher em 
+1936 [183] como exemplo de funções discriminantes lineares.  
+(a) 
+(b) 
+(c) 
+Figura 1.3: Flores Iris: (a) Iris setosa; (b) Iris versicolor; (c) Iris virginica. 
+
+O problema de classificação pode ser visto como uma busca por funções discriminantes 
+(lineares ou não lineares) capazes de dividir o espaço das variáveis de entrada em re-
+giões e associar cada região a uma classe (cf. Figura 1.4).  
+(a) 
+(b) 
+Figura 1.4: Problema de classificação: (a) conjunto de treinamento; (b) conjunto de testes. 
+Em situações em que é possível separar todos os registros de uma classe por uma fun-
+ção linear, diz-se que a classe é linearmente separável. Quando os registros de uma 
+classe podem ser separados por uma função não linear, a classe é dita separável não 
+linearmente. Na prática, na maioria dos casos, os registros não podem ser separados 
+completamente por alguma função linear ou não linear. Nesse caso, as classes são ditas 
+não separáveis uma vez que a informação coletada pelas variáveis de entrada não é 
+suficiente para separar completamente as classes e, em consequência, o erro de classi-
+ficação não pode ser nulo, por melhor que seja o modelo. O problema é explorado em 
+detalhes no Capítulo 5, onde mostramos que é possível estabelecer um limite teórico 
+do erro de um classificador. Os modelos lineares locais e os modelos de sistemas fuzzy 
+e redes neurais podem tratar tanto problemas de classificação como problemas de re-
+gressão e serão apresentados no Capítulos 7, 8 e 9 respectivamente. 
+O problema de classificação tem sido estudado desde muito antes do surgimento das 
+técnicas de inteligência computacional. Em estatística, o problema de classificação é 
+chamado de reconhecimento de padrões [146]. As abordagens modernas para o pro-
+blema reúnem técnicas estatísticas clássicas e técnicas de inteligência computacional 
+[146]. Esse tipo de problema encontra inúmeras aplicações nos mais variados campos 
+de negócio, como, por exemplo, diagnóstico médico, análise de crédito, classificação de 
+documentos, classificação de imagens, bioinformática, entre outros. 
+
+1.2.3 Análise de agrupamentos 
+O objetivo da análise de agrupamentos é encontrar grupos de registros semelhantes no 
+conjunto de dados. Na análise de agrupamentos, também chamada de classificação não 
+supervisionada, não existe uma variável de saída ou variável alvo. O conjunto de dados 
+contém, assim, apenas registros das variáveis de entrada. 
+(a) 
+(b) 
+Figura 1.5: Problema de agrupamento: (a) conjunto de dados; (b) agrupamento. 
+Há diversas aplicações da análise de agrupamentos nos mais variados campos, como 
+bioinformática, marketing, processamento de imagens etc. Uma das aplicações mais co-
+nhecidas é a segmentação de clientes, muito útil na definição de estratégias de relacio-
+namento [530]. Nesse caso, as variáveis do conjunto de dados são características dos 
+clientes em função das quais se deseja a análise. 
+Empresas com grandes bases de clientes, como operadoras de telefonia, utilizam aná-
+lise de agrupamentos para segmentação de clientes, em que as variáveis representam 
+a utilização dos serviços. Grupos de clientes podem ser alvo de campanhas de retenção 
+ou promoções diferenciadas. 
+Um problema crítico na análise de agrupamentos é a avaliação da qualidade do resul-
+tado do agrupamento, pois a inexistência de uma variável de saída dificulta a definição 
+de uma estatística de desempenho. Paradoxalmente, a definição do número de grupos 
+é um dado de entrada para a maioria dos algoritmos. Há na literatura diversos índices 
+que se propõem a realizar uma avaliação da qualidade do agrupamento. Entretanto, os 
+índices refletem características geométricas desejáveis de um bom agrupamento e seu 
+resultado deve ser interpretado por um analista. A experiência do analista e a partici-
+pação do especialista do domínio são fundamentais para a análise de agrupamentos. 
+
+O problema de análise de agrupamentos possui diversas abordagens diferentes e um 
+grande número de algoritmos. Há livros inteiros focados no assunto [573][194] e uma 
+abordagem completa do problema foge ao escopo deste livro. As abordagens principais 
+são discutidas no Capítulo 6. 
+Uma variante do problema de análise de agrupamento é chamada de classificação semi 
+supervisionada [82], no qual um pequeno subconjunto dos dados anotados, que deve 
+ser utilizado para a classificação de um conjunto maior de dados. A questão é tratada 
+como um problema de agrupamentos em que os registros categorizados são utilizados 
+para ajudar a ajustar o modelo. 
+1.3 Recursos Complementares 
+Esta seção apresenta um conjunto de recursos relacionados com o conteúdo deste livro 
+e com a ciência de dados em geral.  
+1.3.1 Bibliografia de referência 
+A literatura na área de inteligência computacional com aplicação em ciência de dados 
+é bastante diversificada. A abordagem estatística para a construção de modelos de da-
+dos está fartamente descrita em diversas referências. Um enfoque bastante completo 
+que apresenta tanto os métodos mais avançados quanto dos métodos estatísticos clás-
+sicos é apresentado por Hastie, Tibshirani e Friedman10 [238]. 
+O livro Pattern Classification,11 de Duda e Hart [146], é um clássico em métodos esta-
+tísticos de classificação. O livro tem um volume correspondente com rotinas Matlab dos 
+principais algoritmos [507]. O livro de Theodoris e Koutroumbas12 [521], é outra refe-
+rência em métodos estatísticos de classificação e análise de agrupamentos, que tam-
+bém tem um volume com rotinas em Matlab [522]. O livro de Bishop13 [52] é uma refe-
+rência importante em método estatísticos e de inteligência computacional, trazendo 
+um capítulo sobre métodos variacionais. Uma referência adicional para métodos esta-
+tísticos de classificação é o livro de Webb [553].  
+Em problemas de regressão, Montgomery [399] é uma referência clássica, em sua 
+quarta edição. O clássico de modelos estatísticos de séries temporais e sistemas dinâ-
+micos é o livro de Box, Jenkins e Reinsel [59], que também está na quarta edição. Outra 
+obra de referência para o desenvolvimento de modelos dinâmicos de sistemas lineares 
+
+é o livro de Ljung14 [352], que serviu de base para o desenvolvimento da biblioteca 
+System Identification Toolbox15 do Matlab. Schabenberger e Gotway [472] apresentam 
+uma visão bastante abrangente sobre análise de dados espaciais. 
+Há diversas referências clássicas sobre as principais técnicas de inteligência computa-
+cional, como o livro de Haykin16[240][241] sobre redes neurais e os livros de Pedrycz 
+e Gomide [432][433] sobre a teoria de conjuntos fuzzy. A obra de referência sobre má-
+quinas de vetores de suporte e métodos baseados em funções de núcleo (kernel) é o 
+livro de Schölkopf e Smola17[478], que apresenta uma abordagem completa dos méto-
+dos e suas formulações matemáticas e ainda inclui uma discussão sobre temas correla-
+tos como regularização e otimização. Taylor e Cristianini18 [485], Huang, Kecman e Ko-
+priva 19 [269], e Kulkarni e Harman [326] apresentam uma excelente introdução à teo-
+ria de aprendizado estatístico. A obra de Vapnik [532]-[534] é a referência teórica mais 
+completa. Em seu livro mais recente, Vapnik [533] traz uma apresentação simplificada 
+dos principais conceitos da teoria. 
+O problema de construção de modelos a partir de dados é muito bem descrito por Cher-
+kassky e Mulier [98], com uma abordagem que ressalta os pontos em comum dos vários 
+algoritmos de inteligência computacional. Kecman20 [301] apresenta os principais al-
+goritmos de inteligência computacional, em que os métodos estatísticos clássicos são 
+condensados no primeiro capítulo. A maioria dos livros de inteligência computacional 
+é focada em sistemas fuzzy, redes neurais e algoritmos genéticos [152][318][520]. 
+Há diversos livros sobre mineração de dados, o primeiro com este título foi editado por 
+Fayyad e Piatetsky-Shapiro em 1996 [177]. O trabalho de Han e Kamber, publicado em 
+três edições [232]-[234], também é uma referência importante e tem uma apresenta-
+ção bastante completa. Han também participa em edições sobre a mineração de dados 
+geográficos [386][387] e sobre mineração de dados em grafos [582]. O livro de Tan, 
+Steinbach e Kumar21 [516] é outra referência clássica em mineração de dados. O livro 
+escrito pelos autores do Weka22 [561] apresenta os principais algoritmos do software. 
+Um livro de Zaki e Meira [593] apresenta uma visão bem atual e completa do assunto 
+com os principais algoritmos, além de mostrar aplicações em problemas complexos 
+como mineração de grafos e sequências. O livro de Aggarwal [5] é uma referência mais 
+completa e atualizada na área de ciência de dados, apresentando os fundamentos, téc-
+nicas e aplicações. Em suas 700 páginas, aborda o assunto de forma bem abrangente, 
+
+considerando o pré-processamento, detecção de outliers, mineração de dados estrutu-
+rados, dados espaciais, séries temporais, sequências e dados não estruturados como 
+textos e mineração da web e de redes sociais.  
+Mitchel23 [392] é a referência clássica de aprendizado de máquinas. O livro de Murphy 
+de 2012 [406] apresenta uma abordagem bem completa do tema sob a ótica probabi-
+lística. Alguns livros de aprendizado de máquina apresentam uma abordagem de mi-
+neração de dados [14][370] ou de análise inteligente de dados [44][45]. 
+O livro Deep Learning,24 de Googfellow, Bengio e Courville [212], publicado em 2016, é 
+a referência atual sobre algoritmos de aprendizado profundo. O livro é bem completo 
+e aborda desde os princípios básicos de álgebra linear, teoria das probabilidades e téc-
+nicas clássicas de aprendizado de máquinas até os mais avançados modelos que estão 
+sendo utilizados atualmente em aplicações de inteligência artificial. 
+Liu25 [348] é uma referência em problemas relacionados à internet. Os algoritmos de 
+inteligência computacional têm sido utilizados em problemas com dados não estrutu-
+rados como texto, grafos [1][43][178][502] e redes sociais [4][376]. Outras aplicações 
+importantes são a bioinformática e sistemas financeiros[295]. 
+Na literatura nacional, o livro editado por Solange Rezende em 2002 [451] reúne mé-
+todos de inteligência computacional, mineração de dados e aprendizado de máquina. A 
+obra, assinada por 10 autores com a participação de vários colaboradores, permanece 
+atual e inclui, além dos conceitos teóricos, uma série de aplicações práticas dos méto-
+dos apresentados. Alguns trabalhos na área de ciência de dados e inteligência compu-
+tacional escritos em português apareceram recentemente [61][173][193][345]. Os 
+modelos de redes neurais estão bem descritos na tradução do livro de Haykin [241] e 
+no livro de Braga, Carvalho e Ludermir [62]. 
+1.3.2 Recursos na internet 
+Em 2011, a Universidade de Stanford iniciou seu programa de oferta de cursos online 
+gratuitos pela internet com três cursos de ciência da computação: banco de dados, 
+aprendizado de máquina e inteligência artificial. Os mesmos cursos oferecidos aos alu-
+nos de Stanford foram disponibilizados livremente na internet, onde qualquer um po-
+deria se inscrever e seguir aulas em vídeo. A grande diferença entre essa iniciativa e 
+outras formas de educação online é que alunos inscritos podem responder perguntas, 
+
+realizar exercícios propostos e exames (dentro do mesmo ambiente computacional) e, 
+ao final, desde que obtenham rendimento adequado, receber um certificado de partici-
+pação assinado pelo professor. Os cursos atraíram mais de 100 mil inscritos em todo o 
+mundo. A iniciativa gerou a criação de diversos repositórios de cursos online em uni-
+versidades como Stanford26 e MIT27, além de empresas como Coursera28 e Udacity29, 
+fundadas no início de 2012, que exploram este mercado. O curso de Machine Learning 
+do Coursera,30 apresentado por Andrew Ng, de Stanford, cobre a maioria dos assuntos 
+tratados neste livro. 
+Aulas e conferências em vídeo também podem ser encontradas no VideoLectures31, 
+que é uma espécie de YouTube acadêmico e contém vídeos sobre diversos assuntos. No 
+VideoLectures é possível assistir a seminários sobre os temas de interesse apresenta-
+dos pelos maiores especialistas da área. O Slide Share32 e o Scribd33 também são repo-
+sitórios de conteúdo geral, o primeiro no formato de slides de apresentações e o se-
+gundo no formato de documentos.  
+O principal portal de recursos de ciência de dados na internet é o KDnuggets,34 que 
+contém links para diversos recursos, como softwares, repositórios de dados, cursos etc., 
+além de ofertas de empregos e também muita publicidade. O KDnuggets foi criado em 
+1997 e é mantido por Piatetsky-Shapiro, um dos principais pesquisadores da área e 
+coeditor do primeiro livro de mineração de dados [177].  
+O repositório de dados que é referência em diversos trabalhos de ciência de dados é o 
+UCI Machine Learning Repository,35 mantido pela Universidade da Califórnia em Ir-
+vine. O UCI contém um acervo bastante completo de conjuntos de dados benchmark 
+para avaliação de algoritmos. O UCI tem uma seção especial dedicada aos concursos de 
+ciência de dados KDD Cup propostos nas edições do congresso Knowledge Discovery 
+in Databases (KDD).36 Atualmente, competições de algoritmos de ciência de dados se 
+tornaram comuns através do site Kaggle.37 
+O site do software de código aberto KEEL,38 desenvolvido por um consórcio de seis gru-
+pos de pesquisa espanhóis, disponibiliza, além do próprio software, alguns conjuntos 
+de dados benchmark. Os dados encontrados no site do KEEL são essencialmente os 
+mesmos disponíveis no UCI, mas no KEEL eles podem ser encontrados em partições 
+predefinidas, o que permite a comparação direta entre algoritmos. O site KEEL também 
+
+disponibiliza uma grande variedade de publicações e links para outros repositórios li-
+gados à área de inteligência computacional. 
+Os resultados recentes nas áreas de inteligência computacional e ciência de dados são 
+publicados em periódicos de circulação internacional. No Brasil, graças ao Portal de 
+Periódicos Capes39, o estudante de pós-graduação tem acesso aos principais periódicos 
+científicos em todas as áreas. Na área de inteligência computacional e ciência de dados, 
+os principais portais são o Science Direct40 (Elsevier), o IEEEXplore41 (IEEE), o site da 
+Springer42 e o portal da ACM Digital Library.43 Os principais periódicos da área de ci-
+ência de dados estão listados no portal KDnuggets.44 
+Pesquisadores da área de ciência de dados organizam anualmente diversos congressos 
+internacionais sobre o tema. Os congressos mais importantes na área são o KDD, orga-
+nizado pelo SIGKDD45 e o ICDM,46 organizado pelo IEEE. Na área de aprendizado de 
+máquinas os congressos mais importantes são o NIPS47 (NeurIPS a partir de 2018) e o 
+ICML48. Na área de inteligência computacional, os congressos mais importantes são or-
+ganizados por especialidade. A cada quatro anos, é organizado o WCCI,49 que reúne os 
+principais congressos da área organizados pelo IEEE: FUZZ-IEEE de sistemas fuzzy; 
+IJCNN de redes neurais; e IEEE CEC de computação evolutiva. Outras informações so-
+bre eventos e publicações da área podem ser obtidas no site da Sociedade de Inteligên-
+cia Computacional do IEEE.50 No Brasil, a Associação Brasileira de Inteligência Compu-
+tacional (ABRICOM),51 organiza o Congresso Brasileiro de Inteligência Computacional 
+(CBIC), a cada dois anos. 
+Atualmente, é possível participar de discussões sobre diversos assuntos em blogs52 e 
+perfis no Twitter53 relacionados à área de ciência de dados. Há também diversos gru-
+pos de discussão em redes sociais,54 principalmente no Facebook e no LinkedIn. 
+O desenvolvimento de modelos de inteligência computacional, principalmente redes 
+neurais profundas, tem se beneficiado bastante de um ecossistema aberto, com softwa-
+res livres e linguagens de programação abertas, repositórios de artigos científicos como 
+o arXiv55 e repositórios de códigos como GitHub.56 
+Finalmente, há na internet repositórios de conteúdo genérico que contêm material de 
+diversos assuntos, incluindo tópicos relacionados à inteligência computacional e ciên-
+cia de dados. É importante lembrar que artigos na internet não têm nenhum tipo de 
+avaliação da qualidade da informação e devem ser consultados com cautela. 
+
+1.3.3 Softwares 
+Os softwares comerciais mais utilizados são o SAS (Statistical Analysis Software), o 
+SPSS (Statistical Package for the Social Sciences) e o Statistica. Estes softwares foram 
+desenvolvidos inicialmente como pacotes estatísticos que depois incorporaram outros 
+módulos. O pacote de mineração de dados do SAS57 fornece suporte para todo o pro-
+cesso, incluindo limpeza, transformações de dados e modelos. O SAS ainda tem uma 
+customização de seus módulos para diversos setores de negócios. O IBM SPSS Mode-
+ler58 (ex-PASW, ex-Clementine) e tem características similares ao concorrente SAS. O 
+SAS e o SPSS oferecem uma solução integrada, considerando todas as etapas do pro-
+cesso, desde a aquisição de dados até a implantação dos modelos. A aquisição da SPSS 
+pela IBM mostra claramente essa tendência. O Statistica Data Miner59 também é inte-
+grado aos módulos de estatística e tem uma variedade maior de algoritmos, permitindo 
+otimizar modelos para um problema específico. Os resultados dos modelos do Statis-
+tica também podem ser exportados em C, Java, Visual Basic e PMML. Os três pacotes 
+oferecem, como módulos adicionais, funcionalidades de mineração de textos. 
+O Oracle Data Mining e o Microsoft SQL Server Data Mining são bibliotecas de minera-
+ção de dados que rodam dentro dos respectivos bancos de dados. A vantagem desse 
+tipo de solução é que os modelos são desenvolvidos diretamente no banco de dados, 
+podendo ser integrados à plataforma operacional. Os produtos da Oracle e da Microsoft 
+oferecem uma variedade limitada de algoritmos, alguns proprietários que não são com-
+pletamente explicados na documentação. Esses softwares têm poucos recursos nativos 
+para visualização e caracterização estatística dos dados. A vantagem do Oracle Data 
+Mining é sua presença no mercado e a integração com os outros produtos da Oracle e 
+a possibilidade de ser diretamente integrado a programas Java e à linguagem PLSQL do 
+Oracle. O Microsoft SQL Server Data Mining também tem a vantagem de ser totalmente 
+integrado à plataforma .NET da Microsoft e o seu custo é bem inferior. Nas versões mais 
+recentes, as duas plataformas têm recursos para mineração de textos. 
+O desenvolvimento de softwares comerciais segue a tendência crescente de oferta de 
+serviços na nuvem. Nesse sentido, a plataforma Microsoft Azurre Machine Learning60 
+permite o desenvolvimento e o deploy de modelos de ciência de dados diretamente a 
+partir da nuvem. O produto Amazon Machine Learning61 também segue essa tendência 
+na plataforma de nuvem Amazon Web Services. A Prediction API62 da plataforma de 
+nuvem do Google também é uma iniciativa nessa linha. 
+
+Para grandes corporações que atuam em mercados altamente competitivos e lidam 
+com grandes massas de dados, o ganho potencial dos resultados obtidos com modelos 
+de ciência de dados supera o custo de aquisição e manutenção de pacotes comerciais 
+[439]. Para pequenas e médias empresas e, principalmente, o mundo acadêmico, o 
+custo de uma licença de um pacote comercial como os mencionados pode ser proibi-
+tivo. Há no mercado outros softwares comerciais com custos mais acessíveis como o 
+PolyAnalyst,63 e sua variante para análises de textos TextAnalyst64.  
+Há softwares livres que podem ser utilizados para o desenvolvimento de soluções sem 
+uma linguagem de programação. O primeiro software livre de mineração de dados, de-
+senvolvido em 1997 na Universidade de Waikato, foi o Weka.65 Codificado em Java, o 
+Weka tem código-fonte aberto, embora a documentação não seja das mais claras. O 
+Weka contém uma variedade enorme de algoritmos, com diversas variedades de algo-
+ritmos de indução de árvores e regras de decisão. O Weka também tem uma interface 
+gráfica intuitiva de fácil utilização. Em 2006, o Projeto Weka foi adquirido pela Pen-
+taho66 para ser integrado ao pacote de inteligência de negócios da empresa. O Weka 
+continua sendo desenvolvido como projeto de software livre. 
+O RapidMiner67 utiliza o mesmo modelo de negócios da Pentaho, fornecendo softwares 
+livres para oferecer serviços de consultoria e treinamento. O RapidMiner também é 
+desenvolvido em Java e incorpora algoritmos de outros softwares livres, como o Weka 
+e o LibSVM. O RapidMiner tem recursos elaborados de visualização de dados e de re-
+sultados de modelos, além de permitir o desenvolvimento de workflows de modelagem 
+complexos, com otimização de modelos por algoritmos genéticos. O KNIME68 tembém 
+é desenvolvido em Java e incorpora algoritmos de outros softwares livres, como o Weka 
+e o LibSVM, numa interface gráfica de fácil utilização. O KNIME tem recursos de visua-
+lização melhores que o Weka, mas é equivalente em termos de algoritmos.  
+Uma alternativa ao padrão Java, utilizado pelos softwares livres citados anteriormente, 
+é o Orange,69 desenvolvido em C++ e Python. O Orange é um projeto acadêmico e apre-
+senta uma boa variedade de algoritmos numa interface gráfica agradável e com bons 
+recursos de visualização. O Orange é desenvolvido a partir de uma biblioteca que é for-
+necida junto com o software, permitindo o desenvolvimento de aplicações pelo usuário. 
+A utilização de softwares livres e linguagens de programação abertas têm impulsio-
+nado o desenvolvimento da ciência de dados. As principais bibliotecas do Python para 
+
+ciência de dados são o Pandas70 e o Scikit Learn,71 que utilizam outras bibliotecas de 
+referência do Python como NumPy e SciPy. O Python é desenvolvido por uma comuni-
+dade motivada e suas bibliotecas permitem o acesso a diversos algoritmos. Há uma 
+grande variedade de recursos em Python na internet.72 
+A linguagem R73 é um projeto de software livre da comunidade estatística com um am-
+biente computacional e bibliotecas com uma grande variedade de rotinas para trata-
+mento, processamento e visualização de dados. As rotinas são organizadas em pacotes 
+para cada assunto e podem ser acessadas por uma linguagem de programação simples, 
+que também é ser utilizada para o desenvolvimento de novos algoritmos. Há diversas 
+extensões e interfaces gráficas para a linguagem, assim como empresas74 que fornecem 
+extensões e consultoria. A linguagem R tem sido incorporada em softwares comerciais 
+como o SAS e em bancos de dados como Oracle. 
+O site KDnuggets realiza regularmente uma enquete com o objetivo de determinar os 
+softwares mais utilizados pelos usuários do portal. Nos últimos anos, as linguagens R e 
+Python têm se destacado como linguagens mais utilizadas.  
+Um ambiente computacional importante na área de engenharia é o Matlab.75 O Matlab 
+é um software comercial que tem um núcleo central, basicamente a janela de comando 
+e bibliotecas numéricas básicas. Os recursos avançados do Matlab são comercializados 
+como pacotes, chamados Toolbox, que contêm rotinas para as mais diversas áreas, 
+como biologia, finanças, sistemas de controle etc. Uma configuração adequada para a 
+área de inteligência computacional e ciência de dados deve conter essencialmente os 
+pacotes de estatística,76 redes neurais77 e algoritmos genéticos.78 Pacotes adicionais, 
+como o de otimização79 e de identificação de sistemas,80 também são importantes. O 
+pacote de programação paralela,81 que permite a execução de scripts Matlab em má-
+quinas com processadores de múltiplos núcleos e clusters, pode ser necessário em apli-
+cações computacionalmente intensivas. Os programas desenvolvidos em Matlab po-
+dem ser integrados a softwares corporativos através de compiladores para as platafor-
+mas .NET,82 Java83 e Excel.84 Além dos pacotes mantidos e desenvolvidos pela 
+Mathworks, existe uma comunidade de usuários ativa que desenvolve rotinas e pacotes 
+para o Matlab, organizados no repositório Matlab Central.85 Há mais de 1200 livros es-
+critos sobre o Matlab ou sobre aplicações utilizando o ambiente computacional.86 As 
+figuras neste livro foram geradas com Matlab. 
+
+1.4 Comentários Finais 
+Neste capítulo foram apresentados os conceitos iniciais inteligência computacional 
+para ciência de dados e uma introdução dos assuntos abordados no livro. Os recursos 
+bibliográficos representam um apanhado das principais fontes que podem servir de 
+apoio a um estudo mais aprofundado nesses temas. É provável que alguma referência 
+importante não tenha sido incluída e é provável que alguma informação esteja desatu-
+alizada, principalmente as referências da internet e softwares.

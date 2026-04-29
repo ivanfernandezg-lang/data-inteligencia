@@ -1,0 +1,152 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+%
+% Resumen (2 páginas) del Capítulo 1 — "Introducción"
+% Libro: Inteligencia Computacional: Fundamentos y Aplicaciones
+% Autor: Alexandre G. Evsukoff (E-papers, Rio de Janeiro, 2020)
+%
+% Idioma: Español (español latinoamericano/chileno académico).
+% Generado para el curso de Inteligencia Computacional — USACH (Prof. Max Chacón).
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{microtype}
+\usepackage{parskip}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue!60!black}
+
+\setlist[itemize]{leftmargin=1.2em, itemsep=1pt, topsep=2pt}
+
+\title{\vspace{-1.5cm}Resumen --- Capítulo 1: Introducción\\
+\large Inteligencia Computacional: Fundamentos y Aplicaciones \\
+\normalsize Alexandre G.\ Evsukoff (E-papers, 2020)}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-1.2cm}
+
+\section*{1. Contexto histórico y definición}
+
+La \textbf{inteligencia computacional} (IC) se define como un conjunto de
+paradigmas computacionales destinados al desarrollo y aplicación de sistemas
+inteligentes para resolver problemas complejos del mundo real. Su historia está
+vinculada a la de la inteligencia artificial (IA): desde las reflexiones filosóficas
+sobre la mente y el lenguaje hasta el \emph{test de Turing} (1950). En términos
+metodológicos se distinguen dos corrientes principales: la corriente
+\emph{simbolista} (sistemas expertos, lógica) y la corriente
+\emph{conexionista} (redes neuronales, iniciadas con el Perceptron de Rosenblatt,
+1958). La incapacidad del Perceptron para resolver problemas no linealmente
+separables llevó a una fase de estancamiento hasta que, en 1986, la técnica de
+\emph{retropropagación del error} (Rumelhart, Hinton y Williams) revitalizó las
+redes neuronales multicapa. Paralelamente, Quinlan introdujo el algoritmo \textbf{ID3}
+para árboles de decisión, consolidando el aprendizaje automático simbólico.
+
+Durante las décadas de 1980 y 1990 surgieron otros paradigmas (lógica difusa,
+algoritmos evolutivos, máquinas de soporte vectorial). La integración de estas
+técnicas recibió nombres como \emph{soft computing} o \textbf{inteligencia
+computacional}. Desde 2010 el término \emph{big data} ganó relevancia, y a partir de
+2012 las \textbf{redes neuronales profundas} (\emph{deep learning}) ejecutadas en GPUs
+lograron rendimientos comparables o superiores al humano en tareas como visión
+computacional y procesamiento de lenguaje natural.
+
+\section*{2. Ciencia de datos y el proceso KDD}
+
+La \textbf{ciencia de datos} se sitúa en la intersección entre matemática,
+estadística, informática, ingeniería y conocimiento de dominio. A diferencia del
+método científico clásico, en ciencia de datos los modelos se construyen a partir
+de los datos observados en vez de partir de hipótesis teóricas predefinidas. El autor
+subraya que todo modelo es una representación parcial del fenómeno real y que su
+validez depende de la calidad y representatividad de la muestra.
+
+El proceso de \textbf{descubrimiento de conocimiento en bases de datos (KDD)} —también
+llamado minería de datos— es cíclico y comprende las etapas:
+\begin{enumerate}[leftmargin=1.4em, itemsep=1pt, topsep=2pt]
+  \item \textbf{Selección} --- elegir subconjuntos y variables relevantes (conjunto de entrenamiento).
+  \item \textbf{Limpieza} --- tratar valores ausentes y \emph{outliers}.
+  \item \textbf{Preprocesamiento} --- normalizaciones y transformaciones (p.ej., ACP/PCA).
+  \item \textbf{Modelado} --- ajuste de modelos y parámetros sobre los datos de entrenamiento.
+  \item \textbf{Evaluación} --- validación estadística de los resultados.
+\end{enumerate}
+Participación del experto en dominio es esencial en todas las fases.
+
+\section*{3. Tipos de modelos}
+
+Un modelo es una representación simplificada del proceso real. Según su origen,
+se distinguen \textbf{modelos de conocimiento} (basados en leyes o relaciones físicas)
+y \textbf{modelos de comportamiento} (input-output, ajustados a partir de datos),
+siendo la mayoría de las técnicas de IC parte de esta segunda categoría.
+
+Según su propósito, los problemas se dividen en \textbf{preditivos} y
+\textbf{descriptivos}: los primeros buscan predecir variables objetivo (aprendizaje
+supervisado), y los segundos describir estructuras o patrones sin variable objetivo
+(aprendizaje no supervisado). Existe además el \emph{aprendizaje por reforzamiento},
+donde un agente aprende mediante interacción y retroalimentación del entorno.
+
+\textbf{Regresión.} Predicción de una variable numérica a partir de atributos de
+entrada. La regresión lineal es el punto de partida y se extiende a modelos para
+series temporales y sistemas dinámicos. La evaluación suele basarse en medidas de
+error de predicción.
+
+\textbf{Clasificación.} Asignación de una etiqueta discreta a partir de atributos;
+se busca una función discriminante que separe las clases en el espacio de entrada.
+Las clases pueden ser linealmente separables o no, lo que determina la complejidad
+del modelo requerido. Aplicaciones típicas: diagnóstico médico, evaluación crediticia,
+bioinformática y clasificación de documentos e imágenes.
+
+\textbf{Clustering (agrupamiento).} Identificación de grupos de objetos similares sin
+una variable objetivo. Evaluar la calidad de un clustering es complejo; existen
+medidas internas y externas, y en muchos métodos el número de grupos es un parámetro
+de entrada. Usos frecuentes: segmentación de clientes, análisis genómico y visión por
+computador.
+
+Se mencionan también otros tópicos: \emph{reglas de asociación}, aprendizaje de
+representaciones, clasificación semisupervisada y métodos de \emph{ensemble}, muy
+útiles en competencias de ciencia de datos.
+
+\section*{4. Recursos complementarios}
+
+\textbf{Bibliografía.} Para fundamentos estadísticos y de aprendizaje: Hastie,
+Tibshirani y Friedman (\emph{The Elements of Statistical Learning}); Bishop (\emph{Pattern
+Recognition and Machine Learning}); Duda \& Hart; Theodoridis \& Koutroumbas. Para redes
+neuronales: Haykin; para lógica difusa: Pedrycz \& Gomide; para SVM: Schölkopf \& Smola
+y Vapnik. En minería de datos: Han \& Kamber, Tan et al., Aggarwal y Witten \& Frank.
+En \emph{deep learning}: Goodfellow, Bengio \& Courville.
+
+\textbf{Recursos en línea.} Portales y repositorios: KDnuggets, UCI Machine Learning
+Repository, KEEL y Kaggle. Cursos abiertos (Coursera, Stanford), preprints en arXiv y
+código en GitHub. Conferencias relevantes: KDD, ICDM, NeurIPS, ICML, entre otras.
+
+\textbf{Software.} Comerciales: SAS, IBM SPSS Modeler, Statistica; en entorno libre:
+Weka, RapidMiner, KNIME, Orange. Lenguajes y bibliotecas: Python (pandas,
+scikit-learn, NumPy, SciPy), R y Matlab. KDnuggets muestra el liderazgo de R y Python
+entre practicantes.
+
+\section*{5. Síntesis y relevancia para el curso}
+
+El Capítulo 1 establece el vocabulario y el marco conceptual requerido para el resto
+del libro: diferencia entre dato/información/conocimiento, el ciclo KDD, y la
+taxonomía de modelos (preditivos vs. descriptivos; supervisado vs. no supervisado).
+Se destaca la idea crítica de que todo modelo depende de la muestra y de las
+suposiciones del proceso de muestreo.
+
+Este planteamiento coincide con la \textbf{Unidad 1 (Introducción)} del programa de
+Inteligencia Computacional del Magíster USACH (Prof. Max Chacón) y prepara para los
+temas evaluados en la PEP1 (ACP, reglas de asociación, clustering) y las unidades
+posteriores (clasificación bayesiana, árboles de decisión, paradigma conexionista).
+
+\vspace{0.4em}
+\hrule
+\vspace{0.3em}
+{\footnotesize Fuente: Evsukoff, A.\ G.\ \emph{Inteligencia Computacional: Fundamentos y
+Aplicaciones}. Rio de Janeiro: E-papers, 2020 (Presentación y Capítulo 1, pp. 8--29).
+Resumen elaborado para fines académicos en el contexto del curso de Inteligencia
+Computacional del Magíster en Ingeniería, Universidad de Santiago de Chile (USACH).}
+
+\end{document}

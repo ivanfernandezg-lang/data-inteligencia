@@ -1,0 +1,256 @@
+% =============================================================================
+%  Resumen Capítulo 6 — ANÁLISIS DE AGRUPAMIENTOS
+%  Libro: Evsukoff, A. (2020). Inteligência Computacional: Fundamentos e
+%         Aplicações. Río de Janeiro: E-papers.
+% =============================================================================
+\input{_preambulo}
+
+\title{\sffamily\bfseries Capítulo 6 — Análisis de Agrupamientos\\
+       \large Particionales, jerárquicos, espectrales y validación}
+\author{Resumen de estudio}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+
+\begin{conceito}
+El \textbf{análisis de agrupamientos} (\emph{clustering}) divide el
+conjunto de datos $\mathcal{T}=\{\mathbf{x}(t)\}_{t=1}^{N}$ en
+$K$~subconjuntos disjuntos
+$\mathbb{C}=\{\mathcal{C}_1,\dots,\mathcal{C}_K\}$, de modo que los
+registros del mismo grupo sean \emph{similares entre sí} y
+\emph{disímiles} respecto de los demás grupos. Es un problema
+\textbf{no supervisado}: no hay variable-objetivo, lo que hace
+intrínsecamente difícil su evaluación. Incluso un conjunto pequeño
+admite una explosión combinatoria de particiones ($N=100$ registros en
+dos grupos de~50 producen $\sim 10^{29}$ particiones), y la ``mejor''
+partición depende siempre del contexto de la aplicación.
+\end{conceito}
+
+\section{El problema}
+
+Una partición satisface
+$\bigcup_{i}\mathcal{C}_i=\mathcal{T}$ y
+$\mathcal{C}_i\cap\mathcal{C}_j=\emptyset$ para $i\neq j$. La
+\textbf{forma de los grupos} la determina la métrica de distancia
+elegida (Figura~6.3): la Euclidiana ($L_2$) genera esferas; la
+Mahalanobis, elipsoides; Manhattan ($L_1$) y $L_\infty$, hipercubos.
+Los grupos \emph{convexos} (separables por hiperplanos) los obtienen
+métodos particionales simples; los grupos \emph{no convexos} requieren
+métodos jerárquicos del tipo \emph{single-link} o métodos espectrales.
+
+\textbf{Atención:} los grupos hallados \emph{no} tienen por qué
+coincidir con clases pre-existentes. ``Clasificación no supervisada''
+es una metáfora útil pero peligrosa.
+
+\section{Métodos de partición: $k$-medias}
+
+Se minimiza la suma de distancias cuadráticas a los centros:
+\begin{formula}
+\[
+J(\boldsymbol\Omega)=\sum_{t=1}^{N}\sum_{i=1}^{K}
+u_i(\mathbf{x}(t))\,\|\mathbf{x}(t)-\boldsymbol\omega_i\|^2,
+\quad \boldsymbol\omega_i=\frac{1}{\hat N_i}\!\!\sum_{\mathbf{x}(t)\in\mathcal{C}_i}\!\!\mathbf{x}(t),
+\]
+\end{formula}
+con $u_i(\mathbf{x})=1$ si $\mathbf{x}\in\mathcal{C}_i$, 0 en caso
+contrario. Esto equivale a minimizar $\tr(\boldsymbol\Sigma_W)$ y, como
+$\boldsymbol\Sigma_T=\boldsymbol\Sigma_W+\boldsymbol\Sigma_B$ es
+constante, \textbf{maximizar simultáneamente}
+$\tr(\boldsymbol\Sigma_B)$ --- es decir, grupos compactos y bien
+separados.
+
+\paragraph{Algoritmo (Lloyd/MacQueen).}
+\begin{enumerate}[leftmargin=1.2cm]
+  \item Inicializar $\boldsymbol\Omega=[\boldsymbol\omega_1,\dots,\boldsymbol\omega_K]$
+        (aleatorio, \emph{k-means++}, PCA-Part, CCIA\dots).
+  \item Asignar cada $\mathbf{x}(t)$ al centro más próximo
+        ($\argmin_j\|\mathbf{x}(t)-\boldsymbol\omega_j\|$).
+  \item Recalcular cada centro como media de los registros asignados.
+  \item Iterar hasta $\|\boldsymbol\Omega-\boldsymbol\Omega_0\|<\mathrm{tol}$.
+\end{enumerate}
+
+Complejidad $O(NKp)$ por iteración; muy eficiente cuando $Kp\ll N$.
+
+\paragraph{Limitaciones.}
+Problema NP-difícil, heurística \emph{voraz}: cae en mínimos locales.
+Sensible a (i) inicialización, (ii) presencia de \emph{outliers}, (iii)
+grupos de tamaños desiguales o no convexos. Cuando el número de grupos
+coincide con la estructura real, las inicializaciones convergen a la
+misma solución; cuando no, soluciones distintas en cada ejecución
+indican que $K$ está mal elegido.
+
+\paragraph{Variantes.} ISODATA (ajusta $K$ automáticamente),
+$k$-medoids/PAM/CLARA/CLARANS (centro = registro real, robusto a
+\emph{outliers}), $k$-medians, $x$-means (escoge $K$ por AIC/BIC),
+$k$-medias esférico (similitud del coseno, alta dimensión),
+\emph{fuzzy} $c$-medias (Capítulo~8).
+
+\section{Métodos jerárquicos}
+
+Construyen una cadena de particiones
+$\mathbb{C}_0\subseteq\mathbb{C}_1\subseteq\cdots\subseteq\mathbb{C}_{N-1}$
+visualizada como árbol binario (\textbf{dendrograma}). Los
+\textbf{aglomerativos} (más comunes) inician con $N$ \emph{singletons}
+y fusionan el par más próximo; los \textbf{divisivos} hacen el camino
+inverso.
+
+La función de \textbf{ligadura} entre grupos define el resultado:
+\begin{itemize}[leftmargin=1.2cm]
+  \item \emph{Single-link} (vecino más próximo):
+        $L_{\min}(\mathcal{C}_i,\mathcal{C}_j)=\min\,\mathrm{dist}(\boldsymbol\nu,\boldsymbol\upsilon)$
+        --- captura grupos no convexos, sensible a ``cadenas''.
+  \item \emph{Complete-link} (vecino más lejano):
+        $L_{\max}=\max\,\mathrm{dist}$ --- grupos compactos.
+  \item \emph{UPGMA} (promedio):
+        $L_{\mathrm{med}}=\frac{1}{|\mathcal{C}_i||\mathcal{C}_j|}\sum\sum\mathrm{dist}$.
+  \item \emph{UPGMC} (centroides):
+        $L_{\mathrm{cen}}=\mathrm{dist}(\bar{\boldsymbol\nu},\bar{\boldsymbol\upsilon})$.
+  \item \emph{Ward}: minimiza la varianza intragrupos en cada fusión.
+\end{itemize}
+El número adecuado de grupos se estima por la mayor distancia entre
+dos niveles sucesivos del dendrograma. Costo de memoria $O(N^2)$ por
+la matriz de distancias --- inviable para $N$ muy grande.
+
+\section{Particionamiento de grafos y métodos espectrales}
+
+Se representa $\mathcal{T}$ como grafo $G(\mathcal{V},\mathcal{E})$ con
+$\mathcal{V}\equiv\mathcal{T}$ y matriz de adyacencias $\mathbf{A}$
+ponderada por la similitud. Función usual: gaussiana
+$\mathrm{sim}_G(\mathbf{x}(i),\mathbf{x}(j))=\exp(-\|\mathbf{x}(i)-\mathbf{x}(j)\|^2/2\sigma^2)$
+o coseno (texto).
+
+\paragraph{Corte mínimo.} Para partición
+$\{\mathcal{C}_1,\mathcal{C}_2\}$,
+$\mathrm{cut}(\mathcal{C}_1,\mathcal{C}_2)=\frac12\sum_{i,j}a_{ij}u_1(i)u_2(j)$.
+Solución trivial: aislar el vértice de menor grado (\emph{outlier}).
+El \textbf{corte normalizado de Shi--Malik} corrige:
+\[
+\mathrm{Ncut}=\frac{\mathrm{cut}(\mathcal{C}_1,\mathcal{C}_2)}{\mathrm{cut}(\mathcal{C}_1,\mathcal{V})}
++\frac{\mathrm{cut}(\mathcal{C}_1,\mathcal{C}_2)}{\mathrm{cut}(\mathcal{C}_2,\mathcal{V})}.
+\]
+
+\paragraph{Laplaciano.} $\mathbf{L}=\mathbf{D}-\mathbf{A}$ con
+$\mathbf{D}=\diag(d_1,\dots,d_N)$, $d_i=\sum_j a_{ij}$. Es semi-definido
+positivo; tiene autovalor $\lambda_1=0$ con multiplicidad igual al
+número de componentes conexas. El segundo autovector (\emph{Fiedler})
+revela el mejor corte.
+
+\paragraph{Algoritmo de agrupamiento espectral.}
+\begin{enumerate}[leftmargin=1.2cm]
+  \item Construir $\mathbf{A}$ con la función de similitud.
+  \item Calcular un laplaciano: $\mathbf{L}=\mathbf{D}-\mathbf{A}$
+        (corte mínimo), generalizado
+        $\mathbf{L}\mathbf{W}=\mathbf{D}\mathbf{W}\boldsymbol\Lambda$
+        (Shi--Malik), o
+        $\hat{\mathbf{A}}=\mathbf{D}^{-1/2}\mathbf{A}\mathbf{D}^{-1/2}$
+        (Ng--Jordan--Weiss).
+  \item Descomposición espectral; tomar los $K$ autovectores asociados
+        a los $K$ menores autovalores (o $K$ mayores en NJW).
+  \item Aplicar $k$-medias a la matriz $\mathbf{Z}$ formada por esos
+        autovectores (en NJW, normalizar cada fila).
+\end{enumerate}
+La transformación no lineal (similitud gaussiana) permite separar
+grupos no convexos en el espacio original. La inicialización del
+$k$-medias se vuelve determinista (matriz identidad). Costo dominado
+por $O(N^3)$ de la descomposición.
+
+\paragraph{Modularidad (Newman--Girvan).} Mide cuánto se aleja la
+partición de la esperada en una red aleatoria:
+\[
+Q=\frac{1}{2E}\sum_{ij}\Bigl(a_{ij}-\frac{d_id_j}{2E}\Bigr)\mathbf{u}_i\mathbf{u}_j\T,
+\quad \mathbf{B}=\mathbf{A}-\mathbf{d}\T\mathbf{d}/(2E).
+\]
+Maximizar $Q$ es el problema central de la \emph{detección de
+comunidades} en redes complejas; se resuelve por descomposición
+espectral de $\mathbf{B}$ o por enfoques jerárquicos divisivos.
+
+\section{Validación de grupos}
+
+\subsection{Externas} (requieren rótulos de clases)
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Pureza:}
+        $\mathrm{pur}(\mathcal{C}_j)=\max_i n_{ij}/\hat N_j$
+        (homogeneidad);
+        $\mathrm{PUR}=\sum_j(\hat N_j/N)\mathrm{pur}(\mathcal{C}_j)$.
+  \item \textbf{Entropía} (Shannon):
+        $\mathrm{ent}(\mathcal{C}_j)=-\frac{1}{\log_2 m}\sum_i (n_{ij}/\hat N_j)\log_2(n_{ij}/\hat N_j)$
+        --- menor es mejor.
+\end{itemize}
+
+\subsection{Internas} (sólo usan datos y partición)
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{PI (Bensaid):}
+        $\tr(\boldsymbol\Sigma_W)/\sum_{ij}N_i\|\boldsymbol\omega_i-\boldsymbol\omega_j\|^2$.
+  \item \textbf{VAT:} \emph{data image} reordenado --- diagnóstico
+        visual cualitativo.
+\end{itemize}
+
+\subsection{Relativas} (elección de $K$)
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Calinski--Harabasz:}
+        $\mathrm{CH}=\frac{N-K}{K-1}\frac{\tr(\boldsymbol\Sigma_B)}{\tr(\boldsymbol\Sigma_W)}$ (max).
+  \item \textbf{PBM:}
+        $(\frac{1}{K}\frac{E_1}{E_K}\frac{1}{D_{\max}})^2$ (max).
+  \item \textbf{Silueta:} $sw_i(t)=(b_i(t)-a_i(t))/\max(a_i,b_i)$, con
+        $a_i$ distancia media intragrupo y $b_i$ menor media
+        entregrupos. $\mathrm{SW}\in(-1,1)$, próximo a~1 es ideal.
+  \item \textbf{Xie--Beni:}
+        $\tr(\boldsymbol\Sigma_W)/(N\cdot D_{\min})$ (min).
+\end{itemize}
+
+Vendramin, Campello \& Hruschka (estudio con 1\,080~datasets) concluyen
+que \textbf{CH, PBM y SW} son los índices más efectivos para descubrir
+$K$. Se recomienda ejecutar el $k$-medias múltiples veces para cada
+$K$ y analizar la dispersión de los índices vía \emph{box-plot}.
+
+\section{Aplicaciones}
+
+\begin{aplicacao}
+\textbf{Segmentación de imágenes SAR de la Amazonía} (Beisl,
+Coppe/UFRJ). Imágenes del satélite JERS-1 en las épocas de creciente
+(oct./1995) y de seca (mayo/1996) sobre la cuenca del Solimões.
+Pre-procesamiento por función \emph{semivariograma} caracteriza la
+textura local. El agrupamiento por ISODATA (variante de $k$-medias)
+seguido de clasificación por especialista produce cuatro clases
+temáticas: agua, bosque seco, bosque inundado y vegetación inundada.
+El resultado alimenta mapas de sensibilidad ambiental al derrame de
+petróleo (poliducto Coari--Manaus, Petrobras).
+\end{aplicacao}
+
+\begin{aplicacao}
+\textbf{Agrupamiento de documentos} (Santos, Coppe/UFRJ).
+585~resúmenes de tesis del PEC/Coppe (2004--2008); el
+pre-procesamiento (\emph{stopwords}, \emph{stemming}) reduce a
+265~términos; ponderación \emph{tf-idf}. Se construye un grafo con
+similitud del coseno y umbral~$\varepsilon$; se aplica el algoritmo de
+\textbf{maximización de la modularidad} de Newman--Girvan con etapa de
+refinamiento. En $\varepsilon=0{,}20$, $Q=0{,}5334$ y 7~comunidades
+coherentes con las áreas de investigación del Programa: Mecánica
+Computacional, Estructuras, Geotecnia, Petróleo (Geoquímica y
+Geofísica), Sistemas Computacionales y Recursos Hídricos.
+\end{aplicacao}
+
+\section{Comentarios finales}
+
+\begin{enumerate}[leftmargin=1.2cm]
+  \item El \emph{clustering} es un \textbf{problema mal planteado}:
+        ninguna medida es absoluta, el criterio final es siempre
+        interpretativo.
+  \item \textbf{$k$-medias y jerárquicos aglomerativos} son los
+        enfoques clásicos, en cualquier software. Los métodos
+        \textbf{espectrales} brillan con grupos no convexos y en alta
+        dimensión (textos, imágenes).
+  \item \textbf{No confundir grupos con clases}: la coincidencia es
+        circunstancial. Los métodos \emph{semi}-supervisados usan
+        rótulos parciales para guiar el agrupamiento.
+  \item En minería de textos y bioinformática, la \textbf{alta
+        dimensionalidad} obliga a usar similitudes específicas
+        (coseno) y técnicas de reducción (LSI, ACP).
+  \item Próximos capítulos: \emph{fuzzy} $c$-medias (Capítulo~8),
+        funciones de base radial (Capítulo~7), redes neuronales
+        (Capítulo~9) amplían aún más el arsenal.
+\end{enumerate}
+
+\end{document}

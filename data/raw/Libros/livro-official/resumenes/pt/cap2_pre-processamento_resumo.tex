@@ -1,0 +1,321 @@
+% =============================================================================
+%  Resumo Capítulo 2 — PRÉ-PROCESSAMENTO
+%  Livro: Evsukoff, A. (2020). Inteligência Computacional: Fundamentos e
+%         Aplicações. Rio de Janeiro: E-papers.
+% =============================================================================
+\input{_preambulo}
+
+\title{\sffamily\bfseries Capítulo 2 — Pré-processamento\\
+       \large Caracterização estatística, limpeza e transformações lineares}
+\author{Resumo de estudo}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+
+\begin{conceito}
+O pré-processamento abrange a \textbf{seleção, limpeza e transformação}
+dos dados, e tipicamente consome 60\% a 80\% do tempo de um projeto de
+mineração de dados. Seu produto é o \emph{conjunto de treinamento}: uma
+matriz $\mathbf{X}\in\R^{N\times p}$ (com eventual matriz de saída
+$\mathbf{Y}\in\R^{N\times q}$) cujas variáveis estejam livres de
+\emph{outliers}, valores ausentes, escalas incompatíveis e redundâncias
+graves.
+\end{conceito}
+
+\section{Conjuntos de dados e notação}
+
+Um conjunto de dados estruturado é uma tabela de $N$ registros e $p$ (ou
+$p+q$) variáveis. As variáveis podem ser \emph{contínuas},
+\emph{discretas ordenadas} ou \emph{categóricas (nominais)}; estas
+últimas são geralmente codificadas como variáveis indicadoras
+(\emph{dummy}) binárias para que possam ser processadas por algoritmos
+numéricos. O texto adota a notação:
+\[
+\mathcal{T} = \{(\mathbf{x}(t),\mathbf{y}(t)),\; t=1,\dots,N\},\quad
+\mathbf{x}(t)\in\R^p,\;\mathbf{y}(t)\in\R^q,
+\]
+com vetores em minúsculas-negrito, matrizes em maiúsculas-negrito,
+escalares em itálico, conjuntos em letras caligráficas. Os problemas
+podem ser \emph{estáticos} (a ordem dos registros é irrelevante),
+\emph{dinâmicos} (séries temporais), \emph{georreferenciados} ou
+\emph{espaço-temporais}. O capítulo concentra-se no caso estático.
+
+\section{Caracterização estatística}
+
+\subsection{Análise monovariável}
+
+Para cada variável $x_i$ estimam-se medidas de centralidade e
+dispersão:
+\begin{align*}
+\bar{x}_i &= \frac{1}{N}\sum_{t=1}^{N} x_i(t), &
+\hat{\sigma}_i^2 &= \frac{1}{N-1}\sum_{t=1}^{N}(x_i(t)-\bar{x}_i)^2,
+\end{align*}
+além de mínimo, máximo, mediana, percentis $P_{25}$ e $P_{75}$ (quartis
+$Q_1,Q_3$), faixa interquartil ($\mathrm{IRQ}=Q_3-Q_1$) e moda. A
+\textbf{média} pode ser enganosa em distribuições assimétricas ou com
+\emph{outliers}; a \textbf{mediana} é robusta. A discrepância entre
+média e mediana já sugere assimetria.
+
+A distribuição normal $N(\mu,\sigma^2)$, com densidade
+\[
+f(x)=\frac{1}{\sqrt{2\pi\sigma^2}}\exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right),
+\]
+é fundamental: pelo \emph{teorema central do limite}, médias amostrais
+de processos estacionários convergem em distribuição para uma normal,
+independentemente da distribuição original. A função gaussiana
+reaparece como \emph{função de base} em modelos RBF e SVM
+(Capítulo~7).
+
+A análise visual emprega \textbf{histogramas} (incluindo histogramas
+por classe, em problemas de classificação), \textbf{box-plots}, e o
+\textbf{gráfico de probabilidade normal} (linearidade indica
+normalidade). Histogramas multimodais podem refletir mistura de
+classes ou subpopulações.
+
+\subsection{Análise multivariada}
+
+A estatística multivariada-chave é a \textbf{matriz de covariâncias}
+\begin{formula}
+\[
+\hat{\boldsymbol{\Sigma}} = \frac{1}{N-1}\sum_{t=1}^{N}
+(\mathbf{x}(t)-\bar{\mathbf{x}})\T(\mathbf{x}(t)-\bar{\mathbf{x}})
+\in\R^{p\times p},
+\]
+simétrica e definida positiva, com $\hat{\sigma}_{ii}^2 =
+\hat{\sigma}_i^2$ na diagonal.
+\end{formula}
+
+A versão padronizada é a \textbf{matriz de correlação} de Pearson, com
+elementos
+\[
+\hat{\rho}_{ij} = \frac{\Cov(x_i,x_j)}{\sqrt{\Var(x_i)\Var(x_j)}}\in[-1,1].
+\]
+Os valores absolutos próximos de~1 indicam dependência linear
+(redundância). Importante: $\hat{\rho}_{ij}=0$ exclui apenas dependência
+\emph{linear}, não relação não linear. A visualização típica é a
+\emph{matriz scatter plot}, ou, para muitas variáveis, um mapa de cor da
+matriz de correlação.
+
+\subsection{Distâncias e similaridades}
+
+Para detectar \emph{outliers}, imputar valores ausentes ou fazer
+\emph{clustering}, calcula-se a matriz $\mathbf{D}\in\R^{N\times N}$
+com $d_{ij}=\mathrm{dist}(\mathbf{x}(i),\mathbf{x}(j))$. As principais
+métricas (\emph{quaisquer} satisfazendo não negatividade, simetria e
+desigualdade triangular) são:
+
+\begin{center}\small
+\begin{tabular}{@{}l l@{}}
+\toprule
+Euclidiana ($L_2$) & $\sqrt{\sum_i (\nu_i-\upsilon_i)^2}$ \\
+Manhattan ($L_1$) & $\sum_i |\nu_i-\upsilon_i|$ \\
+Chebyshev ($L_\infty$) & $\max_i |\nu_i-\upsilon_i|$ \\
+Minkowski ($L_r$) & $(\sum_i |\nu_i-\upsilon_i|^r)^{1/r}$ \\
+Mahalanobis & $\sqrt{(\boldsymbol\nu-\boldsymbol\upsilon)\,
+                     \hat{\boldsymbol{\Sigma}}^{-1}
+                     (\boldsymbol\nu-\boldsymbol\upsilon)\T}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Similaridades clássicas: cosseno
+$\sin_C(\boldsymbol\nu,\boldsymbol\upsilon)=
+\langle\boldsymbol\nu,\boldsymbol\upsilon\rangle/
+(\|\boldsymbol\nu\|\,\|\boldsymbol\upsilon\|)$ e gaussiana
+$\sin_G=\exp(-\|\boldsymbol\nu-\boldsymbol\upsilon\|^2/(2\sigma^2))$. A
+visualização da matriz de similaridades como \emph{data image} (mapa de
+calor) revela grupos e \emph{outliers} mesmo em alta dimensão.
+
+\section{Limpeza de dados}
+
+\subsection{Padronização}
+
+\paragraph{Min--max:} $\hat{x}_i(t)=(x_i(t)-\min)/(\max-\min)\in[0,1]$.
+Sensível a \emph{outliers}; substituir por $P_5$ e $P_{95}$ se
+necessário.
+
+\paragraph{$z$-score:} $\hat{x}_i(t)=(x_i(t)-\bar{x}_i)/\hat{\sigma}_i$.
+Resulta em média nula e variância unitária; mais robusto. Em
+distribuições muito assimétricas convém aplicar antes a transformação
+logarítmica $\log(x+c)$.
+
+\subsection{Detecção de outliers}
+
+Duas famílias de métodos:
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Por distribuição:} sob hipótese de normalidade,
+        rejeitar registros fora de $[\mu-3\sigma,\mu+3\sigma]$.
+        Visualmente: \emph{box-plot}, com regra
+        $[Q_1-1{,}5\,\mathrm{IRQ},\;Q_3+1{,}5\,\mathrm{IRQ}]$. Atua
+        \emph{variável a variável}; apenas indica suspeitas.
+  \item \textbf{Por distância:} ordenam-se as distâncias médias
+        $\bar{d}_i=\frac{1}{N}\sum_j d_{ij}$ e descartam-se os $P_{out}\%$
+        registros mais afastados (Algoritmo~2.1). Considera todas as
+        variáveis simultaneamente; custo $\mathcal{O}(N^2)$.
+\end{itemize}
+
+\begin{aplicacao}
+Em detecção de fraudes ou anomalias, os \emph{outliers} \textbf{são} o
+objeto de interesse, e não devem ser removidos.
+\end{aplicacao}
+
+\subsection{Valores ausentes}
+
+Devem ser distinguidos do valor zero. Estratégias:
+\begin{enumerate}[leftmargin=1.2cm]
+  \item \textbf{Eliminar} registros (ou variáveis) com valores
+        ausentes — viável quando a perda é pequena ou se concentra em
+        poucas colunas;
+  \item \textbf{Imputar}: substituir pela média (ingênuo, perde
+        variância) ou, melhor, pelos $k$-vizinhos mais próximos
+        (Algoritmo~2.2): para cada registro incompleto, busca-se o
+        subespaço das variáveis disponíveis, calculam-se distâncias aos
+        registros completos e imputa-se a média (eventualmente
+        ponderada pelo inverso da distância) dos $k\geq 3$ vizinhos.
+\end{enumerate}
+
+A imputação introduz informação artificial; deve-se medir o impacto
+sobre as estatísticas das variáveis afetadas.
+
+\section{Transformações lineares}
+
+Uma transformação linear é uma matriz $\mathbf{T}:\R^n\to\R^m$. Quando
+$\mathbf{T}$ é \emph{ortogonal} ($\mathbf{T}\T\mathbf{T}=\mathbf{I}$),
+a transformação preserva normas e ângulos: trata-se de uma rotação do
+espaço.
+
+\subsection{Análise de Componentes Principais (ACP)}
+
+\begin{conceito}
+Encontrar uma rotação ortogonal $\mathbf{P}$ tal que as variáveis
+transformadas $\mathbf{Z}=\mathbf{X}\mathbf{P}$ sejam
+\textbf{descorrelacionadas} e ordenadas por variância decrescente. As
+colunas de $\mathbf{P}$ são os \emph{componentes principais} (ou
+autovetores da matriz de covariâncias).
+\end{conceito}
+
+A diagonalização da matriz de covariâncias dá origem ao problema de
+autovalores
+\[
+\hat{\boldsymbol{\Sigma}}\,\mathbf{p}_i = \lambda_i\,\mathbf{p}_i,
+\quad
+\hat{\boldsymbol{\Sigma}}\,\mathbf{P} = \mathbf{P}\,\boldsymbol\Lambda,
+\]
+com $\boldsymbol\Lambda=\diag(\lambda_1,\dots,\lambda_p)$ e
+$\lambda_1\geq\dots\geq\lambda_p\geq 0$. O \textbf{quociente de
+Rayleigh}
+\[
+\lambda_{\max}=\max_{\mathbf{v}\neq 0}\frac{\mathbf{v}\T\hat{\boldsymbol{\Sigma}}\mathbf{v}}
+                                            {\mathbf{v}\T\mathbf{v}}
+\]
+mostra que o primeiro componente é a \textbf{direção de máxima
+variância}; os demais são as direções ortogonais subsequentes de
+máxima variância.
+
+A invariância do traço sob rotações ortogonais garante
+$\sum_i \hat{\sigma}_i^2 = \sum_i \lambda_i$, de modo que a fração da
+variância explicada pelos $n$ primeiros componentes é
+$\sum_{i=1}^n \lambda_i/\sum_{i=1}^p \lambda_i$. Tipicamente escolhe-se
+$n$ tal que essa fração seja $\geq 85\%$. Reduz-se assim a
+dimensionalidade preservando o essencial da estrutura linear.
+
+\paragraph{Pré-requisito:} centrar/padronizar as variáveis ($z$-scores)
+antes do cálculo, pois a ACP é sensível à escala. Também pressupõe que
+os dados sejam aproximadamente gaussianos.
+
+\subsection{Decomposição em Valores Singulares (SVD)}
+
+Para qualquer matriz $\mathbf{A}\in\R^{n\times m}$ existe a fatoração
+\[
+\mathbf{A}=\mathbf{U}\,\mathbf{S}\,\mathbf{V}\T,
+\]
+com $\mathbf{U},\mathbf{V}$ ortogonais e $\mathbf{S}$ diagonal com
+valores singulares $s_1\geq\dots\geq s_r\geq 0$. Aplicada à matriz de
+dados $\mathbf{X}$, obtém-se $\mathbf{X}\T\mathbf{X}=\mathbf{V}
+\mathbf{S}^2\mathbf{V}\T$, ou seja, $\mathbf{V}=\mathbf{P}$ e
+$s_i=\sqrt{\lambda_i}$. A SVD permite calcular a ACP \textbf{sem} formar
+o produto $\mathbf{X}\T\mathbf{X}$, ganhando estabilidade numérica, e
+tem aplicações próprias em \emph{Latent Semantic Indexing} (LSI) e
+\emph{recuperação de informação}.
+
+\subsection{Análise Discriminante Linear (ADL)}
+
+A ACP ignora a variável de saída; em classificação, a melhor
+projeção pode \emph{não} ser a de maior variância. A ADL (Fisher,
+1936) procura a transformação $\mathbf{V}$ que maximiza a separação
+entre classes minimizando a dispersão intraclasses, via decomposição
+da variância total
+\[
+\boldsymbol\Sigma_T = \boldsymbol\Sigma_B + \boldsymbol\Sigma_W,
+\]
+em variância \emph{between} e \emph{within} classes. Resolve-se o
+problema de autovalor generalizado
+\[
+\boldsymbol\Sigma_B\,\mathbf{V} = \boldsymbol\Sigma_W\,\mathbf{V}\,
+\boldsymbol\Lambda,
+\]
+gerando no máximo $m-1$ direções discriminantes (com $m$~classes). Os
+dados projetados são $\mathbf{Z}=\mathbf{X}\mathbf{V}$.
+
+\subsection{Análise de Correlação Canônica (ACC)}
+
+Aborda problemas de regressão com dois conjuntos de variáveis,
+$\mathbf{X}\in\R^{N\times p}$ e $\mathbf{Y}\in\R^{N\times q}$.
+Calcula simultaneamente duas transformações $\mathbf{U}_x,\mathbf{U}_y$
+que maximizam a correlação cruzada entre as variáveis canônicas
+$\mathbf{Z}_x=\mathbf{X}\mathbf{U}_x$ e
+$\mathbf{Z}_y=\mathbf{Y}\mathbf{U}_y$. Algoritmicamente, fatoram-se
+$\mathbf{X}=\mathbf{Q}_x\mathbf{R}_x$ e
+$\mathbf{Y}=\mathbf{Q}_y\mathbf{R}_y$ (decomposição QR) e calcula-se a
+SVD de $\mathbf{Q}_x\T\mathbf{Q}_y$; as correlações canônicas são os
+valores singulares.
+
+\section{Aplicações ilustrativas}
+
+\begin{aplicacao}
+\textbf{Padrões de mobilidade urbana:} a partir de 2{,}1 bilhões de
+registros de chamadas (\emph{Call Detail Records}, CDR) na Região
+Metropolitana do Rio de Janeiro (2014), foi possível estimar matrizes
+origem--destino e identificar dois padrões claros — viagens
+\emph{casa-trabalho} (Centro--Zona Sul, picos em dias úteis, simétrico
+ida/volta) e viagens \emph{turísticas} (Zona Sul--Teresópolis, picos em
+fins de semana e feriados, defasagem ida/volta).
+\end{aplicacao}
+
+\begin{aplicacao}
+\textbf{Validação de sensores por equações de paridade:} num sistema
+linear estático com $p$ sensores e $n$ estados ($p>n$), as colunas da
+matriz de componentes principais decompõem-se como
+$\mathbf{P}=[\mathbf{C}\mid\mathbf{W}]$. O vetor de paridades
+$\mathbf{u}(t)=\mathbf{x}(t)\mathbf{W}$, satisfazendo
+$\mathbf{C}\T\mathbf{W}=\mathbf{0}$, anula-se na ausência de falhas e
+indica direções típicas de falha quando perturbado. Um limiar
+$\xi=\sqrt{\sum_{i=n+1}^{p}\lambda_i}$ acomoda o ruído. Aplicado à UHE
+de Funil, detectou falhas em extensômetros mesmo na presença de
+muitos valores ausentes.
+\end{aplicacao}
+
+\section{Comentários finais}
+
+\begin{enumerate}[leftmargin=1.2cm]
+  \item Investir tempo na \textbf{caracterização e visualização} dos
+        dados é a melhor garantia de uma modelagem bem-sucedida nas
+        etapas seguintes.
+  \item As \textbf{transformações lineares} (ACP, SVD, ADL, ACC) são
+        ferramentas universais para reduzir dimensionalidade,
+        descorrelacionar variáveis ou alinhar a representação com a
+        tarefa supervisionada. Todas dependem fortemente de uma
+        \textbf{padronização} prévia.
+  \item Métodos baseados em \textbf{distâncias e similaridades} são
+        gerais o bastante para resolver outros problemas (limpeza,
+        \emph{outliers}, imputação) que aparecem repetidamente no
+        livro.
+  \item Existem extensões não lineares dos mesmos princípios (ICA,
+        LLE, ACP por funções de núcleo); o capítulo limita-se ao caso
+        linear, que é a base obrigatória para os modelos não lineares
+        dos Capítulos~7--9.
+\end{enumerate}
+
+\end{document}

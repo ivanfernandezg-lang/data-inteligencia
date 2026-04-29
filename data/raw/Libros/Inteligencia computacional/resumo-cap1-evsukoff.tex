@@ -1,0 +1,157 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+%
+% Resumo (2 páginas) do Capítulo 1 — "Introdução"
+% Livro: Inteligência Computacional: Fundamentos e Aplicações
+% Autor: Alexandre G. Evsukoff (E-papers, Rio de Janeiro, 2020)
+% ISBN 978-65-87065-02-1
+%
+% Idioma: Português (PT-BR), conforme idioma original do livro.
+% Gerado para o curso de Inteligência Computacional — USACH (Prof. Max Chacón).
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{microtype}
+\usepackage{parskip}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue!60!black}
+
+\setlist[itemize]{leftmargin=1.2em, itemsep=1pt, topsep=2pt}
+
+\title{\vspace{-1.5cm}Resumo --- Capítulo 1: Introdução\\
+\large Inteligência Computacional: Fundamentos e Aplicações \\
+\normalsize Alexandre G.\ Evsukoff (E-papers, 2020)}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-1.2cm}
+
+\section*{1. Contexto histórico e definição}
+
+A \textbf{inteligência computacional} (IC) é definida pelo autor como um conjunto de
+paradigmas computacionais para o desenvolvimento e aplicação de sistemas inteligentes
+em problemas complexos do mundo real. Sua história está entrelaçada com a da
+inteligência artificial (IA): da reflexão filosófica de Wittgenstein (década de 1920)
+e do \emph{teste de Turing} (1950), passando pela divisão entre as correntes
+\emph{simbolista} (provadores de teoremas, sistemas especialistas) e
+\emph{conexionista} (Perceptron de Rosenblatt, 1958). A limitação do Perceptron como
+classificador linear levou a uma estagnação até 1986, quando o algoritmo de
+\emph{retropropagação do erro} (Rumelhart, Hinton e Williams, \emph{Nature}) reabilitou
+as redes neurais multicamadas, e o algoritmo \textbf{ID3} de Quinlan inaugurou o
+\emph{aprendizado de máquina} simbólico via árvores de decisão.
+
+Nas décadas de 1980--90 surgiram novos paradigmas (sistemas \emph{fuzzy}, redes
+neurais, máquinas de vetor de suporte, algoritmos evolucionários). Sua integração foi
+batizada de \emph{soft computing} ou \textbf{inteligência computacional}, hoje
+englobando também métodos estatísticos e de aprendizado de máquina. A partir de 2010
+consolida-se o termo \emph{big data} e, desde 2012, as \textbf{redes neurais profundas}
+(\emph{deep learning}) executadas em GPUs alcançam desempenho comparável --- ou
+superior --- ao humano em visão computacional e processamento de linguagem natural.
+
+\section*{2. Ciência de dados e o processo KDD}
+
+A \textbf{ciência de dados} situa-se na intersecção de matemática, estatística,
+computação, engenharia e o conhecimento do domínio da aplicação. Diferencia-se do
+método científico clássico porque os modelos são construídos \emph{diretamente a
+partir dos dados observados}, sem partir de hipóteses teóricas. O autor enfatiza que
+qualquer modelo é uma representação \emph{indireta} do processo real: sua validade
+está limitada pela qualidade e representatividade da amostra.
+
+O processo de \textbf{descoberta de conhecimento em bases de dados (KDD)}, ou
+\emph{mineração de dados}, é cíclico e compreende as etapas:
+\begin{enumerate}[leftmargin=1.4em, itemsep=1pt, topsep=2pt]
+  \item \textbf{Seleção} --- escolha do subconjunto e das variáveis (\emph{conjunto de treinamento}).
+  \item \textbf{Limpeza} --- tratamento de \emph{outliers} e valores ausentes.
+  \item \textbf{Pré-processamento} --- normalização, transformações lineares (e.g.\ PCA).
+  \item \textbf{Modelagem} --- ajuste de parâmetros sobre o conjunto de treinamento.
+  \item \textbf{Avaliação} --- estatísticas de validação dos resultados.
+\end{enumerate}
+A participação do especialista do domínio é fundamental em todas as fases.
+
+\section*{3. Tipos de modelos}
+
+Um modelo é uma representação simplificada de um processo real. Quanto à origem do
+conhecimento, distingue-se entre \textbf{modelos de conhecimento} (analíticos, baseados
+em leis físicas) e \textbf{modelos de comportamento} (entrada/saída, ajustados por
+dados) --- categoria à qual pertencem essencialmente os modelos de IC.
+
+Quanto ao objetivo, divide-se em problemas \textbf{preditivos} e \textbf{descritivos},
+ajustados respectivamente por algoritmos de \emph{aprendizado supervisionado} e
+\emph{não supervisionado}; existe ainda o \emph{aprendizado por reforço}, no qual o
+modelo se ajusta pela interação com o ambiente.
+
+\textbf{Regressão.} Estimativa de uma variável de saída numérica a partir das
+variáveis de entrada (regressores ou \emph{features}). A regressão linear é o ponto de
+partida (Cap.\ 3) e estende-se para séries temporais e sistemas dinâmicos (Cap.\ 4).
+A avaliação utiliza o erro de predição.
+
+\textbf{Classificação.} Predição de uma classe discreta a partir dos atributos. Pode
+ser entendida como busca de \emph{funções discriminantes} que particionam o espaço de
+entrada. Classes podem ser linearmente separáveis, separáveis não linearmente ou
+\emph{não separáveis} (caso geral, com erro irredutível). O conjunto clássico das
+flores Iris (Fisher, 1936) ilustra o problema. Aplicações: diagnóstico médico, análise
+de crédito, bioinformática, classificação de documentos e imagens.
+
+\textbf{Análise de agrupamentos} (\emph{clustering}, classificação não supervisionada).
+Busca grupos de registros similares quando não há variável-alvo. A avaliação da
+qualidade é difícil --- existem medidas externas, internas e relativas, mas o número de
+grupos costuma ser uma entrada do algoritmo. Aplicações típicas: segmentação de
+clientes, bioinformática, processamento de imagens.
+
+Outros temas mencionados: \emph{regras de associação}, \emph{aprendizado da
+representação}, \emph{classificação semi-supervisionada} e \emph{ensembles} (essenciais
+em competições de ciência de dados como o Prêmio Netflix).
+
+\section*{4. Recursos complementares}
+
+\textbf{Bibliografia.} Como fundamentação estatística, destacam-se Hastie, Tibshirani
+e Friedman (\emph{Elements of Statistical Learning}); Bishop (\emph{Pattern Recognition
+and Machine Learning}); Duda \& Hart; Theodoridis \& Koutroumbas. Em séries temporais,
+Box, Jenkins \& Reinsel e Ljung. Em IC: Haykin (redes neurais); Pedrycz \& Gomide
+(\emph{fuzzy}); Schölkopf \& Smola e Vapnik (SVM e teoria de aprendizado estatístico).
+Em mineração de dados: Han \& Kamber, Tan, Steinbach \& Kumar, Aggarwal e Witten \&
+Frank (Weka). Em \emph{deep learning}: Goodfellow, Bengio \& Courville. Em português:
+Rezende (org.), Braga, Carvalho \& Ludermir e a tradução de Haykin.
+
+\textbf{Internet.} O \emph{KDnuggets} é o portal de referência. Repositórios de dados:
+\emph{UCI Machine Learning Repository}, KEEL e plataforma de competições \emph{Kaggle}.
+Cursos abertos (MOOCs) em Coursera, Udacity, Stanford e MIT --- com destaque para o
+\emph{Machine Learning} de Andrew Ng. Pré-prints em \emph{arXiv} e código em
+\emph{GitHub}. Conferências principais: KDD, ICDM, NeurIPS, ICML, WCCI (FUZZ-IEEE,
+IJCNN, IEEE CEC) e, no Brasil, o CBIC da ABRICOM.
+
+\textbf{Softwares.} \emph{Comerciais}: SAS, IBM SPSS Modeler, Statistica, Oracle Data
+Mining, Microsoft SQL Server Data Mining e plataformas em nuvem (Azure ML, Amazon ML).
+\emph{Livres}: Weka, RapidMiner, KNIME, Orange. \emph{Linguagens}: Python (pandas,
+scikit-learn, NumPy, SciPy), R e Matlab (toolboxes de estatística, redes neurais,
+otimização). Nas enquetes recentes do KDnuggets, R e Python lideram.
+
+\section*{5. Síntese e relevância para o curso}
+
+O Capítulo 1 fornece o vocabulário mínimo para o restante do livro: distinção entre
+dado / informação / conhecimento, ciclo KDD, taxonomia de modelos (preditivos vs.\
+descritivos; supervisionado vs.\ não supervisionado), e a noção crítica de que todo
+modelo é função da amostra utilizada. Este enquadramento corresponde diretamente à
+\textbf{Unidade 1 (Introdução)} do programa de Inteligência Computacional do Magíster
+USACH (Prof.\ Max Chacón) e prepara o terreno para os tópicos avaliados na PEP1
+(análise de componentes principais, reglas de associação, análise de agrupamentos) e
+nas unidades posteriores sobre clasificação bayesiana, árvores de decisão e o
+paradigma conexionista.
+
+\vspace{0.4em}
+\hrule
+\vspace{0.3em}
+{\footnotesize Fonte: Evsukoff, A.\ G.\ \emph{Inteligência Computacional: Fundamentos e
+Aplicações}. Rio de Janeiro: E-papers, 2020 (Apresentação e Capítulo 1, pp.\ 8--29).
+ISBN 978-65-87065-02-1. Resumo elaborado para fins acadêmicos no contexto do curso de
+Inteligência Computacional do Magíster em Engenharia, Universidade de Santiago de
+Chile (USACH).}
+
+\end{document}

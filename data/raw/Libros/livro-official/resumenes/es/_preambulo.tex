@@ -1,0 +1,69 @@
+% =============================================================================
+%  preambulo.tex — Preámbulo de los resúmenes en español
+%  Evsukoff, A. (2020). Inteligência Computacional. Rio de Janeiro: E-papers.
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black!70,
+  urlcolor=blue!60!black,
+  citecolor=black!70,
+  pdfborder={0 0 0}
+}
+
+\titleformat{\section}{\Large\bfseries\sffamily\color{black!85}}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\large\bfseries\sffamily\color{black!75}}{\thesubsection}{0.6em}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape Resumen — Inteligencia Computacional (Evsukoff, 2020)}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+
+\newtcolorbox{conceito}[1][]{
+  colback=blue!4, colframe=blue!55!black, boxrule=0.6pt,
+  arc=2mm, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\bfseries Concepto clave}, fonttitle=\sffamily\bfseries,
+  breakable, #1
+}
+\newtcolorbox{formula}[1][]{
+  colback=gray!6, colframe=gray!50, boxrule=0.4pt,
+  arc=1.5mm, left=6pt, right=6pt, top=3pt, bottom=3pt,
+  breakable, #1
+}
+\newtcolorbox{aplicacao}[1][]{
+  colback=green!4, colframe=green!45!black, boxrule=0.5pt,
+  arc=2mm, left=6pt, right=6pt, top=3pt, bottom=3pt,
+  title={\bfseries Aplicación}, fonttitle=\sffamily\bfseries,
+  breakable, #1
+}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\argmin}{\operatorname*{arg\,min}}
+\newcommand{\argmax}{\operatorname*{arg\,max}}
+\newcommand{\T}{^{\!\top}}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\tr}{tr}

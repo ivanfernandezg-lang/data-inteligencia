@@ -1,0 +1,12 @@
+{
+  "numero": 2,
+  "titulo": "Pré-processamento",
+  "slug": "pre-processamento",
+  "pdf_inicio": 31,
+  "pdf_fin": 78,
+  "n_paginas": 48,
+  "n_caracteres_texto": 78734,
+  "n_palabras_aprox": 12610,
+  "pdf_salida": "cap2_pre-processamento.pdf",
+  "txt_salida": "cap2_pre-processamento.txt"
+}

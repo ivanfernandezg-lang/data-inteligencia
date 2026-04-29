@@ -1,0 +1,1741 @@
+6    ANÁLISE DE AGRUPAMENTOS 
+O objetivo da análise de agrupamentos é a divisão do conjunto de dados em subconjun-
+tos chamados de grupos. A análise de agrupamentos é um problema de aprendizado 
+não supervisionado e frequentemente é chamada de classificação não supervisionada, 
+uma vez que não existe uma variável de saída (ou variável alvo) a ser predita como na 
+regressão ou na classificação, que são problemas de aprendizado supervisionado. A 
+falta de supervisão dificulta a definição de uma função de avaliação da qualidade do 
+resultado. Dessa forma, a análise de agrupamentos é essencialmente uma atividade 
+descritiva, em que o papel do analista é preponderante para a qualidade do resultado. 
+As aplicações da análise de agrupamentos são bastante variadas. Na área de negócios, 
+a segmentação da base de clientes é muito comum em grandes corporações [530]. Há 
+também aplicações em praticamente todas as áreas com uso intensivo de dados, como, 
+por exemplo, bioinformática [290][357], processamento de imagens [528], recupera-
+ção da informação [319], entre outras [284].  
+A análise de agrupamentos tem sido estudada em diferentes comunidades científicas e 
+a literatura sobre algoritmos de agrupamento é muito diversificada. Há obras clássicas 
+na estatística [146][194][238][521], em inteligência computacional [572][573] e ciên-
+cia de dados [232][516]. Neste capítulo, apresentamos os algoritmos clássicos, que po-
+dem ser encontrados na maioria dos softwares e abordagens mais recentes baseadas 
+na teoria de grafos. 
+
+6.1 O Problema de Análise de Agrupamentos 
+Um grupo é um conjunto de objetos com alguma característica comum que os identifica 
+como elementos do grupo. O objetivo da análise de agrupamentos é identificar padrões 
+que permitam separar um conjunto de dados em grupos. Os algoritmos de agrupa-
+mento encontram grupos ou subconjuntos de dados da amostra com características 
+similares. Frequentemente, o problema envolve a análise e interpretação dos grupos 
+encontrados.  
+Matematicamente, um grupo é um conjunto definido por uma propriedade caracterís-
+tica compartilhada pelos seus elementos. Assim, dado um universo 𝒳, os elementos do 
+conjunto 𝒜⊆𝒳 são definidos pela propriedade 𝜒𝒜(𝑥), que, para todo elemento do 
+universo 𝑥∈𝒳: 
+𝜒𝒜(𝑥), = {1,
+𝑠𝑒  𝑥∈𝒜 
+0,
+𝑠𝑒  𝑥∉𝒜 
+(6.1) 
+A equação (6.1) é a base do chamado axioma da separação [77], que estabelece as duas 
+leis (ou axiomas) fundamentais da teoria dos conjuntos:  
+a) a lei do terceiro excluído: 𝒜⋃𝒜̅ = 𝒳; 
+b) a lei da não contradição: 𝒜⋂𝒜̅ = ∅. 
+A noção de conjunto é estendida ao conceito de partição, particularmente útil em ci-
+ência de dados, em que o universo é subdividido em 𝐾 subconjuntos disjuntos.  
+Na análise de agrupamentos, a partição do conjunto de dados (de treinamento) 𝒯 em 
+𝐾 subconjuntos é definida como ℂ= {𝒞1, … , 𝒞𝐾}, de tal forma que as seguintes condi-
+ções sejam satisfeitas: 
+i. 
+A união de todos os subconjuntos é o universo: ⋃
+𝒞𝑖
+𝐾
+𝑖=1
+= 𝒯; 
+ii. 
+Os subconjuntos não têm elementos em comum: 𝒞𝑖∩𝒞𝑗= ∅, 𝑖≠𝑗. 
+A descoberta de uma partição num conjunto de dados é computacionalmente com-
+plexa; a partição de um conjunto de dados com 𝑁 registros em apenas dois subconjun-
+tos, com 𝑁1 e 𝑁2 registros respectivamente, implica a avaliação de 𝑁! (𝑁1! 𝑁2!)
+⁄
+ parti-
+ções distintas. Por exemplo, um conjunto de dados de 𝑁= 100 registros pode ser divi-
+dido em dois subconjuntos de 𝑁1 = 𝑁2 = 50 registros de 1029 formas diferentes! Além 
+da complexidade inerente ao problema, a da qualidade do agrupamento não é bem de-
+finida e, em geral, utiliza-se índices de validação (cf. seção 6.5).  
+
+Na análise de agrupamentos, um grupo é definido como um conjunto de registros simi-
+lares entre si e dissimilares dos registros alocados em outros grupos. A escolha do me-
+lhor agrupamento num conjunto de dados é uma tarefa analítica que depende muito da 
+interpretação dos grupos no contexto da aplicação. O conjunto de dados da Figura 6.1a 
+pode ser dividido em dois grupos, como mostrado na Figura 6.1b, mas também em qua-
+tro ou seis grupos, como nas Figura 6.1c e d [516]. A decisão sobre a melhor solução 
+vai depender muito da aplicação. 
+ 
+(a) 
+ 
+(b) 
+ 
+(c) 
+ 
+(d) 
+Figura 6.1: Diferentes agrupamentos sobre o mesmo conjunto de dados: (a) conjunto de dados; (b) dois 
+grupos; (c) quatro grupos; (d) seis grupos. Fonte: [516]. 
+Observando a Figura 6.1, percebemos que os grupos da Figura 6.1d estão contidos na 
+Figura 6.1c, que, por sua vez, estão contidos na partição da Figura 6.1b. Dessa forma, 
+uma solução para a dificuldade de avaliação da qualidade do agrupamento é realizá-lo 
+de forma hierárquica, como nos algoritmos apresentados na seção 6.3. 
+Outra característica importante da análise de agrupamentos é que os grupos encontra-
+dos podem não corresponder às classes de um problema supervisionado. Isso não sig-
+nifica que o algoritmo de agrupamento tenha falhado, apenas que os padrões encon-
+trados não correspondem às classes. Isso acontece porque os algoritmos de agrupa-
+mento utilizam informações dos registros e a classificação é usualmente uma informa-
+ção externa aos registros. Dessa forma, o entendimento da análise de agrupamentos 
+como “classificação não supervisionada” deve ser utilizado com cautela. 
+A Figura 6.2a mostra um conjunto de dados contendo claramente quatro grupos, em-
+bora esse mesmo conjunto tenha sido apresentado como um problema de duas classes 
+no exemplo da Figura 5.6. 
+
+ 
+(a) 
+ 
+(b) 
+Figura 6.2: Exemplo de agrupamento: (a) conjunto de dados; (b) dados classificados. 
+Os algoritmos apresentados neste capítulo utilizam métricas de distância, como as de-
+finidas na seção 2.2.3, para variáveis numéricas. Há diversas outras, além de métricas 
+para variáveis binárias e categóricas [194]. A escolha das métricas de distância ou si-
+milaridade pode tornar o problema ainda mais complexo, pois não há um critério uni-
+versal para guiar tal escolha [232]. A abordagem mais simples para o tratamento de 
+variáveis nominais é a sua transformação em variáveis indicadoras (cf. equação (5.14)) 
+e a utilização de métricas definidas para as variáveis numéricas.  
+O algoritmo clássico em análise de agrupamentos é o algoritmo k-médias, em que os 
+grupos são definidos a partir da distância de cada elemento ao centro do grupo. O k-
+médias é um algoritmo dos métodos de partição. Neste tipo de método, a métrica de 
+distância determina o formato do grupo. A Figura 6.3 mostra um conjunto de pontos e 
+regiões métricas de distância em relação ao centro, onde as regiões escuras represen-
+tam valores menores. A distância euclidiana (norma 𝐿2), mostrada na Figura 6.3b, gera 
+grupos de forma esférica; a distância de Mahalanobis induz grupos elipsoides (Figura 
+6.3c); as distâncias de Manhattan (norma 𝐿1) e de norma infinita (𝐿∞) geram hipercu-
+bos(Figura 6.3a e d). Dessa forma, a escolha da função de distância ou similaridade in-
+fluencia o resultado do algoritmo de agrupamento. 
+
+ 
+(a) 
+ 
+(b) 
+ 
+(c) 
+ 
+(d) 
+Figura 6.3: Métricas de distância: (a) distância de Manhattan (𝐿1); (b) distância euclidiana (𝐿2);  
+(c) distância de Mahalanobis; (d) norma infinita (𝐿∞). 
+A interseção entre dois grupos calculados na análise de agrupamentos também forma 
+uma superfície de decisão, como no problema de classificação. Um conjunto de dados 
+pode conter grupos que formam superfícies de decisão convexa ou não convexa, como 
+ilustrado na Figura 6.4. Em grupos convexos, como o da Figura 6.4a, as superfícies de 
+decisão podem ser aproximadas por funções lineares. Em agrupamentos não convexos, 
+como na Figura 6.4b, a superfície de decisão é uma função não linear. 
+Algoritmos mais simples, como os métodos de partição apresentados na seção 6.2, ge-
+ram agrupamentos convexos. Algoritmos capazes de gerar agrupamentos não conve-
+xos podem representar melhor as características do conjunto de dados. Os métodos 
+hierárquicos, apresentados na seção 6.3, e os métodos baseados em grafos, descritos 
+na seção 6.4, encontram grupos não convexos.  
+
+ 
+(a) 
+ 
+(b) 
+Figura 6.4: Forma de grupos: (a) convexa; (b) não convexa. 
+6.2 Métodos de Partição 
+Os métodos de partição buscam diretamente uma partição do conjunto de dados atra-
+vés da minimização de um critério de avaliação. O método de partição (e de grupa-
+mento) mais amplamente utilizado é o algoritmo k-médias, em que o critério de custo 
+é calculado em função do quadrado da distância entre os registros e as coordenadas 
+dos centros, conforme descrito a seguir. 
+6.2.1 Algoritmo k-médias 
+O algoritmo k-médias é um algoritmo simples e eficiente que geralmente converge num 
+número reduzido de iterações na maioria dos problemas. O algoritmo original foi pro-
+posto há mais de 50 anos* [285], mas continua sendo utilizado em diversas áreas e pode 
+ser encontrado nos principais softwares e bibliotecas. 
+O objetivo do algoritmo k-médias é encontrar uma partição no conjunto de dados em 
+𝐾 grupos ℂ= {𝒞1, … , 𝒞𝐾} através da minimização da seguinte função de avaliação: 
+𝐽(𝛀) = ∑∑𝑢𝑖(𝐱(𝑡))‖𝐱(𝑡) −𝛚𝑖‖2
+𝐾
+𝑖=1
+𝑁
+𝑡=1
+ 
+(6.2) 
+ 
+* O algoritmo é atribuído ao trabalho proposto por Lloyd em 1957 para representação digital de sinais 
+analógicos, que só foi publicado em 1982 [353]. Entretanto, é muito difícil reconhecê-lo nesse artigo. O 
+algoritmo na sua forma atual foi proposto por MacQueen em 1967 [359]. 
+
+onde 𝛚𝑖=
+1
+𝑁̂𝑖∑
+𝐱(𝑡)
+𝐱(𝑡)∈𝒞𝑖
+ é o vetor com as coordenadas do centro do grupo 𝒞𝑖 e a ma-
+triz 𝛀= [𝛚1
+T, … , 𝛚𝐾
+T] representa os centros de todos os grupos.  
+A função 𝑢𝑖(𝐱(𝑡)) na equação (6.2)define a pertinência de um registro 𝐱(𝑡) ao grupo 𝒞𝑖 
+(cf. equação (6.1)) como: 
+𝑢𝑖(𝐱(𝑡)) = {1,
+se 𝐱(𝑡) ∈𝒞𝑖
+0,
+se 𝐱(𝑖) ∉𝒞𝑖 
+(6.3) 
+A cardinalidade do grupo 𝒞𝑖 é o número de registros do grupo, isto é, |𝒞𝑖| = 𝑁̂𝑖, pode 
+ser calculada pela soma dos valores de pertinência ao grupo como 𝑁̂𝑖= ∑
+𝑢𝑖(𝐱(𝑡))
+𝐾
+𝑖=1
+. 
+A função de avaliação (6.2) pode ser interpretada pela decomposição da variância total 
+dos dados como 𝚺𝐓= 𝚺𝐖+ 𝚺𝐁 [146][573], apresentada na seção 2.4.3.  
+A matriz de variância total 𝚺𝐓= (𝑁−1)𝚺̂, onde 𝚺̂ é a matriz de covariâncias estimada 
+(cf. equação (2.5)), é calculada como:  
+𝚺𝐓= ∑(𝐱(𝑡) −𝐱̅)T
+𝑁
+𝑡=1
+(𝐱(𝑡) −𝐱̅) 
+(6.4) 
+onde 𝐱̅ =
+1
+𝑁∑
+𝐱(𝑡)
+𝑁
+𝑡=1
+ é a média dos registros do conjunto de treinamento, que também 
+pode ser calculada pela média ponderada dos centros de grupos como 𝐱̅ =
+1
+𝑁∑
+𝑁̂𝑖𝛚𝑖
+𝐾
+𝑖=1
+. 
+A matriz de variâncias intragrupos 𝚺𝐖 e a matriz de variância entre grupos 𝚺𝐁 são cal-
+culadas como (cf. seção 2.4.3): 
+𝚺𝐁= ∑𝑁𝑖(𝛚𝑖−𝐱̅)T
+𝐾
+𝑖=1
+(𝛚𝑖−𝐱̅) 
+(6.5) 
+𝚺𝐖= ∑∑𝑢𝑖(𝐱(𝑡))(𝐱(𝑡) −𝛚𝑖)T(𝐱(𝑡) −𝛚𝑖)
+𝐾
+𝑖=1
+𝑁
+𝑡=1
+ 
+(6.6) 
+A função de avaliação (6.2) é soma dos elementos da diagonal principal (traço) da ma-
+triz de variância intragrupos 𝚺𝐖, cuja minimização resulta na minimização da variância 
+intragrupos 𝚺𝐖 e, portanto, em grupos mais compactos. A variância total 𝚺𝐓 não é fun-
+ção do agrupamento e se mantém constante, de forma que a minimização da variância 
+intragrupos implica a maximização da variância entre grupos 𝚺𝐁, ou seja, em grupos 
+mais separados.  
+
+A minimização da função (6.2) é um problema NP-difícil [12][360]. O algoritmo k-mé-
+dias aplica uma heurística gulosa para a solução eficiente do problema. Entretanto, o 
+resultado depende muito da estrutura dos dados e uma solução de ótimo local pode ser 
+encontrada, o que torna o resultado dependente da inicialização.  
+O algoritmo k-médias é descrito no Algoritmo 6.1. Sua execução é feita a partir de uma 
+matriz de centros fornecida na inicialização que, em geral, é aleatória. A cada iteração, 
+cada registro do conjunto de dados é alocado ao grupo mais próximo. Embora outras 
+métricas de distância possam ser utilizadas dependendo da implementação, o algo-
+ritmo k-médias clássico utiliza a distância euclidiana. Após uma passagem por todo o 
+conjunto de dados, o centro de cada grupo é atualizado como a média das coordenadas 
+dos registros alocados ao grupo. 
+Algoritmo 6.1: Algoritmo k-médias 
+Entrada: 
+Conjunto de treinamento 𝒯= {𝐱(𝑡), 𝑡= 1 …  𝑁}, estimativa ini-
+cial de centros 𝛀= [𝛚1
+T, … , 𝛚𝐾
+T]  
+Saída:  
+Matriz de centros 𝛀= [𝛚1
+T, … , 𝛚𝐾
+T]  
+01 
+Início 
+02 
+𝜀←∞  
+03 
+Enquanto 𝜀> 𝑡𝑜𝑙 
+04 
+Para 𝑡= 1, … , 𝑁 
+05 
+𝐱(𝑡) ∈𝒞𝑖⟺𝛚𝑖= argmin
+𝑗
+(‖𝐱(𝑡) −𝛚𝑗‖
+2)  
+06 
+Fim Para 
+07 
+𝛀0 ⟵𝛀  
+08 
+Atualizar  𝛀 com 𝛚𝑖=
+∑
+𝑢𝑖(𝐱(𝑡))𝐱(𝑡)
+𝑁
+𝑡=1
+∑
+𝑢𝑖(𝐱(𝑡))
+𝑁
+𝑡=1
+, 𝑖= 1, … , 𝐾  
+09 
+Calcular critério de parada 𝜀= ‖𝛀0 −𝛀 ‖  
+10 
+Fim Enquanto 
+11 
+Retorna 𝛀= [𝛚1
+T, … , 𝛚𝐾
+T]  
+12 
+Fim 
+ 
+O critério de parada do algoritmo, calculado no passo 09, é a norma 𝐿2 da diferença 
+entre as matrizes dos centros calculados em duas iterações sucessivas. O algoritmo é 
+
+interrompido se não há mudanças significativas dos centros. O número máximo de ite-
+rações também pode ser utilizado como critério de parada. 
+A cada iteração, uma partição do conjunto de dados deve ser encontrada, de forma que, 
+se algum grupo não tiver nenhum registro alocado no passo 05, uma ação precisa ser 
+realizada para evitar erro de divisão por zero no passo 08. Dependendo do software, 
+diferentes ações podem ser realizadas. No Matlab,136 por exemplo, o usuário pode es-
+colher entre uma mensagem de erro (default), a eliminação do grupo ou a geração de 
+novas coordenadas aleatoriamente. A possibilidade de redefinição de centros aleatori-
+amente causa instabilidades ao algoritmo.  
+Em geral, o algoritmo k-médias converge rapidamente e a complexidade de cada itera-
+ção do algoritmo é estimada em 𝑂(𝑁𝐾𝑝), onde 𝑝 é o número de variáveis, 𝐾 o número 
+de grupos e 𝑁 o número de registros. Em problemas em que 𝐾𝑝≪𝑁, a complexidade 
+do algoritmo é dominada por 𝑂(𝑁). Em problemas de grandes dimensões, a busca por 
+um agrupamento com muitos grupos resulta em 𝐾𝑝≈𝑁 e a complexidade do algo-
+ritmo é 𝑂(𝑁2). Em alocação de memória, a complexidade do algoritmo é definida pelo 
+armazenamento do conjunto de dados como 𝑂(𝑁𝑝) ≈𝑂(𝑁). 
+Há diversas variantes do algoritmo k-médias [194][229][285][573]. O algoritmo ISO-
+DATA,* proposto em 1967 [27], é uma variante do k-médias que, muitas vezes, é con-
+fundido com o próprio. O algoritmo ISODATA ajusta automaticamente o número de 
+grupos, agrupando-os e subdividindo-os de acordo com limites especificados, e elimina 
+aqueles com poucos registros. No algoritmo ISODATA, a escolha do número de grupos 
+é substituída pela escolha dos parâmetros do algoritmo. 
+O resultado do algoritmo k-médias é muito sensível à presença de outliers e ruído no 
+conjunto de dados. Um outlier será associado a algum grupo e contabilizado no cálculo 
+da média, o que pode afastar os centros calculados dos centros do conjunto mais denso 
+de registros. Algumas variantes do k-médias visam maior robustez a outliers, como os 
+algoritmos k-medoids [300], PAM† e CLARA.‡ Nesse tipo de algoritmo, o centro do grupo 
+é um registro do conjunto de treinamento, chamado medoid, que tem a menor distância 
+média para todos os registros do grupo. Os algoritmos PAM e CLARA aplicam a mesma 
+ideia de k-medoids, mas o segundo utiliza apenas uma amostra do conjunto de dados 
+ 
+* Iterative Self-Organizing Data Analysis Technique 
+† Partition Around Medoids 
+‡ Clustering LARge Applications 
+
+para reduzir a complexidade computacional [521]. O algoritmo CLARANS* [416] é uma 
+variante dos k-medoids mais complexa que o CLARA que obtém melhores resultados 
+[521]. Outra abordagem para a solução do problema de outliers é obtida pelos algorit-
+mos chamados k-medianas [83][378], cujos centros de grupos também são registros 
+do conjunto de treinamento. 
+Há trabalhos mais recentes com outras variantes do k-médias. No algoritmo x-médias 
+[434], o número de grupos é otimizado a partir dos critérios AIC e BIC, utilizados para 
+seleção de estrutura de modelos de regressão [238]. O algoritmo k-médias esférico137 
+[126][602] utiliza a similaridade do cosseno como métrica, sendo indicado para pro-
+blemas de alta dimensionalidade. Zhao e Karypis [600] discutem algumas alternativas 
+à função de avaliação quadrática para o agrupamento de documentos. Algumas abor-
+dagens têm sido propostas para a inicialização do k-médias, como PCA-Part [508], CCIA 
+[302] e o algoritmo k-médias++ [21][421].  
+O algoritmo fuzzy c-médias é uma variante importante do k-médias, em que o conceito 
+pertinência ao grupo é estendido por funções de pertinência fuzzy. O algoritmo fuzzy c-
+médias será apresentado no Capítulo 8. 
+O k-médias é um algoritmo simples e eficiente, mas apresenta algumas características 
+e limitações, discutidas nos exemplos a seguir. 
+6.2.2 Exemplos 
+A forma dos grupos encontrados pelo algoritmo k-médias depende da métrica de dis-
+tância utilizada (cf. Figura 6.3). Com a distância euclidiana, os grupos encontrados pelo 
+k-médias têm formato hiper esférico, de modo que a superfície de decisão entre grupos 
+é aproximada por uma função linear. Dessa forma, as regiões associadas aos grupos 
+formam um diagrama de Voronoi138 no espaço de variáveis de entrada. A Figura 6.5 
+apresenta os resultados do algoritmo k-médias sobre os dados de Diabetes das índias 
+Pima, projetado no plano definido pela ACP. Podemos observar claramente as superfí-
+cies de decisão lineares entre os grupos. 
+ 
+* Clustering LARge Applications based on RANdomized Search 
+
+O algoritmo k-médias tem algumas limitações, tais como encontrar grupos de tama-
+nhos muito diferentes [516] e grupos de forma não convexa. Entretanto, é possível uti-
+lizar o algoritmo para encontrar um número maior de grupos e, posteriormente, agre-
+gar grupos para obter formas não convexas.  
+(a) 
+(b) 
+Figura 6.5: Resultados no conjunto de dados Diabetes projetados em 2D pela ACP:  
+(a) 𝐾= 3 grupos; (b) 𝐾= 7 grupos. 
+A Figura 6.6 mostra os resultados do k-médias no conjunto de dados das duas luas. Na 
+Figura 6.6a, o resultado do algoritmo com 𝐾= 2 mostra que não foi possível identificar 
+os dois grupos. O resultado com 𝐾= 6 grupos é mostrado na Figura 6.6b permite veri-
+ficar que é possível encontrar os grupos pela agregação de subgrupos. Essa solução é 
+aplicada no desenvolvimento de modelos de base radial, apresentados no Capítulo 7. 
+(a) 
+(b) 
+Figura 6.6: Resultados no conjunto de dados duas luas: (a) 𝐾= 2 grupos; (b) 𝐾= 6 grupos. 
+
+A principal limitação do algoritmo k-médias é a dependência da estimativa inicial dos 
+centros de grupos, que ocorre principalmente em problemas em que o número de gru-
+pos não corresponde à estrutura dos dados. A Figura 6.7 mostra os resultados sobre-
+postos dos centros de grupos calculados em 100 execuções do algoritmo k-médias so-
+bre os dados do problema de quatro grupos. Com 𝐾= 2 grupos, a Figura 6.7a mostra 
+que o algoritmo particiona os dados horizontalmente ou verticalmente. Com 𝐾= 3 ou 
+𝐾= 5 (Figuras Figura 6.7b e d), soluções diferentes são encontradas em cada execução. 
+No caso de 𝐾= 4 grupos (Figura 6.7c), todas as execuções convergem para a mesma 
+solução, que corresponde aos centros dos grupos. 
+ 
+(a) 
+ 
+(b) 
+ 
+(c) 
+ 
+(d) 
+Figura 6.7: Resultados de centros encontrados pelo k-médias no conjunto de dados de quatro grupos: 
+(a) 𝐾= 2 grupos; (b) 𝐾= 3 grupos; (c) 𝐾= 4 grupos; (d) 𝐾= 5 grupos. 
+A variação dos resultados do k-médias em execuções diferentes do algoritmo pode ser 
+utilizada como um indicativo da qualidade do agrupamento. No exemplo da Figura 6.7, 
+os dados têm quatro grupos muito bem definidos, de forma que o algoritmo k-médias 
+
+encontra sempre o mínimo global, independentemente da inicialização. Quando o nú-
+mero de grupos não corresponde às características do conjunto de dados, o algoritmo 
+encontra um mínimo local e o resultado depende da inicialização. Celebi e colaborado-
+res [80] apresentam um estudo sobre os principais métodos de inicialização do k-mé-
+dias, mas não discutem a influência da escolha do número de grupos. Algumas medidas 
+de validação para escolha do melhor agrupamento são apresentadas na seção 6.5. 
+6.3 Métodos Hierárquicos 
+Os algoritmos de agrupamento hierárquicos geram uma estrutura hierárquica de agru-
+pamentos em que cada nível representa uma partição do conjunto de dados definida 
+na seção 6.1. A estrutura de agrupamentos hierárquicos em diferentes níveis é repre-
+sentada como uma árvore binária, chamada dendrograma*. 
+Os métodos hierárquicos podem ser classificados em aglomerativos ou divisivos. Nos 
+algoritmos aglomerativos, a estrutura hierárquica é construída a partir dos registros, 
+sendo cada registro definido como um grupo singleton. Dessa forma, a partição do nível 
+mais baixo da hierarquia é definida como ℂ0 = 𝒯, com 𝐾= 𝑁 grupos. A partir dos gru-
+pos singletons, o algoritmo constrói a estrutura hierárquica ℂ0 ⊆ℂ1 ⊆⋯⊆ℂ𝑁−1, ite-
+rativamente, fundindo grupos das partições dos níveis anteriores até formar a partição 
+ℂ𝑁−1, que corresponde a um único grupo contendo todo o conjunto de dados. Nos al-
+goritmos divisivos, a estratégia é de cima para baixo; a partição inicial ℂ0 corresponde 
+a um único grupo e a estrutura hierárquica ℂ𝑁−1 ⊆ℂ𝑁−2 ⊆⋯⊆ℂ0 [522]. 
+Nesta seção, são apresentados os algoritmos hierárquicos aglomerativos, que são mais 
+comuns e podem ser encontrados na maioria dos softwares. Algoritmos divisivos são 
+obtidos aplicando-se recursivamente em cada grupo e diferentes abordagens são en-
+contradas na literatura [194][573]. 
+ 
+ 
+* A palavra dendrograma é de origem grega, pela composição de dendron, que significa árvore, e gramma, 
+desenho ou escrita. 
+
+6.3.1 Algoritmos aglomerativos 
+Os algoritmos hierárquicos aglomerativos seguem o procedimento geral descrito pelo 
+Algoritmo 6.2, cujo resultado é uma estrutura hierárquica, utilizada para gerar o den-
+drograma que representa os agrupamentos formados em cada nível.  
+Algoritmo 6.2: Algoritmo hierárquico (adaptado de [522]) 
+Entrada: 
+Conjunto de treinamento 𝒯= {𝐱(𝑡), 𝑡= 1 …  𝑁} 
+Saída:  
+Partições hierárquicas ℂ0 ⊆ℂ1 ⊆⋯⊆ℂ𝑁−1 
+01 
+Início 
+02 
+Calcular a matriz de distâncias 𝐃 
+03 
+Definir ℂ0 = {𝒞𝑖= 𝐱(𝑖), 𝑖= 1, … , 𝑁}  
+04 
+𝑘= 1  
+05 
+Enquanto 𝑘< 𝑁−1 
+06 
+Selecionar {𝒞𝑖, 𝒞𝑗} ∈ℂ𝑘−1 como argmin(𝐿(𝒞𝑖, 𝒞𝑗)) 
+07 
+Gerar a nova partição ℂ𝑘= {ℂ𝑘−1 −{𝒞𝑖, 𝒞𝑗}} ⋃{𝒞𝑖∪𝒞𝑗} 
+08 
+𝑘←𝑘+ 1  
+09 
+Fim Enquanto 
+10 
+Retorna {ℂ0, ℂ1, … , ℂ𝑁−1} 
+11 
+Fim 
+ 
+Em cada iteração 𝑘 do Algoritmo 6.2, no passo 07, um par de grupos {𝒞𝑖, 𝒞𝑗} é retirado 
+da partição ℂ𝑘−1 e a união {𝒞𝑖∪𝒞𝑗} é incluída na partição ℂ𝑘. A função de ligação 
+𝐿(𝒞𝑖, 𝒞𝑗) no passo 06 é utilizada para selecionar os grupos a serem unidos. Diferentes 
+funções de ligação resultam em diferentes agrupamentos. Na literatura, as principais 
+estratégias para função de ligação são: 
+▪ Vizinho mais próximo (single-link): a distância entre os grupos é calculada pe-
+los elementos mais próximos [495]: 
+𝐿𝑚𝑖𝑛(𝒞𝑖, 𝒞𝑗) = min
+𝛎∈𝒞𝑖
+𝛖∈𝒞𝑗
+𝑑𝑖𝑠𝑡(𝛎, 𝛖) 
+(6.7) 
+▪ Vizinho mais distante (complete-link): a distância entre os grupos é calculada 
+pela distância máxima entre seus elementos: 
+
+𝐿𝑚𝑎𝑥(𝒞𝑖, 𝒞𝑗) = max
+𝛎∈𝒞𝑖
+𝛖∈𝒞𝑗
+𝑑𝑖𝑠𝑡(𝛎, 𝛖) 
+(6.8) 
+▪ Distâncias médias (UPGMA):* a distância entre os grupos é calculada pela dis-
+tância média entre os elementos [499]: 
+𝐿𝑚𝑒𝑑(𝒞𝑖, 𝒞𝑗) =
+1
+|𝒞𝑖||𝒞𝑗| ∑∑𝑑𝑖𝑠𝑡(𝛎, 𝛖)
+𝛖∈𝒞𝑗
+𝛎∈𝒞𝑖
+ 
+(6.9) 
+onde |𝒞𝑖| representa a cardinalidade, isto é, o número de elementos do grupo 𝒞𝑖; 
+▪ Centroides (UPGMC):† a distância entre os grupos é calculada pela distância en-
+tre os centroides [499]: 
+𝐿𝑐𝑒𝑛(𝒞𝑖, 𝒞𝑗) = 𝑑𝑖𝑠𝑡(𝛎̅, 𝛖̅) 
+(6.10) 
+onde 𝛎̅ =
+1
+|𝒞𝑖| ∑
+𝛎
+𝛎∈𝒞𝑖 e 𝛖̅ =
+1
+|𝒞𝑗| ∑
+𝛖
+𝛖∈𝒞𝑗. 
+Há também as variantes WPGMA e WPGMC, que são semelhantes, respectivamente, aos 
+critérios de distância média (UPGMA) e de centroide (UPGMC), em que as distâncias 
+são ponderadas pelo número de elementos em cada grupo [194]. Finalmente, o critério 
+de Ward minimiza a variância dos grupos [551]. 
+Os algoritmos hierárquicos aglomerativos, em geral, trabalham com a matriz de distân-
+cias na memória, o que significa armazenar, pelo menos, 𝑁(𝑁−1)/2 valores. ‡ A aplica-
+ção desse tipo de algoritmo em conjuntos de dados com número muito grande de regis-
+tros pode causar problemas de memória. 
+6.3.2 Exemplos 
+Nesta seção, os algoritmos anteriores são avaliados em conjuntos de dados sintéticos e 
+benchmark. Todos os exemplos foram executados utilizando a distância euclidiana, va-
+riando apenas a função de ligação.  
+A Figura 6.8 mostra os dendrogramas e as partições resultantes dos quatro algoritmos 
+hierárquicos discutidos previamente no conjunto de dados sintético de quatro grupos 
+(cf. Figura 6.2a). O nível inferior foi limitado a 25 grupos para facilitar a visualização. 
+ 
+* Unweighted Pair Group Method with Average linkage 
+† Unweighted Pair Group Method with Centroid linkage. 
+‡ Considerando que a matriz de distâncias é simétrica e armazenando apenas a matriz triangular. 
+
+Observe que, mesmo num exemplo simples como este, os resultados são ligeiramente 
+diferentes, tanto em termos do dendrograma quanto da partição encontrada. 
+A Figura 6.9 apresenta os resultados dos algoritmos no conjunto de dados de duas luas 
+apresentado (cf. Figura 6.4b). Este exemplo mostra a capacidade do algoritmo do vizi-
+nho mais próximo (single-link) de encontrar partições não convexas, o que não acon-
+tece no caso das demais funções de ligação. 
+A observação dos resultados na Figura 6.8 e na Figura 6.9 mostra que o dendrograma 
+pode indicar o número de grupos presentes num conjunto de dados pelo número de 
+ramos (traços verticais) entre os dois patamares (traços horizontais) mais distantes. O 
+resultado dessa análise qualitativa é bem visível na Figura 6.8, indicando a presença de 
+quatro grupos (exceto para o algoritmo single-link), e na Figura 6.9, indicando a pre-
+sença de dois grupos. 
+6.4 Particionamento de grafos 
+A teoria dos grafos [55][129] é o ramo da matemática que estuda problemas que po-
+dem ser representados na forma de um grafo, isto é, um conjunto de vértices conecta-
+dos por um conjunto de arestas. A teoria dos grafos é a base matemática para uma série 
+de disciplinas na ciência da computação e a análise de rede complexas [414]. 
+Um conjunto de dados pode ser representado como um grafo 𝐺(𝒱, ℰ), no qual o con-
+junto de vértices 𝒱 representa os registros, isto é, 𝒱≡𝒯= {𝐱(𝑡), 𝑡= 1 …  𝑁}, e o con-
+junto de arestas é definido pela matriz de adjacências* 𝐀∈ℛ𝑁×𝑁, em que cada ele-
+mento representa a similaridade entre um par de registros como: 
+𝑎𝑖𝑗= {𝑠𝑖𝑚(𝐱(𝑖), 𝐱(𝑗)),
+𝑠𝑒 𝑖≠𝑗
+0,
+𝑠𝑒 𝑖= 𝑗 
+(6.11) 
+A matriz de similaridades é simétrica e, portanto, as arestas do grafo correspondente a 
+um conjunto de dados são ponderadas e não direcionadas.  
+O grau de um vértice é o número de vizinhos do vértice. Em grafos ponderados, o grau 
+é a soma do peso das arestas conectadas ao vértice. 
+ 
+* Aqui, seguimos a notação proposta por Newman [414], em que a matriz de adjacências binária é um 
+caso particular da matriz de adjacências ponderada.  
+
+ 
+(a) 
+ 
+(b) 
+ 
+(c) 
+ 
+(d) 
+ 
+(e) 
+ 
+(f) 
+ 
+(g) 
+ 
+(h) 
+Figura 6.8: Resultados do agrupamento hierárquico nos dados de quatro grupos: (a) e (b) single-link; 
+(c) e (d) complete-link; (e) e (f) distância média; (g) e (h) centroide. 
+
+ 
+(a) 
+ 
+(b) 
+ 
+(c) 
+ 
+(d) 
+ 
+(e) 
+ 
+(f) 
+ 
+(g) 
+ 
+(h) 
+Figura 6.9: Resultados do agrupamento hierárquico nos dados duas luas: (a) e (b) single-link;  
+(c) e (d) complete-link; (e) e (f) distância média; (g) e (h) centroide. 
+
+A função de similaridade gaussiana é muito utilizada para representação de um con-
+junto de dados como um grafo e é definida como (cf. equação (2.14)): 
+𝑠𝑖𝑚𝐺(𝐱(𝑖), 𝐱(𝑗)) =  𝑒𝑥𝑝(−‖𝐱(𝑖) −𝐱(𝑗)‖2
+2𝜎2
+) 
+(6.12) 
+A Figura 6.10 mostra o exemplo de um grafo gerado a partir de um conjunto de dados 
+de quatro grupos pela função de similaridade gaussiana (6.12) com 𝜎= 1 3
+⁄ . Na Figura 
+6.10a, o grafo formado pela conexão dos registros em que os tons de cinza representam 
+os valores das arestas; na Figura 6.10b, a matriz de adjacências. 
+ 
+(a) 
+ 
+(b) 
+Figura 6.10: Conjuntos de dados quatro grupos: (a) Grafo; (b) matriz de adjacências. 
+A função de similaridade do cosseno (cf. equação (2.13)) também é frequentemente 
+utilizada, principalmente em aplicações de mineração de textos [468]. Há outras for-
+mas de representar um conjunto de dados como um grafo [356][473]. A função de si-
+milaridade gaussiana relaciona o particionamento em grafos com métodos baseados 
+em funções de núcleo [182], discutidos no Capítulo 7.  
+Um corte num grafo conexo é um conjunto de arestas (ou vértices) cuja remoção des-
+conecta um determinado par de vértices [414]. O corte em grafos é estudado principal-
+mente em problemas em que o grafo representa um sistema onde há algum fluxo (de 
+matéria, informação etc.) ao longo das arestas e a capacidade de fluxo é representada 
+pelo valor (ou peso) da aresta. O corte mínimo é o conjunto de arestas que, se retiradas, 
+desconecta um par de vértices e cuja soma dos pesos das arestas retiradas é mínima. O 
+corte mínimo corresponde ao fluxo máximo entre o par de vértices [6]. 
+
+O problema do corte mínimo num grafo pode ser associado ao problema de agrupa-
+mento para encontrar uma partição ℂ= {𝒞1, 𝒞2}, tal que 𝒞1 ∩𝒞2 = ∅ e 𝒞1 ∪𝒞2 = 𝒱, 
+através da minimização da soma dos pesos das arestas entre os dois grupos calculada 
+pela função de corte: 
+𝑐𝑢𝑡(𝒞1, 𝒞2) = 1
+2 ∑∑𝑎𝑖𝑗𝑢1(𝐱(𝑖))
+𝑁
+𝑗=1
+𝑢2(𝐱(𝑗))
+𝑁
+𝑖=1
+ 
+(6.13) 
+onde 𝑎𝑖𝑗∈𝐀 são os elementos da matriz de adjacências, 𝑢𝑖(𝐱(𝑡)) é a pertinência de um 
+registro 𝐱(𝑡) ao grupo 𝒞𝑖 (cf. equação (6.3)) e o fator 
+1
+2 é incluído para evitar a contagem 
+dupla da mesma aresta, uma vez que a matriz de adjacências 𝐀 é simétrica. 
+Em grafos não direcionados, o critério de corte definido pela equação (6.13) admite 
+uma solução trivial que corresponde a separar apenas um vértice cuja soma das suas 
+arestas é mínima, isto é, o vértice de menor grau. Num grafo correspondente a um con-
+junto de dados, essa solução trivial significa separar um outlier. Para evitar esse pro-
+blema, Shi e Malik [489] propõem minimizar a função de corte normalizado: 
+𝑁𝑐𝑢𝑡(𝒞1, 𝒞2) = 𝑐𝑢𝑡(𝒞1, 𝒞2)
+𝑐𝑢𝑡(𝒞1, 𝒱) + 𝑐𝑢𝑡(𝒞1, 𝒞2)
+𝑐𝑢𝑡(𝒞2, 𝒱) 
+(6.14) 
+onde 𝑐𝑢𝑡(𝒞𝑘, 𝒱) = 1
+2 ∑
+∑
+𝑎𝑖𝑗𝑢𝑘(𝐱(𝑖))
+𝑁
+𝑗=1
+𝑁
+𝑖=1
+ e 𝒱 é o conjunto de vértices do grafo. 
+A função de avaliação definida pela equação (6.14) evita a obtenção de um grupo em 
+que as arestas do corte representam uma parcela importante da sua conectividade.  
+O corte mínimo pode ser ilustrado na Figura 6.10a, em que o agrupamento é definido 
+pelo corte das arestas mais claras. Nesse caso, a medida de corte da equação (6.13) é 
+generalizada para o caso de uma partição genérica ℂ= {𝒞1, … , 𝒞𝐾} como [468]: 
+𝑐𝑢𝑡(𝒞1, … , 𝒞𝐾) = ∑𝑐𝑢𝑡(𝒞𝑖, 𝒞̅𝑖)
+𝐾
+𝑖=1
+ 
+(6.15) 
+onde 𝒞̅𝑖= 𝒱−𝒞𝑖 é o complemento de 𝒞𝑖, i.e. 𝒞̅𝑖= ⋃
+𝒞𝑗
+𝐾
+𝑗=1
+𝑗≠𝑖
+.  
+Na literatura encontram-se outras variantes da medida de corte em grafos com carac-
+terísticas ligeiramente diferentes [130][468].  
+
+A teoria dos grafos tem sido explorada para o estudo de redes complexas [414]. O pro-
+blema de particionamento de grafos na área de redes complexas é chamado de detec-
+ção de comunidades [412][414][468]. Numa rede social, por exemplo, os indivíduos 
+representam os vértices do grafo e as arestas, as relações entre eles. As comunidades 
+são formadas por grupos de indivíduos que compartilham características em comum 
+e, por isso, têm mais relações entre si do que com indivíduos de outros grupos. Essa 
+tendência é chamada de homofilia.  
+Newman apresenta uma medida para aferir o grau de homofilia de uma rede, chamada 
+modularidade [411]-[413]. A medida de modularidade segue um raciocínio bem dife-
+rente da medida de corte em grafos (6.13). Em vez de avaliar o peso das arestas em 
+grupos diferentes, a ideia é avaliar o peso das arestas no mesmo grupo e a medida re-
+flete a fração de arestas que ligam vértices desse grupo. Entretanto, para evitar a solu-
+ção trivial de considerar toda a rede como um só grupo, a medida de modularidade 
+subtrai a fração de arestas esperada de uma rede cujas ligações ocorrem de forma ale-
+atória. Em outras palavras, a modularidade mede o quanto a estrutura de comunidades 
+encontrada na rede é diferente de um arranjo aleatório.  
+Matematicamente, a modularidade de uma partição ℂ= {𝒞1, … , 𝒞𝐾} é definida como: 
+𝑄(𝒞1, … , 𝒞𝐾) = 1
+2𝐸∑∑(𝑎𝑖𝑗−𝑑𝑖𝑑𝑗
+2𝐸) 𝐮𝑖𝐮𝑗
+T
+𝑁
+𝑗=1
+𝑁
+𝑖=1
+ 
+(6.16) 
+onde 𝑑𝑖= ∑𝑎𝑖𝑗
+𝑗
+ é o grau do vértice associado ao registro 𝐱(𝑖) e 𝐸= ∑𝑑𝑖
+𝑖
+ é o número 
+total de arestas. O vetor 𝐮𝑖= (𝑢1(𝐱(𝑖)), … , 𝑢𝐾(𝐱(𝑖))) é aquele em que cada elemento é 
+a pertinência do registro 𝐱(𝑖) a cada um dos grupos (cf. equação (6.3)). O produto 
+𝐮𝑖𝐮𝑗
+T = 1 se os registros 𝐱(𝑖) e 𝐱(𝑗) estão no mesmo grupo; caso contrário, 𝐮𝑖𝐮𝑗
+T = 0. 
+Se os registros 𝐱(𝑖) e 𝐱(𝑗) estão no mesmo grupo, a modularidade da partição calculada 
+pela equação (6.16) é a diferença entre o número total de arestas ∑𝑎𝑖𝑗
+𝑖𝑗
+ e o número 
+esperado de arestas numa rede aleatória ∑𝑑𝑖𝑑𝑗2𝐸
+⁄
+𝑖𝑗
+ [413]. 
+A modularidade pode ser escrita diretamente a partir da definição da matriz de modu-
+laridade 𝐁, calculada como:  
+𝐁= 𝐀−𝐝T𝐝
+2𝐸 
+(6.17) 
+
+onde 𝐝= (𝑑1, … , 𝑑𝑁) é o vetor dos graus dos vértices (registros) correspondentes, em 
+que cada elemento é calculado como 𝑑𝑖= ∑𝑎𝑖𝑗
+𝑗
+. Observe que, em geral, a matriz 𝐀 é 
+esparsa, mas 𝐁 é uma matriz densa. 
+De uma forma geral, o problema de particionamento em grafos é um problema NP-di-
+fícil por razões análogas à complexidade do problema de particionamento de um con-
+junto de dados. Dessa forma, uma solução computacionalmente tratável para o pro-
+blema é obtida por uma formulação aproximada, baseada na decomposição espectral 
+de uma matriz derivada da matriz de adjacências do grafo 𝐀, chamada de laplaciano 
+[356][408]. Essa abordagem dá origem a diferentes algoritmos, apresentados a seguir. 
+6.4.1 Algoritmos de agrupamento espectral 
+Uma partição ℂ= {𝒞1, 𝒞2} num grafo pode ser representada por um vetor 𝐯∈ℛ𝑁, que 
+representa a partição através da variável indicadora: 
+𝑣𝑖= {+1,
+se 𝐱(𝑖) ∈𝒞1
+−1,
+se 𝐱(𝑖) ∈𝒞2 
+(6.18) 
+onde 𝒞1 ∩𝒞2 = ∅ e 𝒞1 ∪𝒞2 =. 
+A variável indicadora permite identificar se dois registros 𝐱(𝑖) e 𝐱(𝑗) estão no mesmo 
+grupo como 𝑢1(𝐱(𝑖))𝑢2(𝐱(𝑗)) = 1
+2(1 −𝑣𝑖𝑣𝑗). Se os registros estão no mesmo grupo, 
+1
+2(1 −𝑣𝑖𝑣𝑗) = 0; caso contrário, 1
+2(1 −𝑣𝑖𝑣𝑗) = 1. Dessa forma, a medida de corte (6.13) 
+pode ser escrita como: 
+𝑐𝑢𝑡(𝒞1, 𝒞2) = 1
+4 ∑∑𝑎𝑖𝑗(1 −𝑣𝑖𝑣𝑗)
+𝑁
+𝑗=1
+𝑁
+𝑖=1
+ 
+(6.19) 
+Considerando ∑
+∑
+𝑎𝑖𝑗
+𝑁
+𝑗=1
+𝑁
+𝑖=1
+= ∑
+𝑑𝑖
+𝑁
+𝑖=1
+= ∑
+∑
+𝑑𝑖𝛿𝑖𝑗
+𝑁
+𝑗=1
+𝑁
+𝑖=1
+𝑣𝑖𝑣𝑗 [414], onde 𝑑𝑖= ∑𝑎𝑖𝑗
+𝑗
+ é o 
+grau do vértice e 𝛿𝑖𝑗, a função 𝛿 de Kronecker,* a equação (6.19) é reescrita como: 
+𝑐𝑢𝑡(𝒞1, 𝒞2) = 1
+4 ∑∑(𝑑𝑖𝛿𝑖𝑗−𝑎𝑖𝑗)𝑣𝑖𝑣𝑗
+𝑁
+𝑗=1
+𝑁
+𝑖=1
+ 
+(6.20) 
+ 
+* A função 𝛿 de Kronecker é definida como: 𝛿𝑖𝑗= {1, 𝑠𝑒 𝑖= 𝑗
+0, 𝑠𝑒 𝑖≠𝑗. 
+
+A medida de corte escrita na forma (6.20) evidencia os valores 𝑙𝑖𝑗= (𝑑𝑖𝛿𝑖𝑗−𝑎𝑖𝑗), que 
+são os elementos do laplaciano do grafo, definido como: 
+𝐋= 𝐃−𝐀 
+(6.21) 
+onde 𝐃 é uma matriz diagonal em que cada elemento 𝑑𝑖𝑖= ∑𝑎𝑖𝑗
+𝑗
+ é o grau do vértice 
+(registro) correspondente.  
+O laplaciano do grafo recebe esse nome devido a uma analogia com o operador laplaci-
+ano da equação da difusão [414]. O laplaciano tem grande importância nas proprieda-
+des topológicas de grafos [104][381].  
+A medida de corte (6.20) é escrita em função do laplaciano e da variável indicadora da 
+partição ℂ= {𝒞1, 𝒞2} pela seguinte equação vetorial: 
+𝑐𝑢𝑡(𝒞1, 𝒞2) = 1
+4𝐯T𝐋𝐯 
+(6.22) 
+A minimização da função de corte definida pela equação (6.22) não é uma tarefa sim-
+ples, considerando a restrição 𝑣𝑖∈{−1,1} imposta pela definição da variável indica-
+dora na equação (6.18). Entretanto, uma solução aproximada 𝐯̂ ∈ℛ𝑁 pode ser calcu-
+lada pela solução do problema de autovalor: 
+𝐋𝐖= 𝐖𝚲 
+(6.23) 
+onde 𝚲 é a matriz diagonal dos autovalores cujos elementos são ordenados de forma 
+que 𝜆1 ≤𝜆2 ≤⋯≤𝜆𝑁; 𝐖= [𝐰1, … , 𝐰𝑁] é a matriz dos autovetores em que cada co-
+luna 𝐰𝑖∈ℛ𝑁 é o autovetor correspondente ao autovalor 𝜆𝑖. 
+O laplaciano é uma matriz positiva semi-definida,* de modo que todos os seus autova-
+lores são números reais e positivos [206][414]. O laplaciano tem sempre um autovalor 
+nulo, isto é, 𝜆1 = 0, que corresponde ao autovetor unitário 𝐰1 = [1 √𝑁
+⁄
+, … , 1 √𝑁
+⁄
+]
+T 
+[414]. O número de autovalores nulos corresponde ao número de componentes cone-
+xas do grafo. Assim, se 𝜆2 > 0, o grafo é conexo, isto é, há apenas um componente e 
+existe um caminho entre quaisquer pares de vértices. Quanto maior o autovalor 𝜆2, 
+maior a conectividade do grafo [179]. O segundo autovetor do laplaciano 𝐰2, corres-
+pondente ao segundo autovalor 𝜆2, é conhecido como o autovetor de Fiedler [408], em 
+homenagem ao matemático Miroslav Fiedler [179][180]. 
+ 
+* Uma matriz 𝐀 é positiva semi-definida se 𝐱T𝐀𝐱≥𝟎, ∀𝐱. 
+
+Uma partição genérica ℂ= {𝒞1, … , 𝒞𝐾}, segundo o corte mínimo (6.15), é obtida apli-
+cando-se o algoritmo k-médias aos 𝐾 autovetores correspondentes aos 𝐾 menores au-
+tovalores da solução do problema (6.23). O algoritmo de agrupamento espectral básico 
+é descrito pelo Algoritmo 6.3. 
+Algoritmo 6.3: Algoritmo de agrupamento espectral 
+Entrada: 
+Conjunto de treinamento 𝒯= {𝐱(𝑡), 𝑡= 1 …  𝑁}, parâmetro de 
+dispersão 𝜎 e número de centros 𝐾  
+Saída:  
+Partição ℂ= {𝒞1, … , 𝒞𝐾} 
+01 
+Início 
+02 
+Calcular a matriz 𝐀, pela equação (6.11) 
+03 
+Calcular o laplaciano 
+04 
+Calcular a decomposição espectral do laplaciano 
+05 
+Calcular a matriz 𝐙 a partir dos autovetores do laplaciano 
+06 
+Calcular a partição ℂ= {𝒞1, … , 𝒞𝐾} pelo k-médias em 𝐙 
+07 
+Retorna ℂ= {𝒞1, … , 𝒞𝐾} 
+08 
+Fim 
+ 
+Von Luxburg [356] sugere que a matriz de adjacências binária possa ser utilizada no 
+passo 02, em que uma aresta é definida por um valor mínimo de similaridade ou por 
+um número especificado de vizinhos. Entretanto, a forma mais usual é utilizar direta-
+mente a matriz de similaridade nos algoritmos [408]. 
+A partição ℂ= {𝒞1, … , 𝒞𝐾} obtida no passo 06 do Algoritmo 6.3 é definida no espaço de 
+variáveis transformadas 𝐙 e, devido à transformação não linear realizada pelo cálculo 
+da similaridade, o Algoritmo 6.3 pode encontrar uma partição não convexa no espaço 
+de variáveis originais. O problema da inicialização aleatória do k-médias também é re-
+solvido no algoritmo de agrupamento espectral. A matriz identidade pode ser utilizada 
+na inicialização dos centros, uma vez que o algoritmo realiza uma partição de 𝐾 grupos 
+no espaço de variáveis transformadas, de 𝐾 dimensões. 
+O algoritmo de agrupamento espectral descrito pelo Algoritmo 6.3 foi formulado em 
+função da medida de corte mínimo, mas algumas variantes do algoritmo básico são ob-
+tidas segundo a medida de corte utilizada. As principais variantes são apresentadas a 
+
+seguir, começando pela formalização do próprio algoritmo de corte mínimo. Para faci-
+litar a apresentação, a mesma notação será utilizada para denotar a matriz de autova-
+lores 𝚲 e a matriz de autovetores 𝐖 em cada variante do algoritmo espectral. Essas 
+matrizes são diferentes em função do problema formulado em cada algoritmo. 
+6.4.1.1 Algoritmo de corte mínimo 
+No algoritmo de corte mínimo [356][408], os passos 03 e 04 são calculados pelas equa-
+ções (6.21) e (6.23). A matriz de dados transformados 𝐙= [𝐰1, … , 𝐰𝐾], onde 𝐰𝑖 são os 
+autovetores calculados pela equação (6.23), ordenados pela ordem crescente de seus 
+autovalores [356][408]. Os passos 03-05 do Algoritmo 6.3 para o corte mínimo são for-
+mulados no Algoritmo 6.3ª. 
+Algoritmo 6.3a: Corte mínimo 
+03 
+𝐋= 𝐃−𝐀  
+04 
+𝐋𝐖= 𝐖𝚲  
+05 
+Ordenar 0 = 𝜆1 ≤𝜆2 ≤⋯≤𝜆𝑁, 𝐙= [𝐰1, … , 𝐰𝐾] 
+ 
+6.4.1.2 Algoritmo de corte mínimo normalizado de Shi e Malik 
+Uma variante do Algoritmo 6.3a para a minimização do corte mínimo normalizado 
+(6.14) foi proposta por Shi e Malik [488][489]. Nesse caso, a decomposição espectral 
+do passo 04 é calculada pela solução do problema de autovalor generalizado: 
+𝐋𝐖= 𝐃𝐖𝚲 
+(6.24) 
+onde 𝐋 é o laplaciano (6.21) e 𝐃 é a matriz diagonal de graus. 
+Shi e Malik [488] mostram que o sinal do segundo menor autovalor de (6.24) é uma 
+aproximação da solução pelo corte mínimo normalizado (6.14). Para uma partição ge-
+nérica em 𝐾 grupos, os autores apresentam uma abordagem hierárquica divisiva em 
+que, a cada iteração, uma nova partição pode ser encontrada pela aplicação recursiva 
+do problema de autovalor (6.24) [489]. 
+Na abordagem hierárquica divisiva, a definição do número de grupos é substituída por 
+um critério de parada do algoritmo. Entretanto, essa abordagem pode se tornar instá-
+vel, além de computacionalmente complexa [489].  
+
+Uma partição de 𝐾 grupos pode ser obtida pela aplicação do Algoritmo 6.3, em que a 
+matriz das variáveis transformadas é definida pelos autovetores correspondentes aos 
+menores autovalores 𝐙= [𝐰1, … , 𝐰𝐾]. O algoritmo do corte mínimo normalizado é 
+apresentado pelo Algoritmo 6.3b. 
+Algoritmo 6.3b: Corte mínimo normalizado [489]  
+03 
+𝐋= 𝐃−𝐀  
+04 
+𝐋𝐖= 𝐃𝐖𝚲  
+05 
+Ordenar 0 = 𝜆1 ≤𝜆2 ≤⋯≤𝜆𝑁,  𝐙= [𝐰1, … , 𝐰𝐾] 
+ 
+O algoritmo de corte mínimo normalizado de Shi e Malik (Algoritmo 6.3b) tem o mesmo 
+resultado do algoritmo de corte mínimo (Algoritmo 6.3a). 
+A equação (6.24) também pode ser escrita como: 
+𝐋̂ 𝐖̂ = 𝐖̂ 𝚲 
+(6.25) 
+onde 𝐋̂ = 𝐃−1 2
+⁄ 𝐋𝐃−1 2
+⁄ = 𝟏−𝐃−1 2
+⁄ 𝐀𝐃−1 2
+⁄  e 𝐖̂ = 𝐃1 2
+⁄ 𝐖 [489]. A matriz 𝐋̂  é chamada de 
+laplaciano simétrico [356] ou, ainda, laplaciano normalizado [408]. 
+6.4.1.3 Algoritmo de corte mínimo normalizado de Ng, Jordan e Weiss 
+Uma variante do algoritmo de corte mínimo normalizado foi apresentada por Ng, Jor-
+dan e Weiss [415]. O laplaciano no passo 03 é substituído pela matriz 𝐀̂ = 𝐃−1 2
+⁄ 𝐀𝐃−1 2
+⁄ , 
+chamada de matriz de adjacências normalizada [104] ou matriz de adjacências redu-
+zida [414]. Alguns autores sugerem que a decomposição espectral seja calculada com 
+o Laplaciano normalizado 𝐋̂ = 𝐃−1 2
+⁄ 𝐋𝐃−1 2
+⁄  [356][408]. No artigo original [415], a de-
+composição espectral do passo 04 é calculada como: 
+𝐀̂𝐖= 𝐖𝚲̂ 
+(6.26) 
+A decomposição espectral (6.26) produz os mesmos autovetores 𝐖 que (6.25) e auto-
+valores 𝚲̂ = 𝟏−𝚲, onde 𝚲 é a matriz de autovalores calculada em (6.25). Dessa forma, 
+a solução do problema (6.26) corresponde à minimização de corte mínimo normali-
+zado (6.14) com os autovalores em ordem não crescente 𝜆̂1 ≥𝜆̂2 ≥⋯≥𝜆̂𝑁. 
+A matriz 𝐀̂ tem outras propriedades interessantes. Num grafo definido por uma matriz 
+de adjacências binária, isto é, 𝑎𝑖𝑗∈{0,1}, o maior autovalor 𝜆̂1 = 1. O número de auto-
+valores unitários corresponde ao número de componentes do grafo [104][342] e, em 
+
+grafos conexos, 𝜆̂2 < 1 [104]. Num grafo com 𝐾 componentes que definem uma parti-
+ção ℂ= {𝒞1, … , 𝒞𝐾}, o valor do corte mínimo 𝑐𝑢𝑡(𝒞1, … , 𝒞𝐾) = 0 (cf. (6.15)) e a matriz 
+𝐀̂ tem 𝐾 autovalores unitários: 𝜆̂𝑖= 1, 𝑖= 1, … 𝐾. Essa propriedade permite utilizar o 
+resultado da decomposição espectral (6.26) para uma estimativa do número de grupos 
+de um conjunto de dados [342][168][170]. 
+As variáveis transformadas são calculadas, para cada registro, pelos autovetores nor-
+malizados como: 
+𝐳̂(𝑡) = [ 𝑤1(𝑡)
+‖𝐳(𝑡)‖ , … , 𝑤𝐾(𝑡)
+‖𝐳(𝑡)‖] 
+(6.27) 
+onde 𝐳(𝑡) = [𝑤1(𝑡), … , 𝑤𝐾(𝑡)] e 𝑤𝑖(𝑡) é o elemento 𝑡 do autovetor correspondente ao 
+autovalor 𝜆̂𝑖, calculado na decomposição espectral (6.26). 
+A utilização das variáveis transformadas normalizadas no k-médias é equivalente à uti-
+lização do k-médias esférico nas variáveis transformadas sem normalização [468]. Na 
+prática, a normalização (6.27) também pode ser aplicada aos demais algoritmos de 
+corte mínimo. O algoritmo do corte normalizado de Ng, Jordan e Weiss é descrito no 
+Algoritmo 6.3c. 
+Algoritmo 6.3c: Corte mínimo normalizado [415] 
+03 
+𝐀̂ = 𝐃−1 2
+⁄ 𝐀𝐃−1 2
+⁄   
+04 
+𝐀̂𝐖= 𝐖𝚲̂  
+05 
+Ordenar 1 = 𝜆1 ≥𝜆2 ≥⋯≥𝜆𝑁, 𝐳̂(𝑡) = [
+𝑤1(𝑡)
+‖𝐳(𝑡)‖ , … ,
+𝑤𝐾(𝑡)
+‖𝐳(𝑡)‖] 
+ 
+A complexidade computacional do cálculo da matriz de similaridade é 𝑂(𝑁2) e a com-
+plexidade do algoritmo de agrupamento espectral é dominada pelo cálculo do pro-
+blema de autovalor, que é de 𝑂(𝑁3). Em problemas que 𝐾≪𝑁, a complexidade pode 
+ser reduzida a 𝑂(𝑁2), uma vez que apenas os primeiros autovetores são necessários. 
+O algoritmo de agrupamento espectral pode separar grupos não convexos no espaço 
+de variáveis de entrada do problema e, por isso, tem bons resultados em aplicações de 
+agrupamento. Essas características motivaram o desenvolvimento de outras variantes 
+do algoritmo [23][356][408][554]. Os algoritmos de agrupamento espectral são rela-
+cionados aos algoritmos baseados em função de núcleo [127][128][182][596].  
+
+6.4.1.4 Algoritmo de maximização da modularidade de Newman e Girvan 
+O problema de maximização da modularidade (cf. equação (6.16)) também tem solução 
+aproximada pela decomposição espectral da matriz de modularidade 𝐁. No caso de 
+uma partição binária ℂ= {𝒞1, 𝒞2}, o produto 𝐮𝑖𝐮𝑗
+T é escrito em função variável indica-
+dora (6.18) como 𝐮𝑖𝐮𝑗
+T  = 1
+2(𝑣𝑖𝑣𝑗+ 1), de modo que 1
+2(𝑣𝑖𝑣𝑗+ 1) = 1 se dois registros 
+𝐱(𝑖) e 𝐱(𝑗) estão no mesmo grupo e 1
+2(𝑣𝑖𝑣𝑗+ 1) = 0 caso contrário. 
+A função de modularidade (6.16) é reescrita como: 
+𝑄(𝒞1, 𝒞2) = 1
+4𝐸∑∑𝑏𝑖𝑗(𝑣𝑖𝑣𝑗+ 1)
+𝑁
+𝑗=1
+𝑁
+𝑖=1
+= 1
+4𝐸(∑∑𝑏𝑖𝑗𝑣𝑖𝑣𝑗
+𝑁
+𝑗=1
+𝑁
+𝑖=1
++ ∑∑𝑏𝑖𝑗
+𝑁
+𝑗=1
+𝑁
+𝑖=1
+) 
+(6.28) 
+onde 𝑏𝑖𝑗 são os elementos da matriz de modularidade 𝐁 definida em (6.17). A soma das 
+linhas (ou colunas) da matriz 𝐁 é zero, de forma que o termo ∑𝑏𝑖𝑗
+𝑖𝑗
+= 0. A função de 
+modularidade pode ser escrita vetorialmente como: 
+𝑄(𝒞1, 𝒞2) = 1
+4𝐸𝐯T𝐁𝐯 
+(6.29) 
+Uma aproximação para a solução do problema de maximização da modularidade (6.29) 
+é obtida pela solução do problema de autovalor 𝐁𝐰= 𝐰𝜆, em que 𝜆 é o maior autovalor 
+e 𝐯̂, o autovetor correspondente. O sinal dos elementos do autovetor correspondente 
+ao maior autovalor é utilizado para a obtenção da partição ℂ= {𝒞1, 𝒞2}: 
+𝑣̂𝑖= {+1,
+se 𝑤𝑖≥0
+−1,
+se 𝑤𝑖< 0 
+(6.30) 
+Newman e Girvan [413] apresentam uma abordagem hierárquica divisiva para o par-
+ticionamento do grafo em que, a cada iteração, o valor do ganho da função modulari-
+dade é avaliado e utilizado para a decisão sobre um novo particionamento. Vieira e co-
+laboradores [541] apresentam um estudo de desempenho e o código dos principais 
+algoritmos de detecção de comunidades baseados na função de modularidade. 
+6.4.2 Exemplos 
+A Figura 6.11 mostra, em cada linha, os resultados dos algoritmos 6.3a-c no conjunto 
+de dados de duas luas utilizando o parâmetro 𝜎= 0.1 no cálculo da função de similari-
+dade. Na coluna da direita são apresentados os resultados do agrupamento e, na coluna 
+da esquerda, as variáveis transformadas.  
+
+ 
+(a) 
+ 
+(d) 
+ 
+(b) 
+ 
+(e) 
+ 
+(c) 
+ 
+(f) 
+ 
+ 
+Figura 6.11: Resultados no conjunto de dados duas luas: à esquerda, os resultados do agrupamento e, à 
+direita, as variáveis transformadas; nas linhas, os Algoritmos 6.3a-c. 
+Podemos observar que os algoritmos espectrais baseados no corte mínimo podem ge-
+rar grupos de forma não convexa e as três formulações produzem os mesmos resulta-
+dos. Os resultados das variáveis transformadas utilizadas nos algoritmos de corte mí-
+nimo (6.3a) e corte mínimo normalizado (6.3b) também são idênticos. Uma aplicação 
+
+do algoritmo de maximização da modularidade para agrupamento de documentos será 
+apresentada na seção 6.6.2. 
+Os resultados dos algoritmos de agrupamento espectral dependem do valor do parâ-
+metro de dispersão 𝜎 no cálculo da função de similaridade gaussiana (6.12), além da 
+informação do número de grupos 𝐾 para o algoritmo k-médias. Entretanto, a iniciali-
+zação do algoritmo k-médias é definida pela matriz identidade e o resultado do algo-
+ritmo espectral é determinístico. 
+Na análise de agrupamentos, a decisão sobre o melhor número de grupos depende de 
+alguma medida de validação, como apresentado a seguir. 
+6.5 Validação de Grupos 
+Encontrar uma partição num conjunto de dados é um problema mal definido e diferen-
+tes agrupamentos podem ser obtidos do mesmo conjunto (cf. Figura 6.1). Não há uma 
+medida absoluta de qualidade para o problema e o resultado do agrupamento deve ser 
+avaliado no contexto da aplicação. 
+As medidas de validação de agrupamentos visam avaliar as características geométricas 
+do agrupamento formado, sabendo-se que um bom agrupamento deve produzir grupos 
+compactos e bem separados. É comum encontrar na literatura a divisão das medidas 
+de validação de agrupamentos em três tipos [194][227][228][573], cujos principais ín-
+dices são apresentados na sequência: 
+▪ Medidas externas: avaliam a qualidade do agrupamento em relação a uma in-
+formação externa sobre a estrutura de grupos (ou classes) do problema; 
+▪ Medidas internas: avaliam a qualidade do agrupamento a partir dos registros 
+do conjunto de dados, em geral utilizando critérios geométricos; 
+▪ Medidas relativas: produzem índices calculados pela combinação de critérios 
+(internos) que avaliam a qualidade de um agrupamento em relação a outros. 
+6.5.1 Medidas externas 
+As medidas externas avaliam a qualidade do agrupamento a partir de uma matriz de 
+confusão como na avaliação de classificadores (cf. Tabela 5.2). Para avaliação de gru-
+pos, a matriz de confusão relaciona os grupos encontrados pelo algoritmo de agrupa-
+
+mento com as classes do problema. A Tabela 6.1 mostra a matriz de confusão para ava-
+liação de agrupamentos, onde {𝐶1, … , 𝐶𝑚} é o conjunto de classes e ℂ= {𝒞1, … , 𝒞𝐾}, uma 
+partição de 𝐾 grupos. Cada elemento 𝑛𝑖𝑗 na Tabela 6.1 representa o número de regis-
+tros da classe 𝐶𝑖 alocados no grupo 𝒞𝑗. A soma das linhas corresponde ao número de 
+elementos das classes e a soma das colunas, o número de elementos dos grupos. 
+Quando o número de grupos é igual ao número de classes, qualquer estatística de ava-
+liação de classificadores (cf. seção 5.3.1) pode ser utilizada como medida de validação 
+externa. Entretanto, é comum que o número de grupos seja diferente do número de 
+classes e, nesse caso, as medidas externas avaliam o quanto o agrupamento encontrado 
+corresponde à estrutura de classes conhecida. 
+Tabela 6.1: Matriz de confusão 
+ 
+𝒞1 
+… 
+𝒞𝐾 
+Total 
+𝐶1 
+𝑛11  
+… 
+𝑛1𝐾  
+𝑁1 
+⋮ 
+⋮ 
+⋱ 
+⋮ 
+⋮ 
+𝐶𝑚 
+𝑛𝑚1  
+… 
+𝑛𝑚𝐾  
+𝑁𝑚 
+Total 
+𝑁̂1 
+… 
+𝑁̂𝐾 
+𝑁 
+ 
+A pureza de um grupo é a porção dos registros de um grupo que pertence à classe que 
+contém a maioria dos registros daquele grupo. A pureza é uma medida de homogenei-
+dade do agrupamento: quanto maior a pureza, mais homogêneos são os grupos. A pu-
+reza de um grupo é calculada como: 
+𝑝𝑢𝑟(𝒞𝑗) = max
+𝑖=1,…,𝑚(𝑛𝑖𝑗
+𝑁̂𝑗
+) 
+(6.31) 
+A pureza total ou pureza do agrupamento é calculada como a média da pureza dos gru-
+pos ponderada pelo número de registros de cada grupo: 
+𝑃𝑈𝑅(ℂ) = ∑𝑁̂𝑗
+𝑁𝑝𝑢𝑟(𝒞𝑗)
+𝐾
+𝑗=1
+ 
+(6.32) 
+
+A entropia de Shannon é uma medida clássica da teoria da informação que pode ser 
+utilizada para avaliar a heterogeneidade do agrupamento: quanto menor a entropia, 
+melhor o agrupamento. A entropia de um grupo é calculada como (cf. Tabela 6.1): 
+𝑒𝑛𝑡(𝒞𝑗) = −
+1
+log2 𝑚∑(𝑛𝑖𝑗
+𝑁̂𝑗
+) log2 (𝑛𝑖𝑗
+𝑁̂𝑗
+)
+𝑚
+𝑖=1
+ 
+(6.33) 
+A entropia do agrupamento é calculada como a média da entropia dos grupos ponde-
+rada pelo número de registros de cada grupo: 
+𝐸𝑁𝑇(ℂ) = ∑𝑁̂𝑗
+𝑁𝑒𝑛𝑡(𝒞𝑗)
+𝐾
+𝑗=1
+ 
+(6.34) 
+Há outras medidas externas para avaliação da qualidade de agrupamentos baseadas 
+em contagem de pares e informação mútua [544]. Entretanto, nem sempre uma infor-
+mação de classes é conhecida para a avaliação do agrupamento. Além disso, a estrutura 
+de grupos pode não coincidir com a estrutura de classes, o que não significa que o agru-
+pamento esteja inadequado (cf. Figura 6.2). Medidas internas e relativas são mais co-
+muns em problemas de agrupamento. 
+6.5.2 Medidas internas 
+Medidas internas avaliam um agrupamento utilizando apenas as informações dos re-
+gistros do conjunto de dados e o resultado do agrupamento. A função de avaliação de 
+um algoritmo de agrupamento, por exemplo, é uma medida interna de avaliação. Em 
+algoritmos hierárquicos, o coeficiente de correlação cofenética [572] é empregado para 
+avaliação de agrupamentos. 
+Uma medida interna muito utilizada é o índice de partição (PI, na sigla em inglês), pro-
+posta por Bensaid e colaboradores [41] para avaliação de agrupamentos fuzzy. O índice 
+PI, quando calculado com funções de pertinência binárias, é a razão entre o critério 
+quadrático do k-médias e a soma ponderada das distâncias entre centros: 
+𝑃𝐼(ℂ) =
+∑
+∑
+𝑢𝑖(𝐱(𝑡))
+2‖𝐱(𝑡) −𝛚𝑖‖2
+𝑁
+𝑡=1
+𝐾
+𝑖=1
+∑
+∑
+𝑁𝑖‖𝛚𝑖−𝛚𝑗‖
+2
+𝐾
+𝑗=1
+𝐾
+𝑖=1
+=
+𝑡𝑟(𝚺𝐖)
+∑
+∑
+𝑁𝑖‖𝛚𝑖−𝛚𝑗‖
+2
+𝐾
+𝑗=1
+𝐾
+𝑖=1
+ 
+(6.35) 
+onde 𝑡𝑟(𝚺𝐖) é o traço da matriz de variância intragrupos (cf. equação (6.6)). 
+
+Na avaliação de agrupamentos obtidos pelo algoritmo k-médias e suas variantes, o ín-
+dice PI permite a escolha do melhor agrupamento de um conjunto de soluções obtidas 
+com diversas inicializações aleatórias, mas com o mesmo número de grupos 𝐾. 
+Uma proposta para avaliação de agrupamentos é a visualização qualitativa da tendên-
+cia de agrupamento (VAT)* [49][239]. A VAT é basicamente o data image do conjunto 
+de dados com os registros ordenados segundo o resultado do agrupamento. Um bom 
+agrupamento mostra um contraste mais intenso que um agrupamento de pior quali-
+dade, para o mesmo conjunto de dados. 
+A Figura 6.12 mostra os resultados do agrupamento do conjunto de dados Íris com 𝐾=
+4 grupos. Foram realizados 25 agrupamentos distintos e selecionados os de menor e 
+maior valor de PI, que são apresentados, respectivamente, na coluna da esquerda e na 
+da direita da Figura 6.12. Podemos observar que o resultado com menor valor de PI (à 
+esquerda) resulta num contraste ligeiramente maior que o resultado com maior valor 
+de PI (à direita).  
+ 
+(a) 
+ 
+(b) 
+Figura 6.12: Data image do resultado do agrupamento do conjunto de dados Iris com 𝐾= 4: 
+(a) resultado com menor PI; (b) resultado com maior PI. 
+A avaliação qualitativa pelo data image é muito subjetiva, sendo preferível a utilização 
+de uma métrica quantitativa para a escolha do melhor agrupamento. As medidas rela-
+tivas permitem avaliar o número de grupos, principalmente em algoritmos de partição. 
+ 
+* Visual Assessment of (cluster) Tendency. 
+
+6.5.3 Medidas relativas 
+Os métodos de partição, principalmente o k-médias e suas variantes, são os mais utili-
+zados na prática e, nesse caso, as medidas relativas são empregadas para a descoberta 
+do número de grupos. As medidas relativas são índices utilizados para comparação de 
+diversas soluções do mesmo algoritmo, variando-se o número de grupos. No algoritmo 
+k-médias, o resultado depende da inicialização e as medidas relativas podem variar 
+para o mesmo número de grupos, sendo, portanto, uma função do agrupamento gerado 
+pelo algoritmo e não somente do número de grupos. 
+Num estudo realizado em 1985, Milligan e Cooper [388] compararam 30 medidas de 
+avaliação de agrupamento existentes na época. A medida que obteve o melhor resul-
+tado foi a proposta por Calinski e Harabasz [71] em 1974. 
+O índice Calinski-Harabasz (CH) de uma partição ℂ= {𝒞1, … , 𝒞𝐾} é calculado como: 
+𝐶𝐻(ℂ) = 𝑁−𝐾
+𝐾−1
+𝑡𝑟(𝚺𝐁)
+𝑡𝑟(𝚺𝐖) 
+(6.36) 
+onde, 𝑡𝑟(𝚺𝐁) e 𝑡𝑟(𝚺𝐖) são, respectivamente, os traços das matrizes de variância entre 
+grupos e intragrupos, definidas nas equações (6.5) e (6.6). 
+O índice CH é um critério de maximização, uma vez que o valor pequeno de 𝑡𝑟(𝚺𝐖) 
+indica grupos coesos e um valor grande de 𝑡𝑟(𝚺𝐁), grupos separados.  
+Um índice semelhante, proposto por Pakhira, Bandyopadhyay e Maulik [423] em 2006, 
+também é um critério de maximização calculado pelo produto de três termos: 
+𝑃𝐵𝑀(ℂ) = (1
+𝐾
+𝐸1
+𝐸𝐾
+1
+𝐷max
+)
+2
+ 
+(6.37) 
+onde 𝐸1 = ∑
+‖𝐱(𝑡) −𝐱̅‖
+𝑁
+𝑡=1
+ é constante para um determinado conjunto de dados. O 
+termo, 𝐸𝐾= ∑
+∑
+𝑢𝑖(𝐱(𝑡))‖𝐱(𝑡) −𝛚𝑖‖,
+𝐾
+𝑖=1
+𝑁
+𝑡=1
+ diminui com o aumento do número de gru-
+pos 𝐾 e o termo 𝐷max = max
+𝑖,𝑗=1…𝐾(‖𝛚𝑖−𝛚𝑗‖
+2) aumenta com o número de grupos. 
+O índice PBM utiliza os valores de distâncias nas somas de 𝐸1 e 𝐸𝐾, ao passo que as 
+matrizes de variância utilizadas no índice CH são calculadas pela soma das diferenças 
+ao quadrado (cf. equações (6.4)-(6.6)). A razão 𝐸1 𝐸𝐾
+⁄
+ favorece agrupamentos cuja va-
+riância intragrupos é a menor porção da variância total. O primeiro e o terceiro fatores 
+
+do índice PBM favorecem, respectivamente, agrupamentos com pequeno número de 
+grupos e com centros separados. 
+Uma medida de avaliação relativa muito conhecida é o coeficiente de silhueta [462], 
+que avalia a qualidade do agrupamento para cada registro como: 
+𝑠𝑤𝑖(𝑡) = −
+(𝑏𝑖(𝑡) −𝑎𝑖(𝑡))
+max
+𝑡=1,…,𝑁(𝑎𝑖(𝑡), 𝑏𝑖(𝑡)) 
+(6.38) 
+onde 𝑎𝑖(𝑡) é a média das distâncias entre o registro 𝐱(𝑡) e todos os outros registros 
+alocados ao mesmo grupo 𝒞𝑖 e 𝑏𝑖(𝑡) é a menor distância média entre 𝐱(𝑡) e os registros 
+alocados aos demais grupos 𝒞𝑗≠𝒞𝑖. 
+O valor 𝑎𝑖(𝑡) é calculado para cada registro 𝐱(𝑡) ∈𝒞𝑖 como a distância média para os 
+demais elementos do grupo: 
+𝑎𝑖(𝑡) = 1
+𝑁̂𝑖
+∑𝑑𝑖𝑠𝑡(𝐱(𝑡), 𝐱(𝑘))
+𝑁
+𝑘=1
+,
+𝐱(𝑘) ∈𝒞𝑖 
+(6.39) 
+O valor 𝑏𝑖(𝑡) = min
+𝑗
+(𝑎̅𝑗(𝑡)), onde 𝑎̅𝑗(𝑡) é a distância média de 𝐱(𝑡) para os registros 
+dos demais grupos 𝒞𝑗, 𝑗= 1, … , 𝐾, 𝑗≠𝑖, calculada como: 
+𝑎̅𝑗(𝑡) = 1
+𝑁̂𝑖
+∑𝑑𝑖𝑠𝑡(𝐱(𝑡), 𝐱(𝑘))
+𝑁
+𝑘=1
+,         𝐱(𝑡) ∈𝒞𝑗, 𝑗≠𝑖 
+(6.40) 
+O coeficiente de silhueta é definido no intervalo −1 < 𝑠𝑤𝑖(𝑡) < 1, sendo que o valor 
+𝑠𝑤𝑖(𝑡) ≈1 é obtido quando 𝑎𝑖(𝑡) ≈0, o que indica que o registro está no centro de um 
+agrupamento compacto. Quanto maior o valor do coeficiente de silhueta, melhor a po-
+sição do registro no agrupamento. O coeficiente de silhueta também pode ser utilizado 
+numa etapa de refinamento, verificando-se seu valor caso o registro seja alocado em 
+outro grupo. 
+O coeficiente de silhueta da partição ℂ= {𝒞1, … , 𝒞𝐾} é calculado como o valor médio do 
+coeficiente de silhueta para todos os registros e todos os grupos: 
+𝑆𝑊(ℂ) = 1
+𝐾𝑁∑∑𝑠𝑤𝑖(𝑡)
+𝑁
+𝑡=1
+𝐾
+𝑖=1
+ 
+(6.41) 
+
+O índice proposto por Xie e Beni [570] para avaliação de agrupamentos fuzzy é uma 
+medida de minimização que avalia a razão entre a variância intragrupos e a menor se-
+paração entre os grupos. O índice XB é similar ao PI e é calculado como: 
+𝑋𝐵(ℂ) = 1
+𝑁
+∑
+∑
+𝑢𝑖(𝐱(𝑡))
+2‖𝐱(𝑡) −𝛚𝑖‖2
+𝑁
+𝑡=1
+𝐾
+𝑖=1
+𝐷min
+= 1
+𝑁
+𝑡𝑟(𝚺𝐖)
+𝐷min
+ 
+(6.42) 
+onde 𝐷min =
+min
+𝑖,𝑗=1…𝐾,𝑖≠𝑗(‖𝛚𝑖−𝛚𝑗‖
+2). 
+As medidas relativas são geralmente aplicadas para a avaliação do número de grupos 
+em algoritmos de partição. No caso do algoritmo k-médias e suas variantes, a questão 
+da inicialização aleatória deve ser levada em consideração e uma avaliação estatística 
+em diferentes execuções com o mesmo número de grupos é a abordagem mais indicada 
+para uma avaliação isenta da influência da inicialização. 
+A Figura 6.13 apresenta boxplot dos resultados das medidas de validação aplicadas so-
+bre os resultados de 10 execuções do algoritmo k-médias no conjunto de dados quatro 
+grupos (cf. Figura 6.7). A linha azul representa a média das medidas em todas as simu-
+lações para cada valor de 𝐾. Neste exemplo, todas as medidas indicam o número de 
+grupos 𝐾= 4, que é o valor com menor dispersão de resultados. 
+Os resultados apresentados na Figura 6.13 mostram o desempenho das medidas de 
+avaliação num conjunto de dados com 𝑝= 2 variáveis e com uma estrutura de grupos 
+muito bem definida (cf. Figura 6.7). Na prática, as medidas de validação podem apre-
+sentar resultados conflitantes. 
+A Figura 6.14 apresenta os resultados de 100 simulações das medidas de validação no 
+conjunto de dados de Diabetes das índias Pima, que tem 𝑝= 8 variáveis. Nesse caso, as 
+medidas CH e XB apontam uma estrutura com 𝐾= 3 grupos por apresentar os melho-
+res valores dos índices e a menor dispersão. Os resultados do índice PBM e SW não são 
+conclusivos com relação ao número de grupos, mas o agrupamento com 𝐾= 3 grupos 
+também gera a menor dispersão dessas medidas.  
+Observe que o conjunto de dados de Diabetes das índias é um problema de classificação 
+com 𝑚= 2 classes, mas é desbalanceado com 65% dos registros numa das classes. Este 
+exemplo mostra que nem sempre a estrutura de grupos presente nos dados corres-
+ponde às classes do problema. 
+ 
+
+ 
+(a) 
+ 
+(b) 
+ 
+(c) 
+ 
+(d) 
+Figura 6.13: Resultados das medidas de validação: (a) CH; (b) PBM; (c) SW; (d) XB. 
+Mesmo um algoritmo simples como o k-médias acarreta num alto custo computacional 
+quando executado com diferentes inicializações e para vários valores do parâmetro K, 
+o que limita a análise em problemas de grande dimensionalidade. Entretanto, o algo-
+ritmo k-médias pode ser executado em paralelo [58][601] para viabilizar a busca do 
+melhor particionamento utilizando medidas de validação. Modenesi e colaboradores 
+[395]-[397] apresentam uma abordagem que integra a versão fuzzy do algoritmo k-
+médias (cf. Capítulo 8) com o cálculo do índice PBM de avaliação de grupos em proces-
+samento paralelo. 
+Um estudo abrangente sobre medidas relativas de validação de agrupamentos foi apre-
+sentado recentemente por Vendramin, Campello e Hruschka [538]. No artigo, os auto-
+res analisam e comparam 40 índices de validação em 1.080 conjuntos de dados dife-
+rentes. O artigo apresenta a descrição das medidas de validação acompanhada de aná-
+lises de complexidade assintótica. A análise experimental é feita em duas partes: na 
+
+primeira, é reproduzido o mesmo procedimento empregado por Milligan e Cooper 
+[388]; na segunda, a análise é estendida com conjuntos de dados maiores, com maior 
+diversidade de número de grupos e de variáveis. Os resultados mostram que os índices 
+CH, PBM e SW são os mais efetivos para encontrar o número de grupos presentes num 
+conjunto de dados. 
+ 
+(a) 
+ 
+(b) 
+ 
+(c) 
+ 
+(d) 
+Figura 6.14: Resultados das medidas de validação: (a) CH; (b) PBM; (c) SW; (d) XB. 
+A validação de agrupamentos é um assunto recorrente na literatura e diversas medidas 
+são encontradas na literatura [592][599]. Em geral, as medidas são avaliadas em con-
+juntos de dados sintéticos e de baixa dimensionalidade. A própria característica do pro-
+blema de análise de agrupamentos dificulta a definição de uma média absoluta para 
+avaliar a melhor solução.  
+
+6.6 Aplicações 
+A análise de agrupamentos tem aplicações em diversas áreas. Nesta seção, apresenta-
+mos duas aplicações em problemas reais em trabalhos de pesquisa realizados na Co-
+ppe/UFRJ [32][468]. 
+6.6.1 Segmentação de imagens de satélite 
+Segmentação de uma imagem é a partição da imagem em regiões representadas por 
+conjuntos de pixels. Essencialmente, a segmentação de imagens é uma aplicação de aná-
+lise de agrupamentos na qual os registros são os pixels e as variáveis são características 
+extraídas destes.  
+Nesta seção, apresentamos uma aplicação de segmentação de imagens para classifica-
+ção das zonas inundáveis na Amazônia a partir de imagens de satélite obtidas por ra-
+dares de abertura sintética (SAR, na sigla em inglês). As imagens SAR são úteis para 
+monitorar florestas tropicais úmidas, pois são imunes à cobertura de nuvens. A inter-
+pretação de imagens SAR permite a discriminação de áreas de cobertura vegetal, flo-
+restas inundadas e corpos d’água. 
+Beisl [32] utilizou imagens SAR da região Amazônica registradas pelo satélite JERS-1 e 
+obtidas no projeto de Mapeamento Global de Florestas Tropicais (GRFM, na sigla em 
+inglês) em duas épocas distintas: a época de cheia, captadas em outubro de 1995 (Fi-
+gura 6.15a), e a época de seca, em maio de 1996 (Figura 6.15b). Uma parte do trabalho 
+foi feita para a determinação do traçado do poliduto Coari-Manaus, da Petrobras. 
+Beisl realizou o mapeamento das mudanças em toda a extensão da bacia do Solimões 
+em função das variações no ciclo hidrológico do rio. O estudo relacionou os padrões de 
+mudança com as características do ambiente, que haviam sido identificadas em estudos 
+anteriores, para obter um mapa de sensibilidade da região ao derramamento de óleo.  
+Após o pré-processamento, os frames foram combinados para produzir as imagens 
+mostradas na Figura 6.15. A imagem cobre boa parte da bacia do Solimões, com cerca 
+de 600 km de extensão, onde Manaus aparece no alto à direita das imagens. As regiões 
+mais escuras indicam a reflexão total do sinal do radar e indicam corpos d’água. As 
+regiões de cinza mais escuro indicam o espalhamento do sinal pela copa das árvores e 
+indicam regiões de floresta. As regiões de cinza mais claro indicam regiões de dupla 
+
+reflexão, em que o sinal reflete na água, mas parte do sinal retorna após refletir nova-
+mente em algum obstáculo, como árvores, o que caracteriza floresta inundada. 
+ 
+(a) 
+ 
+(b) 
+Figura 6.15: Imagens SAR da Amazônia: (a) em época de cheia (outubro de 1995);  
+(b) em época de seca (maio de 1996). Fonte: [32]. 
+Em imagens SAR, o conteúdo é apresentado em um canal e a imagem é representada 
+pelo conjunto de dados 𝒵= {𝑧(𝑡) ∈ℛ, 𝑡= 1, … , 𝑁}, onde 𝑧(𝑡) é o valor do pixel. Beisl 
+[32] utilizou uma transformação do conjunto de dados 𝒵 pela função de semi vario-
+grama, que relaciona um pixel a seus vizinhos pela relação: 
+𝑥ℎ(𝑡) = 1
+2𝑛∑(𝑣ℎ(𝑡, 𝑖) −𝑧(𝑡))2
+𝑛
+𝑖=1
+ 
+(6.43) 
+onde  ℎ é um parâmetro que regula a extensão da vizinhança e 𝑛, o número de pixels de 
+vizinhança e  𝑣ℎ(𝑡, 𝑖) = ℎ(𝑡, 𝑖) uma função de vizinhança. 
+
+A função de vizinhança é calculada num círculo de raio ℎ centrado no pixel correspon-
+dente, como mostra a Figura 6.16 para ℎ= 6 pixels. 
+ 
+Figura 6.16: Função de vizinhança com ℎ= 6. 
+As imagens foram segmentadas pelo algoritmo textural não supervisionado por semi 
+variograma (USTC),* que utiliza a função semi variograma como um descritor de tex-
+tura [390][391]. No método USTC, o agrupamento é realizado pelo algoritmo ISODATA 
+[27] aplicado ao conjunto 𝒯= {𝐱(𝑡), 𝑡= 1 …  𝑁}, em que o vetor de variáveis tem di-
+mensão ℎ+ 2 e as componentes são calculados pela função de semi variograma (6.43) 
+como 𝐱(𝑡) = [𝑧(𝑡), 𝑥1(𝑡), … , 𝑥ℎ(𝑡), 𝜎ℎ
+2(𝑡)], incluindo o valor do pixel central 𝑧(𝑡) e 𝜎ℎ
+2(𝑡) 
+que é a variância calculada na região da função de vizinhança ℎ(𝑡, 𝑖), 𝑖= 1 … 𝑛. 
+O resultado obtido pelo algoritmo ISODATA é classificado por um especialista e os gru-
+pos são definidos para representar um significado temático. Beisl [32] utilizou quatro 
+classes: água, vegetação inundada e floresta seca ou inundada. O resultado final é mos-
+trado na Figura 6.17, na qual a região em verde representa floresta seca, a região em 
+azul representa corpos d’água, a região em amarelo representa floresta inundada e a 
+região em azul-claro, vegetação inundada. 
+Beisl utiliza o resultado da classificação de imagens obtida pelo método USTC para pro-
+duzir mapas de sensibilidade ao derramamento de óleo [32]. O trabalho utiliza siste-
+mas fuzzy para o cálculo do índice e os resultados são apresentados no Capítulo 8. 
+ 
+ 
+* Unsupervised Semivariogram Textural Classifier. 
+
+ 
+(a) 
+ 
+(b) 
+Figura 6.17: Resultados do USTC: (a) em época de cheia; (b) em época de seca. Fonte: [32]. 
+6.6.2 Agrupamento de documentos 
+Estima-se que 85% das informações estão armazenadas na forma não estruturada, o 
+que inclui imagens, gravações e, principalmente, texto. A mineração de textos utiliza 
+técnicas de recuperação de informações, processamento de linguagem natural e algo-
+ritmos de inteligência computacional para a extração de conhecimento de coleções de 
+documentos. A análise de agrupamentos de uma coleção de documentos permite a de-
+terminação dos principais assuntos da coleção e tem diversas aplicações, tendo em 
+vista que a maior parte dos documentos não é categorizada.  
+
+A abordagem mais comum para a mineração de textos é aplicar uma etapa de pré-pro-
+cessamento para transformar a coleção de documentos numa tabela de dados, de forma 
+que os algoritmos de mineração de dados possam ser aplicados [43][178][502]. O pré-
+processamento básico inclui a retirada de palavras irrelevantes (stopwords) e a redu-
+ção ao termo raiz (stemming). Outras etapas mais elaboradas podem incluir o trata-
+mento de polissemia (palavras diferentes utilizadas com o mesmo significado) e de ho-
+monímia (palavras iguais com significados diferentes), além da identificação de sintag-
+mas nominais [437] e outras técnicas de processamento de linguagem natural [294]. 
+Após o pré-processamento, cada documento é representado como um vetor em que os 
+componentes representam os termos (palavras após o pré-processamento) presentes 
+na coleção. Essa representação é chamada de modelo de espaço vetorial e é muito uti-
+lizada na área de recuperação de informações [43][467]. A coleção de documentos é, 
+assim, transformada no conjunto de treinamento 𝒯= {𝐱(𝑡), 𝑡= 1 …  𝑁}, onde 𝑁 é o 
+número total de documentos e cada documento é representado pelo vetor 𝐱(𝑡) ∈ℛ𝑝, 
+onde 𝑝 é o número total de termos da coleção. 
+As coordenadas associadas a cada documento no modelo de espaço vetorial podem ser 
+calculadas pela frequência do termo no documento. Em geral, utiliza-se o valor cha-
+mado tf-idf, em que a frequência do termo no documento é ponderada pelo logaritmo 
+do inverso da frequência do termo na coleção, o que evita que palavras muito citadas 
+em toda a coleção tenham peso muito alto. Cada coordenada é calculada como: 
+𝑥𝑖(𝑡) = 𝑓𝑖(𝑡) log 𝑁
+𝑁𝑖
+,
+𝑖= 1, … , 𝑝 
+(6.44) 
+onde 𝑓𝑖(𝑡) é a frequência do termo 𝑖 no documento 𝑡 e 𝑁𝑖 é o total de ocorrências do 
+termo 𝑖 em toda a coleção. 
+A ponderação pelo logaritmo do inverso da frequência reduz a importância de termos 
+que aparecem em muitos documentos da coleção e, portanto, são menos importantes 
+para diferenciar os documentos entre si. Há algumas variantes139 ao tf-idf que podem 
+apresentar resultados em aplicações específicas [372]. 
+A representação pelo modelo de espaço vetorial gera um conjunto de dados de altís-
+sima dimensionalidade. Dependendo do assunto, uma coleção pode conter milhares de 
+termos, o que pode dificultar o cálculo de similaridade entre documentos. Há algumas 
+abordagens de redução da dimensionalidade, das quais a mais conhecida é o índice de 
+
+semântica latente (LSI)* [43], cujo cálculo é semelhante à análise de componentes prin-
+cipais (ACP), apresentada na seção 2.4.1. 
+A aplicação de algoritmos de detecção de comunidades para o agrupamento de cole-
+ções de documentos foi estudada por Santos [468][469]. Nesta seção, reproduzimos os 
+resultados obtidos no conjunto de resumos das teses e dissertações do Programa de 
+Engenharia Civil140 (PEC) da Coppe/UFRJ, publicados entre janeiro de 2004 e dezem-
+bro de 2008, totalizando 585 resumos. Após o pré-processamento, a coleção foi repre-
+sentada por um conjunto de 265 termos [468]. 
+A coleção de documentos foi transformada num grafo para a aplicação do algoritmo de 
+maximização da modularidade de Newman e Girvan [413]. A similaridade entre os re-
+gistros foi utilizada para a definição da matriz de adjacências 𝐀∈ℛ𝑁×𝑁, cujos elemen-
+tos foram calculados como: 
+𝑎𝑖𝑗= {1,   se 𝑖≠𝑗 e 𝑠𝑖𝑚(𝐱(𝑖), 𝐱(𝑗)) > 𝜀 
+0,   caso contrário                              
+(6.45) 
+onde a função de similaridade 𝑠𝑖𝑚(𝐱(𝑖), 𝐱(𝑗)) é calculada pelo cosseno (cf. equação 
+(2.13)) e 𝜀∈[0,1] é um parâmetro que determina um limite de similaridade para dois 
+registros serem considerados próximos. 
+Cada valor do parâmetro 𝜀 na equação (6.45) define um grafo diferente que resulta 
+num número diferente de comunidades [413]. A Tabela 6.2 mostra os resultados de 
+modularidade (𝑄) e número de grupos (𝐾) para diversos valores de 𝜀 na definição do 
+grafo [468]. O resultado com 𝜀= 0.20 foi escolhido porque o número de grupos gera-
+dos é coerente com a estrutura de áreas de pesquisa do PEC. O algoritmo foi aprimo-
+rado por uma etapa de refinamento que, a cada nova divisão, verifica se o resultado da 
+modularidade pode ser melhorado alterando-se a alocação de cada documento a outro 
+grupo [541]. Com essa etapa de refinamento, Santos encontrou sete grupos com 𝜀=
+0.20 com modularidade 𝑄= 0.5334 [468]. 
+O resultado do agrupamento é mostrado na Figura 6.18, gerada com o software livre 
+Cytoscape.141 A Figura 6.18 foi gerada de forma que os vértices similares do grafo fi-
+quem mais próximos, representando a coesão dos grupos. 
+ 
+* Latent Semantic Index. 
+
+Tabela 6.2: Modularidade para vários valores de 𝜀. Fonte: [468] 
+𝜀 
+𝑄 
+𝐾 
+0.10 
+0.3232 
+4 
+0.15 
+0.4236 
+5 
+0.20 
+0.4998 
+6 
+0.25 
+0.5468 
+9 
+0.30 
+0.6588 
+12 
+0.35 
+0.7167 
+13 
+ 
+ 
+Figura 6.18: Rede de documentos resultante da análise de agrupamentos. Fonte: [468][469]. 
+Uma interpretação do resultado do agrupamento pode ser obtida observando-se os 
+termos mais importantes em cada grupo. A seleção de termos é um caso particular do 
+problema de seleção de variáveis [350][351]. Santos [468] utilizou uma abordagem 
+simples, na qual a relevância de cada termo para cada grupo 𝒞𝑖 é calculada como:  
+𝑟𝑒𝑙(𝑖, 𝑗) = ∑𝑥𝑗(𝑡)𝑢𝑖(𝐱(𝑡))
+𝑁
+𝑡=1
+ 
+(6.46) 
+
+onde 𝑢𝑖(𝐱(𝑡)) é a função de pertinência do documento 𝑡 ao grupo 𝒞𝑖.  
+Os 10 termos de maior relevância para cada grupo segundo o índice (6.46) são mostra-
+dos na Tabela 6.3 [468], na qual os grupos foram interpretados em relação às áreas de 
+pesquisa do PEC. Observa-se que o agrupamento recuperou os assuntos das principais 
+áreas de pesquisa do Programa. A área de Petróleo e Gás foi dividida em dois agrupa-
+mentos, que representam as duas linhas de pesquisa mais importantes da área: Geo-
+química e Geofísica. 
+Tabela 6.3: Palavras de cada grupo. Fonte: [468] 
+Grupo 
+Termos Relevantes 
+Área de Pesquisa 
+𝒞1 
+elemento, riser, estaca, linha, estrutura, finito, 
+duto, acoplamento, método, contorno 
+Mecânica Computacional 
+𝒞2 
+concreto, fibra, reforço, viga, agregado, misto, pa-
+vimento, resistência, armado, liga 
+Estrutura e Materiais 
+𝒞3 
+aterro, resíduo, solo, ensaio, contaminar, sólido, 
+geotecnia, rejeitar, argila, liga 
+Geotecnia /  
+Meio Ambiente 
+𝒞4 
+óleo, geoquímica, migrar, biomarcador, hidrocar-
+boneto, maturar, biodegradável, bacia, amostra, 
+sísmica 
+Petróleo e Gás  
+(Geoquímica) 
+𝒞5 
+classificação, redes, virtual, texto, dados, fuzzy, 
+mineração, algoritmo, regra, agrupamento 
+Sistemas Computacionais 
+𝒞6 
+reservatório, poço, fluxo, simulação, petróleo, flu-
+ido, produção, estimativa, otimização, rocha 
+Petróleo e Gás  
+(Geofísica) 
+𝒞7 
+bacia, hídrico, água, recursos, regra, gestão, co-
+brança, urbano, modelo, cheia 
+Recursos Hídricos /  
+Meio Ambiente 
+ 
+6.7 Comentários Finais 
+O problema de análise de agrupamentos é extenso e alguns livros tratam exclusiva-
+mente do assunto [194][573]. O problema é mal definido, o que dificulta a formulação 
+de estatísticas de validação. Há diversas abordagens distintas, sendo muito difícil uma 
+cobertura completa do assunto. 
+Os tópicos incluídos neste capítulo foram escolhidos para servir como introdução ao 
+tema e aos assuntos que serão tratados nos próximos capítulos. O algoritmo k-médias 
+e os algoritmos hierárquicos aglomerativos apresentados, respectivamente, nas seções 
+
+6.2 e 6.3, são as abordagens clássicas, presentes em praticamente todos os softwares e 
+bibliotecas. Os algoritmos baseados em grafos, apresentados na seção 6.4, têm sido uti-
+lizados em aplicações de mineração de textos e processamento de imagens. 
+A avaliação de agrupamentos depende muito do contexto e, quando disponível, a ava-
+liação de grupos como classes deve ser feita com cuidado, pois nem sempre os dois 
+conceitos são equivalentes. A relação entre classes e grupos fez surgir métodos chama-
+dos de classificação semi supervisionada [8][269][605], em que o conhecimento da 
+classe de alguns registros é utilizado para guiar o algoritmo de agrupamento. Esses 
+métodos têm aplicações em mineração de textos e bioinformática, onde um pequeno 
+número de registros anotados é utilizado para a classificação de um conjunto maior 
+não anotado. 
+As aplicações de mineração de textos e bioinformática trouxeram novos desafios para 
+os algoritmos de análise de agrupamentos, principalmente devido ao problema da di-
+mensionalidade. Nesse tipo de aplicação, os registros são descritos por vetores de 
+grande dimensão, o que dificulta a análise de similaridade entre os registros, funda-
+mental para o agrupamento. No estudo de caso apresentado na seção 6.6.2, a função 
+cosseno é utilizada como métrica de similaridade e um algoritmo de detecção de comu-
+nidades em redes complexas realiza o agrupamento dos documentos. A combinação de 
+técnicas de mineração de dados e de textos com análise de redes complexas também 
+tem sido aplicada para a análise de redes sociais [4][376]. 
+Este capítulo representa a transição entre os métodos clássicos e os métodos mais 
+avançados, que serão apresentados nos próximos capítulos.

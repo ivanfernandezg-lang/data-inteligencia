@@ -1,0 +1,263 @@
+% =============================================================================
+%  Resumo Capítulo 5 — CLASSIFICAÇÃO
+%  Livro: Evsukoff, A. (2020). Inteligência Computacional: Fundamentos e
+%         Aplicações. Rio de Janeiro: E-papers.
+% =============================================================================
+\input{_preambulo}
+
+\title{\sffamily\bfseries Capítulo 5 — Classificação\\
+       \large Decisão bayesiana, modelos lineares e avaliação de classificadores}
+\author{Resumo de estudo}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+
+\begin{conceito}
+A \textbf{classificação supervisionada} constrói um modelo capaz de
+predizer a classe correta $C_j$ de um registro a partir de seu vetor
+de variáveis de entrada $\mathbf{x}\in\R^p$. O classificador particiona
+(implícita ou explicitamente) o espaço de entrada em regiões
+associadas às classes; a fronteira entre regiões é a \emph{superfície
+de decisão}. Erros surgem quando registros próximos pertencem a
+classes diferentes (ruído, variáveis não observadas, sobreposição
+intrínseca). O capítulo formaliza a classificação a partir da
+\textbf{teoria bayesiana de decisão} e mostra como derivar, deste
+arcabouço, modelos lineares (mínimos quadrados, regressão logística).
+\end{conceito}
+
+\section{Classificação Bayesiana}
+
+\subsection{Decisão bayesiana}
+
+O Teorema de Bayes relaciona a \emph{probabilidade a posteriori} com a
+\emph{distribuição condicional} e a \emph{probabilidade a priori}:
+\begin{formula}
+\[
+P(C_i\mid\mathbf{x})=\frac{p(\mathbf{x}\mid C_i)\,P(C_i)}{p(\mathbf{x})},
+\qquad p(\mathbf{x})=\sum_{i=1}^{m}p(\mathbf{x}\mid C_i)P(C_i).
+\]
+\end{formula}
+Interpretação: o conhecimento do problema (probabilidade condicional)
+é \emph{invertido} pela observação $\mathbf{x}$ --- raciocínio abdutivo.
+
+\paragraph{Decisão por mínimo erro.}
+Atribui-se $\mathbf{x}$ à classe de maior posteriori. As regiões
+$\mathcal{R}_i=\{\mathbf{x}:P(C_i\mid\mathbf{x})\geq P(C_j\mid\mathbf{x})\;\forall j\}$
+\textbf{minimizam} a probabilidade de erro
+$P(E)=\sum_i\int_{\mathcal{R}_j}p(\mathbf{x}\mid C_i)P(C_i)\,d\mathbf{x}$.
+No ponto de fronteira:
+$p(\mathbf{x}\mid C_1)/p(\mathbf{x}\mid C_2)=P(C_2)/P(C_1)$ --- a
+classe mais frequente ``empurra'' a fronteira contra a menos frequente.
+
+\paragraph{Decisão por mínimo risco condicional.}
+Quando os erros têm custos $\lambda_{ij}$ assimétricos (ex.: diagnóstico
+de doença grave: falso negativo é muito pior que falso positivo),
+\[
+R(C_i\mid\mathbf{x})=\sum_{j}\lambda_{ij}P(C_j\mid\mathbf{x}),
+\]
+e decide-se pelo \emph{menor risco}. Em problemas desbalanceados, os
+custos podem ser usados para compensar a frequência das classes.
+
+\subsection{Classificador bayesiano simples (naïve Bayes)}
+
+Assume \textbf{independência condicional} entre as variáveis dado a
+classe:
+\[
+p(\mathbf{x}(t)\mid C_j)=\prod_{i=1}^{p}p(x_i(t)\mid C_j),
+\quad\text{usualmente }p(x_i\mid C_j)\sim N(\hat\mu_{ij},\hat\sigma_{ij}^2).
+\]
+Estimam-se apenas $2p$ parâmetros por classe (vs.\
+$p+p(p+1)/2$ da normal multivariada). Ajuste muito rápido, lida bem
+com variáveis numéricas e categóricas misturadas, tolerante a valores
+ausentes.
+
+\textbf{Limitação:} não captura correlações. Quando classes são
+linearmente separáveis e as variáveis são pouco correlacionadas, o
+desempenho é bom (Figura~5.5). Em problemas \emph{não} linearmente
+separáveis com forte correlação intra-classe, o classificador falha
+(Figura~5.6); aplicar ACP previamente pode descorrelacionar e salvar o
+modelo (Figura~5.7).
+
+Aplicações típicas: classificação de documentos, filtros de
+\emph{spam}, análise de sentimentos, componente em \emph{ensembles}.
+
+\subsection{Classificador bayesiano quadrático}
+
+Adota $p(\mathbf{x}\mid C_i)=N(\hat{\boldsymbol\mu}_i,\hat{\boldsymbol\Sigma}_i)$
+multivariada \textbf{sem} hipótese de independência. A função
+discriminante é
+\[
+g_i(\mathbf{x})=-\tfrac12(\mathbf{x}-\hat{\boldsymbol\mu}_i)
+\hat{\boldsymbol\Sigma}_i^{-1}(\mathbf{x}-\hat{\boldsymbol\mu}_i)\T
+-\tfrac12\ln|\hat{\boldsymbol\Sigma}_i|+\ln P(C_i),
+\]
+dominada por termo quadrático: \emph{superfícies de decisão
+quadráticas} (cônicas). Quando $\hat{\boldsymbol\Sigma}_i=\hat{\boldsymbol\Sigma}$
+para todas as classes, o termo quadrático é comum e o classificador
+torna-se \textbf{linear}:
+\[
+g_i(\mathbf{x})=\hat{\mathbf{x}}\,\boldsymbol\theta_i\T,\qquad
+\boldsymbol\theta_{i,1}=\hat{\boldsymbol\Sigma}^{-1}\hat{\boldsymbol\mu}_i\T.
+\]
+Em alta dimensão com poucos registros, é prudente reduzir
+dimensionalidade (ACP/ADL) antes de estimar as covariâncias --- por
+exemplo, no \emph{Wine} (13 variáveis, 178 registros), a ADL reduz a
+2~variáveis ($m-1=2$) e estabiliza o ajuste.
+
+\section{Modelos Lineares de Classificação}
+
+\subsection{Mínimos quadrados (MMQ)}
+
+Define-se a \textbf{variável indicadora bipolar}
+$v_i(t)=+1$ se $y(t)=i$, $-1$ caso contrário. O modelo linear estima
+$\hat v_i(t)=\hat{\mathbf{x}}(t)\boldsymbol\theta_i\T$ minimizando o EMQ:
+\[
+\boldsymbol\theta_i^{*}=
+(\hat{\mathbf{X}}\T\hat{\mathbf{X}})^{-1}\hat{\mathbf{X}}\T\mathbf{V}_i.
+\]
+Toda a maquinaria do Capítulo~3 (regularização de Tikhonov, PCA,
+bias--variância) aplica-se diretamente. O modelo linear de grau~1
+gera fronteira hiperplana; grau~2, fronteira quadrática.
+
+\subsection{Mínimos quadrados ponderados (MMQP)}
+
+Atribui peso $w(t)$ a cada registro:
+\begin{formula}
+\[
+\boldsymbol\theta_i^{*}=
+(\hat{\mathbf{X}}\T\mathbf{W}\hat{\mathbf{X}})^{-1}
+\hat{\mathbf{X}}\T\mathbf{W}\mathbf{V}_i,\quad
+\mathbf{W}=\diag(\mathbf{w}).
+\]
+\end{formula}
+Para neutralizar o desbalanceamento, sugere-se
+$w(t)=1-N_i/N$ para $\mathbf{x}(t)\in C_i$ (peso inverso à
+frequência). Equivale, na visão bayesiana, a remover a influência da
+\emph{priori} $P(C_i)$. Resultado: erro global maior, mas melhor
+recuperação da classe minoritária.
+
+\subsection{Regressão logística}
+
+A função discriminante é a \textbf{sigmoide} aplicada ao modelo linear:
+\[
+g(\mathbf{x},\boldsymbol\theta)=
+\frac{1}{1+\exp(-\hat{\mathbf{x}}\,\boldsymbol\theta\T)}\;\approx\; P(C\mid\mathbf{x}),
+\]
+o que devolve uma \emph{interpretação probabilística}. Modelando
+$P(v=1\mid\mathbf{x})$ como Bernoulli, a verossimilhança é
+\[
+L(\boldsymbol\theta)=\prod_{t=1}^{N}\hat v(t)^{v(t)}(1-\hat v(t))^{1-v(t)},
+\]
+e o ajuste minimiza a \textbf{log-verossimilhança negativa} (entropia
+cruzada binária):
+\[
+\ell(\boldsymbol\theta)=-\sum_{t=1}^{N}\bigl[v(t)\log\hat v(t)+(1-v(t))\log(1-\hat v(t))\bigr].
+\]
+Como $\boldsymbol\theta$ aparece não linearmente, resolve-se por
+Newton--Raphson (algoritmo IRLS, \emph{iteratively reweighted least
+squares}) ou por gradiente. A extensão multiclasse é a
+\textbf{regressão softmax} (Capítulo~9).
+
+\section{Avaliação de Classificadores}
+
+\subsection{Estatísticas a partir da matriz de confusão}
+
+\begin{center}
+\begin{tabular}{c|cc|c}
+\toprule
+ & $\hat C_1$ & $\hat C_2$ & total \\
+\midrule
+$C_1$ & VP & FN & $N_1$ \\
+$C_2$ & FP & VN & $N_2$ \\
+\midrule
+total & $\hat N_1$ & $\hat N_2$ & $N$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Acurácia:} $\mathrm{ACC}=(\mathrm{VP}+\mathrm{VN})/N$.
+  \item \textbf{Erro:} $\mathrm{ERR}=1-\mathrm{ACC}$.
+  \item \textbf{Precisão} $\mathrm{PRE}(C_1)=\mathrm{VP}/(\mathrm{VP}+\mathrm{FP})$:
+        confiabilidade de uma predição positiva.
+  \item \textbf{\emph{Recall}/sensibilidade}
+        $\mathrm{REC}(C_1)=\mathrm{VP}/(\mathrm{VP}+\mathrm{FN})$:
+        proporção de positivos reais capturados.
+  \item \textbf{Medida F:}
+        $F(C_i)=2\,\mathrm{PRE}\cdot\mathrm{REC}/(\mathrm{PRE}+\mathrm{REC})$
+        --- média harmônica.
+  \item \textbf{Estatística kappa}
+        $\kappa=(\mathrm{ACC}-P(E))/(1-P(E))$, com
+        $P(E)=P(C_1)P(\hat C_1)+P(C_2)P(\hat C_2)$. Mede acordo acima
+        do esperado por acaso ($\kappa\geq 0{,}8$ excelente,
+        $0{,}6$--$0{,}8$ razoável, $\leq 0$ pior que aleatório).
+\end{itemize}
+
+\subsection{Espaço ROC e AUC}
+
+Eixos: $\mathrm{TFP}=\mathrm{FP}/(\mathrm{FP}+\mathrm{VN})$ e
+$\mathrm{TVP}=\mathrm{REC}(C_1)$. O ponto $(0,1)$ é o classificador
+ideal; a diagonal corresponde a $\kappa=0$. A
+\textbf{área sob a curva ROC} (resumida em um único ponto) é
+\[
+\mathrm{AUC}=\frac{\mathrm{REC}(C_1)+\mathrm{REC}(C_2)}{2}.
+\]
+Para múltiplas classes, ponderar pelas \emph{prioris}:
+$\mathrm{AUC}=\sum_i \mathrm{AUC}(C_i)P(C_i)$. A AUC é a métrica
+recomendada em problemas \emph{desbalanceados}, pois a acurácia tende
+a favorecer a classe majoritária.
+
+\section{Aplicações}
+
+\begin{aplicacao}
+\textbf{Benchmarks UCI} (10 conjuntos: Iris, Balance, Diabetes Pima,
+Cancer, Statlog Heart, Wine, Parkinson, Ionosphere, Spambase, Sonar).
+Comparados Bayes Naïve, Bayes Quadrático, regressão logística, modelo
+linear de 1ª e 2ª ordem em validação cruzada de 10 ciclos.
+O \textbf{modelo linear de 2ª ordem} (M.\,Lin.\,2) obtém o melhor
+\emph{ranking} pelo teste não paramétrico de Friedman \emph{aligned
+rank} ($p\approx 0{,}08$ tanto em ACC quanto em AUC), confirmando que
+o MMQ é mais robusto que a estimativa de parâmetros do classificador
+bayesiano em conjuntos pequenos.
+\end{aplicacao}
+
+\begin{aplicacao}
+\textbf{Análise de \emph{churn} em telefonia} (Cister, 2007). Base com
+1\,141 clientes corporativos de alto valor, 6 meses de consumo médio
+($x_1,\dots,x_6$). Apenas 7{,}17\% cancelaram (classe $C_2$,
+\emph{minoritária e mais relevante}). \textbf{Sem ponderação}, o
+modelo bayesiano simples atinge ACC$\,=92{,}82\%$ mas AUC$\,=0{,}51$
+--- praticamente aleatório, pois acerta tudo na classe majoritária.
+\textbf{Com ponderação} pelo complemento da \emph{priori}, ACC cai
+mas AUC sobe a $0{,}79$--$0{,}89$, recuperando a classe de
+cancelamentos. Lição: em problemas altamente desbalanceados, ACC
+\emph{engana}; usar AUC e \emph{recall} da classe minoritária.
+\end{aplicacao}
+
+\section{Comentários finais}
+
+\begin{enumerate}[leftmargin=1.2cm]
+  \item A regra de Bayes é o esqueleto conceitual da classificação:
+        mesmo que o classificador final não seja explicitamente
+        bayesiano, os efeitos da \emph{priori} e da distribuição
+        condicional permeiam qualquer modelo ajustado por
+        minimização de erro.
+  \item Em geral, \textbf{estimar a função discriminante} (modelos
+        lineares, logística, SVM, redes neurais) é mais fácil que
+        estimar as distribuições condicionais completas em alta
+        dimensão.
+  \item A \textbf{validação cruzada} e a escolha cuidadosa de
+        métricas (AUC, $\kappa$, F) são indispensáveis em problemas
+        desbalanceados.
+  \item Tópicos correlatos não cobertos: árvores de decisão
+        (Quinlan), redes bayesianas (Koller \& Friedman), SVM
+        (Vapnik) e redes neurais profundas --- estas tratadas nos
+        Capítulos 7, 8 e 9.
+  \item Para desbalanceamento, além de ponderar registros, há
+        técnicas de \textbf{reamostragem} como o algoritmo SMOTE,
+        muito eficaz em conjunto com árvores de decisão.
+\end{enumerate}
+
+\end{document}

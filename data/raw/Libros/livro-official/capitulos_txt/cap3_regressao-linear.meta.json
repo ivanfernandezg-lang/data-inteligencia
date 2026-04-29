@@ -1,0 +1,12 @@
+{
+  "numero": 3,
+  "titulo": "Regressão Linear",
+  "slug": "regressao-linear",
+  "pdf_inicio": 79,
+  "pdf_fin": 116,
+  "n_paginas": 38,
+  "n_caracteres_texto": 58681,
+  "n_palabras_aprox": 9740,
+  "pdf_salida": "cap3_regressao-linear.pdf",
+  "txt_salida": "cap3_regressao-linear.txt"
+}

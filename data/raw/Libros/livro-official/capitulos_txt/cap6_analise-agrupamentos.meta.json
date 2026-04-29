@@ -1,0 +1,12 @@
+{
+  "numero": 6,
+  "titulo": "Análise de Agrupamentos",
+  "slug": "analise-agrupamentos",
+  "pdf_inicio": 190,
+  "pdf_fin": 236,
+  "n_paginas": 47,
+  "n_caracteres_texto": 75293,
+  "n_palabras_aprox": 12321,
+  "pdf_salida": "cap6_analise-agrupamentos.pdf",
+  "txt_salida": "cap6_analise-agrupamentos.txt"
+}

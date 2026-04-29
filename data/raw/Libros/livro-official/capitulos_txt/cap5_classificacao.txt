@@ -1,0 +1,1397 @@
+5    CLASSIFICAÇÃO 
+O objetivo da classificação supervisionada, ou simplesmente classificação, é o desen-
+volvimento de um classificador, isto é, um modelo capaz de predizer a classe correta 
+de um registro a partir dos valores das variáveis de entrada. A classificação pode ser 
+entendida como um problema de decisão em que uma classe é escolhida de acordo com 
+os valores dos atributos do problema, que são as variáveis de entrada. 
+Um modelo de classificação divide de forma explícita ou implícita o espaço de variáveis 
+de entrada em regiões que são associadas às classes. A fronteira entre as regiões é cha-
+mada de superfície de decisão. A predição da classe é feita a partir da verificação da 
+região correspondente ao registro que se deseja classificar. Em problemas reais, regis-
+tros com valores similares de variáveis de entrada podem pertencer a classes diferen-
+tes devido ao efeito de variáveis não observadas, ruído etc. Esse tipo de registro é tra-
+tado como erro de classificação e o modelo é ajustado para minimizar esse erro. Em 
+alguns casos, chamados desbalanceados, as classes não têm o mesmo número de regis-
+tros, o que pode levar o modelo a realizar previsões enviesadas.  
+Este capítulo apresenta o problema de classificação a partir da teoria bayesiana de de-
+cisão, que permite uma formalização matematicamente simples e bastante elucidativa 
+sobre as principais características do problema. Em seguida, apresentamos o método 
+de discriminante linear em que a classificação é tratada como um problema de predição 
+análogo à regressão linear e o modelo de regressão logística, muito conhecido na lite-
+ratura. Este capítulo também apresenta as estatísticas mais utilizadas para avaliação 
+da qualidade do modelo de classificação e alguns exemplos de aplicação. 
+
+5.1 Classificação Bayesiana 
+O teorema (ou regra) de Bayes115 foi criado pelo pastor Thomas Bayes e publicado em 
+1764, após sua morte, pelo amigo e filósofo Richard Price. O teorema de Bayes introduz 
+a interpretação bayesiana da probabilidade como uma medida do “grau de conheci-
+mento” sobre um evento em contraste com a interpretação baseada na frequência que 
+mede a propensão de um evento ocorrer. 
+A apresentação do teorema de Bayes nesta seção é focada no problema de classificação 
+e utiliza uma notação que evidencia os valores de probabilidade como função das vari-
+áveis do problema. 
+5.1.1 Decisão bayesiana 
+O problema de classificação é essencialmente uma decisão, uma vez que uma das clas-
+ses deve ser escolhida em função dos valores das variáveis de entrada. A tomada de 
+decisão no problema de classificação pode ser formalizada pelo teorema de Bayes 
+[146][521], que relaciona o conhecimento prévio do problema na forma: 
+𝑃(𝐶𝑖|𝐱) = 𝑝(𝐱|𝐶𝑖)𝑃(𝐶𝑖)
+𝑝(𝐱)
+ 
+(5.1) 
+onde 𝑃(𝐶𝑖|𝐱) é a probabilidade de observar a classe 𝐶𝑖 conhecendo a observação (evi-
+dência) dos valores das variáveis 𝐱, chamada probabilidade a posteriori; 𝑝(𝐱|𝐶𝑖) re-
+presenta a distribuição de probabilidades das variáveis 𝐱 quando a classe observada é 
+𝐶𝑖, chamada de distribuição* de probabilidade condicional; e 𝑃(𝐶𝑖) é a probabilidade 
+de ocorrência da classe 𝐶𝑖 na ausência de qualquer observação, chamada de probabi-
+lidade a priori. O denominador 𝑝(𝐱) = ∑
+𝑝(𝐱|𝐶𝑖)𝑃(𝐶𝑖)
+𝑚
+𝑖=1
+ é a probabilidade de obser-
+var valores das variáveis 𝐱, que funciona como um fator de padronização para que o 
+resultado permaneça no intervalo [0,1]. 
+A equação (5.1) mostra de forma simples como a probabilidade de um evento é alte-
+rada pelo conhecimento de evidências relacionadas. O teorema de Bayes realiza uma 
+“inversão” do conhecimento representado pela probabilidade condicional, o que mos-
+tra o raciocínio abdutivo116 do problema de classificação.  
+ 
+* Adotamos a notação com 𝑝 minúsculo para representar uma função distribuição de probabilidades e 𝑃 
+maiúsculo para representar um valor de probabilidades. 
+
+Considere, por exemplo, o raciocínio de um médico para o diagnóstico de uma doença 
+a partir dos sintomas observados. O resultado do diagnóstico é determinado pela pro-
+babilidade a posteriori, isto é, o médico vai escolher, dentre as hipóteses plausíveis para 
+o quadro observado, aquela que julgar mais provável. O conhecimento do médico é re-
+presentado pela probabilidade condicional que estabelece a probabilidade de observa-
+ção de um conjunto de sintomas 𝐱 na presença de alguma doença 𝐶𝑖. A probabilidade a 
+priori influi na decisão do médico, que, na observação dos mesmos sintomas, vai ter a 
+tendência de decidir pela doença mais frequente.  
+A interpretação da equação (5.1) no contexto do problema de classificação fornece os 
+elementos para o correto entendimento das características do problema e serve para o 
+desenvolvimento de modelos de classificação.  
+Vamos considerar um exemplo simples, com apenas uma variável de entrada e duas 
+classes. Inicialmente, vamos supor que as duas classes ocorrem coma mesma frequên-
+cia, ou seja, têm a mesma probabilidade a priori 𝑃(𝐶1) = 𝑃(𝐶2) = 0.5. Vamos conside-
+rar também que as duas classes têm distribuição de probabilidade condicional normal 
+𝑁(𝜇, 𝜎) de média 𝜇 e desvio padrão 𝜎. Para o exemplo discutido a seguir, foram utiliza-
+das as distribuições 𝑝(𝑥|𝐶1) = 𝑁(2.5, 2.5) e 𝑝(𝑥|𝐶2) = 𝑁(−1.5, 2.0). 
+A distribuição de probabilidade condicional para cada uma das classes e os valores de 
+probabilidade a posteriori calculados pela regra de Bayes são mostrados na Figura 5.1. 
+A função de probabilidade condicional 𝑝(𝑥|𝐶𝑖) informa a probabilidade de observar um 
+valor 𝑥 sabendo-se que a classe é 𝐶𝑖. No exemplo, a média da distribuição 𝑝(𝑥|𝐶1) é 
+maior que a média de 𝑝(𝑥|𝐶2). 
+(a) 
+(b) 
+Figura 5.1: Regra de Bayes: (a) probabilidade condicional; (b) probabilidade a posteriori. 
+
+No classificador bayesiano, o resultado do problema de classificação é obtido por uma 
+regra de decisão, definida sobre os valores de probabilidade a posteriori das classes 
+calculados pelo teorema de Bayes.  
+5.1.1.1 Decisão pelo mínimo erro de classificação 
+A decisão mais simples para a classificação bayesiana é feita pelo valor máximo de pro-
+babilidade a posteriori, que resulta na divisão do espaço das variáveis de entrada em 
+duas regiões, cada uma associada a uma das classes, da seguinte forma: 
+ℛ1 = {𝑥∈ℛ, 𝑃(𝐶1|𝑥) ≥𝑃(𝐶2|𝑥)} 
+ℛ2 = {𝑥∈ℛ, 𝑃(𝐶2|𝑥) > 𝑃(𝐶1|𝑥)} 
+(5.2) 
+A Figura 5.1a mostra que valores da variável na região de sobreposição das funções de 
+densidade condicional podem pertencer simultaneamente às duas classes com proba-
+bilidades diferentes. Dessa forma, considerando essa única variável, haverá um erro 
+de classificação, calculado pela probabilidade de classificação incorreta como: 
+𝑃(𝐸) = ∫𝑝(𝑥|𝐶2)𝑃(𝐶2)𝑑𝑥
+ℛ1
++ ∫𝑝(𝑥|𝐶1)𝑃(𝐶1)𝑑𝑥
+ℛ2
+ 
+(5.3) 
+O primeiro termo à direita da equação (5.3) representa o percentual de registros da 
+classe 𝐶2 que serão classificados como 𝐶1 por estarem na região 𝑅1. Analogamente, o 
+segundo termo representa o percentual de registros da classe 𝐶1 que serão classifica-
+dos como 𝐶2. O resultado da equação (5.3) para o exemplo da Figura 5.1 é mostrado na 
+Figura 5.2, na qual as distribuições condicionais 𝑝(𝑥|𝐶𝑖) são mostradas em linhas tra-
+cejadas e as distribuições 𝑝(𝑥|𝐶𝑖)𝑃(𝐶𝑖), em linhas cheias. 
+ 
+Figura 5.2: Probabilidade de classificação incorreta. 
+
+É fácil mostrar que a classificação realizada pelas regiões ℛ1 e ℛ2 definidas nas equa-
+ções (5.2) minimizam o erro definido pela equação (5.3) [521]. Observando a Figura 
+5.2, uma regra de decisão diferente de (5.2) resulta num aumento da área correspon-
+dente à equação (5.3), ou seja, da probabilidade de erro de classificação. 
+As regiões associadas às classes pela regra de decisão (5.2) seriam as mesmas se a de-
+cisão fosse realizada diretamente sobre a função de distribuição condicional, pois, no 
+exemplo da Figura 5.2, as classes são equiprováveis. Quando a frequência relativa das 
+classes é diferente, esse resultado não é valido e a região da classe mais frequente au-
+menta em relação à da menos frequente para refletir o efeito das classes mais frequen-
+tes. A Figura 5.3 mostra o resultado da probabilidade a posteriori quando as probabili-
+dades a priori são diferentes. Observe o deslocamento do ponto de decisão em relação 
+ao ponto de interseção das distribuições de probabilidade condicionais. 
+No ponto de decisão, ou seja, no valor limite entre as regiões ℛ1 e ℛ2 , os valores de 
+probabilidade a posteriori são iguais e 𝑝(𝑥|𝐶1)𝑃(𝐶1) = 𝑝(𝑥|𝐶2)𝑃(𝐶2). Dessa forma, po-
+demos escrever: 
+𝑝(𝑥|𝐶1)
+𝑝(𝑥|𝐶2) = 𝑃(𝐶2)
+𝑃(𝐶1) 
+(5.4) 
+ 
+(a) 
+ 
+(b) 
+Figura 5.3: Regra de Bayes: (a) 𝑃(𝐶1) > 𝑃(𝐶2); (b) 𝑃(𝐶2) > 𝑃(𝐶1). 
+A equação (5.4) mostra que, no caso de problemas desbalanceados, a superfície de de-
+cisão é obtida quando a probabilidade condicional da classe menos frequente supera a 
+probabilidade condicional da mais frequente na mesma razão do cociente das proba-
+bilidades a priori.  
+
+5.1.1.2 Decisão pelo mínimo risco condicional 
+No problema de duas classes em que uma é considerada positiva e outra, negativa, o 
+resultado de um modelo de classificação pode ser apresentado pela matriz de confu-
+são da Tabela 5.1. O resultado é chamado de verdadeiro positivo (VP) quando a classe 
+positiva é predita corretamente pelo modelo ou verdadeiro negativo (VN) quando a 
+classe negativa é predita corretamente. Os erros de classificação ocorrem de duas for-
+mas: se a classe positiva é predita quando a classe observada é negativa, o resultado é 
+falso positivo (FP) (ou erro do Tipo I na nomenclatura de testes de hipóteses); o falso 
+negativo (FN) (ou erro do Tipo II) acontece se a classe negativa é predita quando a 
+classe observada é positiva.  
+Tabela 5.1: Matriz de confusão 
+ 
+𝐶1 Predita 
+𝐶2 Predita 
+𝐶1 Real 
+VP 
+FN 
+𝐶2 Real 
+FP 
+VN 
+ 
+A matriz de confusão também será utilizada na seção 5.3 para avaliação de classifica-
+dores. Nesta seção, a matriz de confusão é utilizada para apresentar o conceito de risco 
+de classificação incorreta. 
+Em muitas aplicações, principalmente quando as classes são desbalanceadas, o custo 
+da classificação incorreta é diferente de acordo com o tipo de erro. Considere, por 
+exemplo, um problema de diagnóstico médico a partir de um exame em que a classe 
+positiva representa a presença de uma determinada doença grave. O erro FP consiste 
+em alarmar o paciente desnecessariamente, enquanto o erro FN pode ter impacto im-
+portante no tratamento por atrasar a detecção da doença. Considerando que a proba-
+bilidade a priori de pacientes saudáveis é maior que a de pacientes portadores da do-
+ença, a classificação realizada de acordo com a regra (5.2) só detectaria a doença em 
+casos nos quais as evidências fossem muito fortes.  
+O formalismo de decisão bayesiana permite representar o custo associado a cada deci-
+são. O risco condicional associado a escolher uma classe 𝐶𝑖 a partir da observação das 
+evidências 𝐱 é escrito como [146]: 
+
+𝑅(𝐶𝑖|𝐱) = ∑𝜆𝑖𝑗𝑃(𝐶𝑗|𝐱)
+𝑚
+𝑗=1
+ 
+(5.5) 
+onde 𝜆𝑖𝑗 é o custo associado a escolher a classe 𝐶𝑖 quando a classe correta é 𝐶𝑗.  
+No caso do problema de duas classes considerado anteriormente, o risco condicional 
+associado a cada classe é calculado como: 
+𝑅(𝐶1|𝑥) = 𝜆11𝑃(𝐶1|𝑥) + 𝜆12𝑃(𝐶2|𝑥) 
+𝑅(𝐶2|𝑥) = 𝜆21𝑃(𝐶1|𝑥) + 𝜆22𝑃(𝐶2|𝑥) 
+(5.6) 
+A decisão é calculada pelo menor risco condicional, que não é uma probabilidade. Con-
+siderando o risco de classificação correta nulo, 𝜆11 = 𝜆22 = 0, as regiões associadas às 
+classes são calculadas como: 
+ℛ1 = {𝑥∈ℛ, 𝜆21𝑃(𝐶1|𝑥) ≥𝜆12𝑃(𝐶2|𝑥)} 
+ℛ2 = {𝑥∈ℛ, 𝜆12𝑃(𝐶2|𝑥) > 𝜆21𝑃(𝐶1|𝑥)} 
+(5.7) 
+A Figura 5.4 mostra a diferença da decisão de classificação calculada a partir do valor 
+das probabilidades a posteriori (cf. equações (5.2)) ou pelo risco condicional (cf. equa-
+ções (5.7)). No exemplo, as classes foram consideradas equiprováveis para facilitar a 
+interpretação. Na Figura 5.4, as linhas tracejadas representam a distribuição de valores 
+de probabilidade a posteriori e as linhas cheias, os valores de risco de classificação in-
+correta calculado pela equação (5.6). 
+ 
+(a) 
+ 
+(b) 
+Figura 5.4: Decisão pelo risco de classificação: (a) 𝜆12 > 𝜆21;(b) 𝜆21 > 𝜆12. 
+
+Quando o custo de classificação incorreta λ12 > λ21, ou seja, o erro em favor da classe 
+𝐶1 é mais grave, a região ℛ1 calculada pela minimização do risco condicional (cf. equa-
+ções (5.7)) é menor que a correspondente calculada pela minimização do erro de clas-
+sificação (cf. equações (5.2)). Dessa forma, o limite de decisão se desloca visando redu-
+zir a região associada à classe com maior custo de classificação incorreta. Caso contrá-
+rio, quando λ21 > λ12, o limite de decisão se desloca em favor da classe 𝐶1 uma vez que 
+o custo de classificação incorreta dessa classe é menor.  
+O erro de classificação calculado pela equação (5.3) é maior caso a decisão seja reali-
+zada pelo risco condicional, uma vez que a decisão pela probabilidade a posteriori é a 
+que minimiza o erro de classificação. Entretanto, embora globalmente o erro seja 
+maior, ele será menor na classe de maior custo de classificação incorreta. 
+A aplicação da decisão pelo mínimo risco condicional depende de estimativas dos va-
+lores de custo 𝜆𝑖𝑗. Em problemas em que o custo pode ser quantificado, os parâmetros 
+são definidos facilmente. Entretanto, na maioria dos casos, os custos não podem ser 
+especificados diretamente e os valores são estimados de forma ad hoc. Em problemas 
+desbalanceados, os custos de classificação incorreta podem ser calculados para com-
+pensar o efeito do desbalanceamento. 
+O formalismo da classificação bayesiana é aplicado diretamente sobre dois modelos de 
+classificação que são apresentados a seguir. 
+5.1.2 Classificador bayesiano simples 
+No problema de classificação, o conjunto de dados 𝒯= {(𝐱(𝑡), 𝑦(𝑡)), 𝑡= 1 …  𝑁}, onde 
+cada registro 𝑡 é formado por pares ordenados (𝐱(𝑡), 𝑦(𝑡)), sendo 𝐱(𝑡) ∈ℛ𝑝 o vetor 
+das variáveis de entrada e a variável de saída 𝑦(𝑡) ∈𝒩, em que valor 𝑦(𝑡) = 𝑗 associa 
+o registro 𝑡 à classe 𝐶𝑗, 𝑗= 1, … , 𝑚. É importante observar que os índices não represen-
+tam uma relação de ordem entre as classes, apenas facilitam a representação das clas-
+ses de forma simbólica. 
+O classificador bayesiano utiliza diretamente a regra de Bayes (5.1) para o cálculo da 
+probabilidade a posteriori e realiza a decisão por uma das formas apresentadas anteri-
+ormente, geralmente pelo mínimo erro de classificação. No classificador bayesiano 
+simples ou ingênuo (naïf), a distribuição de probabilidade condicional dos registros 
+
+do conjunto de treinamento é calculada, para cada classe, por uma estimativa que con-
+sidera as variáveis de entrada independentes. Dessa forma, o classificador bayesiano 
+simples não leva em consideração a covariância entre as variáveis e a distribuição de 
+probabilidade condicional conjunta para cada classe é calculada como: 
+𝑝(𝐱(𝑡)|𝐶𝑗) = ∏𝑝(𝑥𝑖(𝑡)|𝐶𝑗)
+𝑝
+𝑖=1
+,
+𝑗= 1, … , 𝑚 
+(5.8) 
+No modelo mais comum, a probabilidade condicional de cada variável é estimada como 
+uma distribuição normal monovariável 𝑝(𝑥𝑖(𝑡)|𝐶𝑗) ≈𝑁(𝜇̂𝑖𝑗, 𝜎̂𝑖𝑗
+2). Os parâmetros de 
+média 𝜇̂𝑖𝑗 e de variância 𝜎̂𝑖𝑗
+2 são estimados no conjunto de treinamento como a média e 
+a variância da variável 𝑥𝑖(𝑡) nos registros da classe 𝐶𝑗. Há variantes que utilizam outros 
+modelos de distribuição condicional.117 
+A hipótese de independência entre as variáveis de entrada reduz consideravelmente o 
+número de parâmetros a serem ajustados pelo classificador. A estimativa da matriz de 
+covariâncias da distribuição normal multivariada (cf. equação (2.6)) requer 𝑝(𝑝+ 1)/2 
+parâmetros para cada classe, o que resulta num total de 𝑝+ 𝑝(𝑝+ 1)/2 parâmetros, 
+incluindo as médias. No classificador bayesiano simples, a hipótese de independência 
+reduz o número de parâmetros a serem ajustado a apenas 2𝑝 para cada classe. 
+O ajuste de parâmetros do classificador bayesiano simples é muito eficiente. Para cada 
+classe, para cada variável, calcula-se a média 𝜇̂𝑖𝑗 e a variância 𝜎̂𝑖𝑗
+2 estimadas – se a vari-
+ável for numérica – ou então diretamente a frequência de cada valor nominal – quando 
+a variável for categórica. A probabilidade a priori também é calculada diretamente pela 
+frequência da classe.  
+Na avaliação, o resultado do classificador bayesiano simples é a probabilidade a poste-
+riori, calculada diretamente pelo teorema de Bayes (cf. equação (5.1)), em que a pro-
+babilidade condicional conjunta é calculada pela equação (5.8). A decisão de classifica-
+ção pode ser feita pela regra de mínimo erro de classificação ou de mínimo risco. 
+A Figura 5.5a mostra um exemplo sintético de um problema linearmente separável em 
+𝑝= 2 dimensões. A Figura 5.5b apresenta a superfície de decisão e as regiões associa-
+das a cada classe pelo valor máximo de probabilidade a posteriori. As Figura 5.5c e 5.5d 
+mostram, respectivamente, as distribuições de probabilidade condicional normal ajus-
+tadas para cada uma das variáveis. Podemos perceber que, apesar de existir correlação 
+
+entre as variáveis, a diferença das médias das distribuições de probabilidade condicio-
+nal permite ajustar um classificador capaz de gerar uma superfície de decisão eficiente. 
+ 
+(a) 
+ 
+(b) 
+(c) 
+(d) 
+Figura 5.5: Problema linearmente separável: (a) Conjunto de treinamento; (b) superfície de decisão; 
+(c) distribuição 𝑝(𝑥1|𝐶𝑗); (d) distribuição 𝑝(𝑥2|𝐶𝑗). 
+A “economia” de parâmetros e a simplicidade do classificador bayesiano simples têm 
+efeitos no seu desempenho. A Figura 5.6a mostra um exemplo um pouco mais com-
+plexo, no qual as classes não podem ser separadas por uma superfície linear – são, as-
+sim, chamadas de não separáveis linearmente. Nesse caso, a superfície de decisão ge-
+rada pelo classificador bayesiano simples, mostrada na Figura 5.6b, não permite sepa-
+rar as duas classes. O resultado pode ser entendido observando-se as distribuições con-
+dicionais nas Figura 5.6c e 5.6d, que mostram que a projeção dos dados em cada vari-
+ável resulta em valores similares das médias e das variâncias das classes e, portanto, a 
+distribuição conjunta das duas classes é muito parecida, de forma que a superfície de 
+decisão gerada não é eficiente para separá-las.  
+
+ 
+(a) 
+ 
+(b) 
+(c) 
+(d) 
+Figura 5.6: Problema não separável linearmente: (a) conjunto de treinamento;  
+(b) superfície de decisão; (c) distribuição 𝑝(𝑥1|𝐶𝑗); (d) distribuição 𝑝(𝑥2|𝐶𝑗). 
+A distribuição normal não é adequada para a representação da distribuição dos dados 
+de cada classe no exemplo da Figura 5.6a. Entretanto, o problema principal é que o 
+classificador bayesiano simples não é capaz de capturar a correlação existente entre as 
+variáveis no conjunto de dados de cada classe. A Figura 5.7a mostra o mesmo conjunto 
+de dados da Figura 5.6a após a transformação realizada pela análise de componentes 
+principais (ACP), que elimina a correlação entre as variáveis. Nesse caso, o classificador 
+bayesiano é capaz de separar as classes (cf. Figura 5.7b), mesmo que a distribuição 
+normal não seja a melhor representação da distribuição das classes, como pode ser ob-
+servado na Figura 5.7c e Figura 5.7d. Nesse caso, a diferença de variâncias das distri-
+buições de probabilidade condicional permite gerar uma superfície de decisão correta. 
+
+ 
+(a) 
+ 
+(b) 
+(c) 
+(d) 
+Figura 5.7: Problema transformado pela ACP: (a) conjunto de treinamento; (b) superfície de decisão; 
+(c) distribuição 𝑝(𝑥1|𝐶𝑗); (d) distribuição 𝑝(𝑥2|𝐶𝑗). 
+A utilização da ACP para eliminar a correlação dos dados nem sempre produz bons 
+resultados, mas é um recurso que pode ser empregado na busca pelo melhor modelo 
+de classificação. Na seção 5.4.1, os resultados do classificador bayesiano simples são 
+comparados aos resultados de outros classificadores apresentados neste capítulo. 
+O classificador bayesiano simples é um classificador computacionalmente eficiente, 
+que pode ser aplicado em problemas de grande dimensionalidade e permite combinar 
+facilmente variáveis numéricas e categóricas. Um classificador bayesiano simples pode 
+facilmente acomodar valores ausentes na avaliação, o que é um problema em diversos 
+outros tipos de classificadores. O algoritmo básico, com algumas variações, pode ser 
+encontrado em praticamente todos os softwares de ciência de dados. Apesar do seu de-
+sempenho regular, o classificador bayesiano tem muitas aplicações em ciência de da-
+dos [289], tendo se mostrado útil na classificação de documentos, em filtros de spam 
+
+[115] e na análise de sentimentos [348][427]. O bom desempenho do classificador ba-
+yesiano simples também o qualifica para utilização em ensembles [325], que combinam 
+os resultados de vários modelos simples para melhorar o desempenho do classificador. 
+Em conjuntos de dados com registros suficientes para estimação das distribuições de 
+probabilidade condicionais conjuntas, é possível utilizá-la na síntese do classificador, 
+como descrito a seguir. 
+5.1.3 Classificador bayesiano quadrático 
+Um classificador realiza a predição da classe de um novo registro pela sua localização 
+em relação às regiões associadas às classes. No caso de um problema com 𝑚 classes, o 
+resultado do classificador vai particionar o domínio das variáveis de entrada em 𝑚 re-
+giões. É possível generalizar regras de decisão como (5.2) e (5.7) pela definição de fun-
+ções discriminantes em problemas de múltiplas classes. A classificação é feita pelo 
+valor máximo da função discriminante como: 
+𝐱(𝑡) ∈𝐶𝑖→𝑔𝑖(𝐱(𝑡)) > 𝑔𝑗(𝐱(𝑡)),
+𝑗= 1, … , 𝑚 
+(5.9) 
+No classificador bayesiano, a função discriminante pode ser calculada diretamente 
+como 𝑔𝑖(𝐱(𝑡)) = 𝑃(𝐶𝑖|𝐱(𝑡)) no caso de minimização da probabilidade de classificação 
+incorreta ou como 𝑔𝑖(𝐱(𝑡)) = −𝑅(𝐶𝑖|𝐱(𝑡)) no caso de minimização do risco condicio-
+nal, onde 𝑅(𝐶𝑖|𝐱(𝑡)) é definido em (5.5) e o sinal negativo é para manter coerência com 
+a equação (5.9), uma vez que a decisão é tomada pelo menor risco de classificação. A 
+escolha da função discriminante não é única e qualquer função monótona crescente de 
+uma função discriminante 𝑓(𝑔𝑖(𝐱(𝑡))) é também uma função discriminante. 
+A questão fundamental para a síntese de um classificador bayesiano é a escolha da fun-
+ção de distribuição de probabilidade condicional. No classificador bayesiano simples, a 
+hipótese de independência resulta num classificador computacionalmente eficiente, 
+mas de precisão apenas regular. O desempenho do classificador pode melhorar bas-
+tante se a distribuição condicional for mais bem estimada. Há métodos estatísticos, pa-
+ramétricos e não paramétricos, para a estimativa de uma função de distribuição condi-
+cional [553]. A abordagem clássica é utilizar a distribuição normal multivariada como 
+uma aproximação da distribuição condicional. 
+
+A hipótese de a probabilidade condicional ser uma distribuição normal permite a defi-
+nição do classificador bayesiano quadrático [146][405], cuja função discriminante 
+para a decisão pela minimização do erro de classificação é calculada como: 
+𝑔𝑖(𝐱(𝑡)) = ln 𝑃(𝐶𝑖|𝐱(𝑡)) = ln 𝑝(𝐱(𝑡)|𝐶𝑖) + ln 𝑃(𝐶𝑖) ,
+𝑖= 1, … , 𝑚 
+(5.10) 
+onde 𝑝(𝐱(𝑡)|𝐶𝑖) = 𝑁(𝛍̂𝑖, 𝚺̂i) é a distribuição normal multivariada de médias 𝛍̂𝑖 e matriz 
+de covariâncias 𝚺̂𝑖 estimadas a partir dos registros da classe 𝐶𝑖. 
+Substituindo a expressão da distribuição normal multivariada na equação (5.10): 
+𝑔𝑖(𝐱(𝑡)) = −1
+2(𝐱(𝑡) −𝛍̂𝑖)𝚺̂𝑖
+−1(𝐱(𝑡) −𝛍̂𝑖)T −1
+2 ln 2𝜋−1
+2 ln|𝚺̂𝑖| + ln 𝑃(𝐶𝑖) 
+(5.11) 
+O termo −1
+2 ln 2𝜋 é o mesmo para todas as classes e, por isso, não exerce influência na 
+função discriminante, podendo ser eliminado. 
+A expressão da função discriminante calculada pela equação (5.11) é dominada por um 
+termo quadrático e, por isso, o classificador bayesiano com distribuições normais mul-
+tivariadas é chamado de classificador bayesiano quadrático. A Figura 5.8 mostra dois 
+exemplos sintéticos de classes geradas por variáveis de distribuição normal e a super-
+fície de decisão calculada pela função discriminante (5.11). 
+Figura 5.8: Exemplos de superfícies de decisão quadráticas. 
+O resultado do classificador bayesiano quadrático no conjunto de dados da Figura 5.6 
+é mostrado na Figura 5.9, na qual podemos observar que função discriminante é efici-
+ente para a separação das classes. 
+ 
+
+ 
+(a) 
+ 
+(b) 
+Figura 5.9: Problema não separável linearmente: (a) conjunto de treinamento;  
+(b) superfície de decisão pelo classificador bayesiano quadrático. 
+A estimativa dos parâmetros da equação normal para o cálculo da função discriminante 
+como (5.11) pode se tornar inviável em problemas de alta dimensionalidade, uma vez 
+que são necessários 𝑝+ 𝑝(𝑝+ 1)/2 parâmetros para cada classe. Considere, por exem-
+plo, o conjunto de dados Wine, com 𝑝= 13 variáveis de entrada, o que resulta em 104 
+parâmetros a serem estimados para cada classe. O conjunto de dados conta apenas 178 
+registros, dos quais 59 da classe 𝐶1, 71 da classe 𝐶2 e 48 da classe 𝐶3, o que prejudica 
+as estimativas de média e matriz de covariâncias.  
+Em problemas de alta dimensionalidade com reduzido número de registros, é possível 
+utilizar a redução de dimensionalidade produzida por transformações lineares como a 
+ACP e a ADL (análise discriminante linear). Aplicando a ADL no conjunto de dados 
+Wine, o número de variáveis é reduzido para 𝑝̂ = 𝑚−1 = 2, o que significa estimar 
+apenas três parâmetros para a média e a matriz de covariâncias. A Figura 5.10 apre-
+senta o resultado da superfície de decisão calculada pelo classificador bayesiano qua-
+drático sobre o conjunto de dados Wine 2D, obtido após a transformação pela ADL do 
+conjunto Wine. Podemos observar o contorno quadrático das funções discriminantes 
+de cada classe. 
+ 
+ 
+ 
+ 
+
+ 
+(a) 
+ 
+(b) 
+Figura 5.10: Conjunto de dados Wine 2D: (a) conjunto de treinamento;  
+(b) superfície de decisão pelo classificador bayesiano quadrático. 
+O classificador bayesiano com distribuições normais multivariadas gera uma função 
+discriminante linear quando a matriz de covariâncias é a mesma para todas as classes 
+e é estimada como a matriz de covariâncias dos dados, isto é, 𝚺̂𝑖= 𝚺̂, 𝑖= 1, … , 𝑚. Nesse 
+caso, o termo quadrático da equação (5.11) pode ser ignorado (por ser o mesmo para 
+todas as classes) e a função discriminante é escrita como: 
+𝑔𝑖(𝐱(𝑡)) = 𝐱(𝑡)𝚺̂−1𝛍̂𝑖
+T −1
+2𝛍̂𝑖𝚺̂−1𝛍̂𝑖
+T + ln 𝑃(𝐶𝑖) 
+(5.12) 
+A equação (5.12) pode ser escrita na forma de uma função linear como: 
+𝑔𝑖(𝐱(𝑡)) = 𝐱̂(𝑡)𝛉𝑖
+T 
+(5.13) 
+onde 𝐱̂(𝑡) = [1, 𝐱(𝑡)] é o vetor de regressores e 𝛉𝑖= [𝜃𝑖0, 𝛉𝑖1] é o vetor de parâmetros, 
+cujos componentes 𝜃𝑖0 = −1
+2𝛍̂𝑖𝚺̂−1𝛍̂𝑖
+T + ln 𝑃(𝐶𝑖) e 𝛉𝑖1 = 𝚺̂−1𝛍̂𝑖
+T. 
+O classificador bayesiano linear não requer um número considerável de parâmetros a 
+serem estimados, pois apenas uma matriz de covariâncias é estimada para todas as 
+classes. Entretanto, na prática, o desempenho pode ser pior que o classificador bayesi-
+ano simples. 
+Do ponto de vista conceitual, a equação (5.13) mostra que um classificador pode ser 
+estimado diretamente por sua função discriminante, sem a necessidade de hipóteses 
+sobre a função de distribuição de probabilidades condicional. Dessa forma, os modelos 
+lineares podem ser aplicados à classificação, como apresentado a seguir. 
+
+5.2 Modelos Lineares de Classificação 
+A equação (5.13) mostra que um modelo linear pode ser utilizado para a aproximação 
+da função discriminante num problema de classificação. Dessa forma, os problemas de 
+classificação e de regressão são similares, diferindo apenas no tipo de variável de saída. 
+A síntese do classificador pode ser realizada diretamente pelo ajuste dos parâmetros 
+de um modelo linear pelo método dos mínimos quadrados (MMQ), como apresentado 
+nas seções 5.2.1 e 5.2.2. Entretanto, um modelo linear não permite a interpretação da 
+função discriminante como um valor de probabilidade. Na regressão logística, apresen-
+tada na seção 5.2.3, o resultado do modelo linear é transformado por uma função ex-
+ponencial que permite a interpretação do resultado como um valor de probabilidade. 
+5.2.1 Mínimos quadrados 
+O ajuste de parâmetros do modelo linear é feito a partir do conjunto de treinamento 
+𝒯= {(𝐱(𝑡), 𝑦(𝑡)), 𝑡= 1 …  𝑁}, onde 𝐱(𝑡) ∈ℛ𝑝 o vetor das variáveis de entrada e a sa-
+ída 𝑦(𝑡) ∈𝒩, o índice das classes.  
+Para o ajuste da função discriminante, a variável de saída é transformada para refletir 
+o resultado da função discriminante em (5.9). Essa transformação é feita pela definição 
+de uma variável indicadora (“dummy”) bipolar 𝑣𝑖(𝑡) ∈{−1,1}, como:* 
+𝑣𝑖(𝑡) = {+1,
+𝑠𝑒 𝑦(𝑡) = 𝑖
+−1,
+𝑠𝑒 𝑦(𝑡) ≠𝑖     𝑖= 1, … , 𝑚 
+(5.14) 
+O vetor 𝐯(𝑡) ∈{−1,1}𝑚 é chamado de vetor de variáveis indicadoras, pois a posição do 
+valor 1 no vetor indica a classe a que pertence o registro. 
+As funções discriminantes são calculadas pelo modelo linear como aproximações das 
+variáveis indicadoras como: 
+𝑣̂𝑖(𝑡) = 𝑔𝑖(𝐱(𝑡), 𝛉𝑖) = 𝐱̂(𝑡)𝛉𝑖
+T,
+𝑖= 1, … , 𝑚 
+(5.15) 
+As variáveis indicadoras estimadas 𝐯̂(𝑡) ∈ℛ𝑚 podem ser utilizadas para a classificação 
+através da regra (5.9). Os parâmetros 𝛉𝑖 são calculados, para cada classe, pela minimi-
+zação do erro médio quadrático (EMQ): 
+ 
+* A variável indicadora binária 𝑣𝑖(𝑡) ∈{0,1} também pode ser utilizada. 
+
+𝐸𝑀𝑄(𝛉𝑖) = 1
+𝑁∑(𝑣𝑖(𝑡) −𝑣̂𝑖(𝑡))
+2
+𝑁
+𝑡=1
+,
+𝑖= 1, … , 𝑚 
+(5.16) 
+A minimização do EMQ para cada classe é feita pelo MMQ da mesma forma que apre-
+sentada na seção 3.1.2. A relação bias x variância do modelo discutida na seção 3.2.1 e 
+as técnicas de regularização apresentadas nas sessões 3.2.2 e 3.2.3 se aplicam igual-
+mente ao modelo linear de classificação. A avaliação de classificadores, entretanto, é 
+feita por estatísticas adicionais, discutidas na seção 5.3. 
+O modelo linear de classificação permite a síntese de um classificador por uma função 
+discriminante linear nos parâmetros. No modelo linear polinomial, descrito na equação 
+(3.3), a estrutura é definida pelo grau do polinômio. A Figura 5.11 apresenta dois exem-
+plos de modelos polinomiais de classificação executados sobre os mesmos dados do 
+exemplo mostrado na Figura 5.10: o conjunto de dados Wine após transformação pela 
+ADL. A Figura 5.11a mostra o resultado do modelo linear, ou polinomial de grau 1, e a 
+Figura 5.11b mostra o resultado do modelo quadrático ou polinomial de grau 2. 
+ 
+(a) 
+ 
+(b) 
+Figura 5.11: Superfícies de decisão no problema Wine 2D: (a) modelo linear; (b) modelo quadrático. 
+Os resultados da Figura 5.11 são ligeiramente diferentes entre si, mas há uma grande 
+diferença entre o resultado da Figura 5.11b e o do classificador bayesiano quadrático, 
+mostrado na Figura 5.10b. Em ambos os casos, o modelo é quadrático, mas, no classifi-
+cador linear, a estrutura do modelo foi definida pela escolha do grau do polinômio, en-
+quanto no classificador bayesiano, a estrutura do modelo foi definida pela hipótese de 
+distribuição normal. O modelo linear foi ajustado pelo MMQ, enquanto o classificador 
+bayesiano foi ajustado pelas médias e matrizes de covariâncias de cada classe.  
+
+O ajuste de parâmetros pelo MMQ obtém um classificador que realiza a decisão pela 
+minimização do erro de classificação. Entretanto, em alguns problemas, é importante 
+realizar a decisão pela minimização do risco condicional, que implica ponderar uma 
+classe em relação à outra. É possível ponderar os registros de uma classe em relação a 
+outra através do método dos mínimos quadrados ponderados descrito a seguir. 
+5.2.2 Mínimos quadrados ponderados 
+O método dos mínimos quadrados ponderados (MMQP) permite ajustar os parâmetros 
+de um modelo linear na situação em que alguns registros são mais “importantes” que 
+outros. O MMQP é utilizado na regressão linear para estabilizar a variância do conjunto 
+de dados e reduzir a influência de outliers [399]. Em modelos lineares de classificação, 
+o MMQP pode atribuir maior peso aos registros da classe de maior risco, permitindo 
+que a decisão de classificação seja feita pela minimização do risco condicional. 
+A formulação do MMQP é feita a partir da definição de um vetor de pesos 𝐰∈ℛ𝑁, em 
+que cada elemento 𝑤(𝑡) representa o peso do registro 𝑡∈𝒯. Os parâmetros do modelo 
+para cada classe 𝛉𝑖 são calculados pela minimização do erro médio quadrático pon-
+derado (EMQP): 
+𝐸𝑀𝑄𝑃(𝛉𝑖) = 1
+𝑁∑𝑤(𝑡)(𝑣𝑖(𝑡) −𝑣̂𝑖(𝑡))
+2
+𝑁
+𝑡=1
+,
+𝑖= 1, … , 𝑚 
+(5.17) 
+onde os valores de ponderação são os mesmos para o cálculo dos parâmetros de todas 
+as classes, uma vez que a ponderação é aplicada aos registros. 
+Adotando a representação vetorial em que 𝐕𝑖= [𝑣𝑖(1), … , 𝑣𝑖(𝑁)]T é a coluna 𝑖 da ma-
+triz de saída, cujos elementos são os valores da variável indicadora da classe 𝐶𝑖, 𝐗̂ é a 
+matriz de regressores (cf. equação (3.5)) e 𝐖= 𝑑𝑖𝑎𝑔(𝐰), a matriz diagonal em que 
+cada elemento é o peso do registro correspondente, o EMQP pode ser escrito como: 
+𝐸𝑀𝑄𝑃(𝛉𝑖) = 1
+𝑁(𝐕𝑖−𝐗̂𝛉𝑖
+T)
+T𝐖(𝐕𝑖−𝐗̂𝛉𝑖
+T),
+𝑖= 1, … , 𝑚 
+(5.18) 
+Derivando-se a expressão do EMQP na equação (5.18) e igualando a zero, obtemos a 
+expressão das equações normais do MMQP, semelhante à equação (3.7): 
+𝐗̂T𝐖𝐗̂𝛉𝑖
+T = 𝐗̂T𝐖𝐕𝑖,
+𝑖= 1, … , 𝑚 
+(5.19) 
+
+A solução do sistema linear (5.19), considerando que a matriz* 𝐗̂T𝐖𝐗̂ tem posto com-
+pleto, é calculada pela pseudoinversa como: 
+𝛉𝑖
+∗= (𝐗̂T𝐖𝐗̂)
+−1𝐗̂T𝐖𝐕𝑖,
+𝑖= 1, … , 𝑚 
+(5.20) 
+Os métodos de regularização discutidos na seção 3.2 se aplicam-se igualmente à solu-
+ção do sistema linear da equação (5.19). 
+Na seção 3.1.3, foi visto que a solução calculada pelo EMQ produz melhor aproximação 
+possível do conjunto de dados. Dessa forma, a solução calculada pelo MMQP terá um 
+erro maior. Em problemas de classificação, a solução do MMQ corresponde à decisão 
+pela minimização do erro de classificação na abordagem bayesiana, enquanto a solução 
+do MMQP corresponde à minimização do risco condicional. Analogamente, o MMQP 
+produz um erro global maior, mas terá um erro menor da classe mais importante. 
+Num problema de classificação desbalanceado, a classe minoritária é, em geral, a mais 
+importante. Nesse caso, podemos definir a ponderação de cada registro pelo comple-
+mento do valor de probabilidade a priori da classe correspondente: 
+𝑤(𝑡) = 1 −𝑁𝑖
+𝑁  ∀𝐱(𝑡) ∈𝐶𝑖,
+𝑖= 1, … , 𝑚  
+(5.21) 
+onde 𝑁𝑖 é o número de registros da classe 𝐶𝑖. 
+A ponderação realizada pela equação (5.21) é equivalente a eliminar o efeito da proba-
+bilidade a priori no classificador bayesiano. A probabilidade a priori influencia indire-
+tamente o classificador ajustado pelo EMQ (cf. equação (5.16)), uma vez que a minimi-
+zação do EMQ produz uma superfície de decisão que vai ser ajustada para incluir um 
+número maior de registros da classe majoritária. 
+A Figura 5.12 mostra uma comparação dos resultados obtidos por um modelo quadrá-
+tico ajustado pelo MMQ e pelo MMQP, com ponderações calculadas pela equação 
+(5.21), nos dados do problema de Diabetes das índias Pima.118 Esse problema tem duas 
+classes que representam o diagnóstico, positivo ou negativo, de diabetes em mulheres 
+da etnia Pima a partir de atributos como número de filhos, pressão sanguínea etc. O 
+ 
+* A matriz de coeficientes 𝐗̂T𝐖𝐗̂ = (𝐖𝐗̂)
+T𝐗̂. A matriz 𝐖𝐗̂ pode ser calculada diretamente a partir do 
+vetor de pesos 𝐰T, multiplicando-se, elemento a elemento, as colunas da matriz de regressores 𝐗̂ pelo 
+vetor de pesos 𝐰T, evitando-se, assim, o custo computacional e de alocação de memória do processa-
+mento dos elementos nulos da matriz diagonal 𝐖. 
+
+conjunto de dados é desbalanceado e a classe negativa (𝐶1) tem 65% dos registros, en-
+quanto a classe positiva (𝐶2) é atribuída a 35% dos registros. O conjunto de dados tem 
+oito variáveis, mas a Figura 5.12 mostra os resultados calculados sobre as duas com-
+ponentes principais para facilitar a visualização. Observe o aumento da região atribu-
+ída à classe positiva (em verde) no caso da solução calculada pelo MMQP. 
+ 
+(a) 
+ 
+(b) 
+Figura 5.12: Superfícies de decisão problema de Diabetes das índias Pima 2D: (a) MMQ; (b) MMQP. 
+Nos modelos lineares ajustados pelo MMQ e MMQP, a variável de saída é uma variável 
+indicadora 𝑣𝑖(𝑡) ∈{−1,1}, enquanto a aproximação do modelo linear 𝑣̂𝑖(𝑡) ∈ ℛ, que 
+não pode ser interpretada a probabilidade a posteriori da classe. No modelo de regres-
+são logística, descrito a seguir, o modelo linear é transformado para que resultado 
+possa ser interpretado como um valor de probabilidade. 
+5.2.3 Regressão logística 
+A regressão logística, também conhecida como modelo logit, é um modelo de classifi-
+cação encontrado em diversos softwares livres e comerciais, e em bibliotecas de lingua-
+gens de programação como R119 e Python.120  
+A formulação clássica da regressão logística é obtida para o problema de classificação 
+binária em que a saída observada é representada pela variável indicadora 𝑣(𝑡) ∈{0,1}: 
+𝑣(𝑡) = {1,
+𝑠𝑒 𝐱(𝑡) ∈𝐶
+0,
+𝑠𝑒 𝐱(𝑡) ∉𝐶      
+(5.22) 
+O modelo é uma aproximação da probabilidade a posteriori, isto é, 𝑔(𝐱, 𝛉) ≈𝑃(𝐶|𝐱), e 
+a função discriminante é calculada pela função sigmoide, também conhecida por função 
+logística ou logit (de onde o método deriva seu nome), aplicada ao modelo linear: 
+
+𝑔(𝐱(𝑡), 𝛉) =
+1
+1 + exp(−𝐱̂(𝑡)𝛉T) 
+(5.23) 
+onde 𝐱̂(𝑡) = [1, 𝐱(𝑡)] é o vetor de regressores e 𝛉 é o vetor de parâmetros. 
+A Figura 5.13 mostra o comportamento da função sigmoide 𝑔(𝑧), na qual podemos ob-
+servar que lim
+𝑧→+∞𝑔(𝑧) = 1 e lim
+𝑧→−∞𝑔(𝑧) = 0.  
+ 
+Figura 5.13: Função sigmoide ou logística. 
+A regressão logística é um modelo de classificação binária, cuja função discriminante é 
+definida pela probabilidade a posteriori como: 
+𝑃(𝑣(𝑡) = 1|𝐱(𝑡), 𝛉) =         𝑔(𝐱(𝑡), 𝛉)
+𝑃(𝑣(𝑡) = 0|𝐱(𝑡), 𝛉) = 1 −𝑔(𝐱(𝑡), 𝛉) 
+(5.24) 
+A equação acima pode ser escrita como uma distribuição de Bernoulli121: 
+𝑃(𝑣(𝑡)|𝐱(𝑡), 𝛉) = 𝑣̂(𝑡)𝑣(𝑡)(1 −𝑣̂(𝑡))
+1−𝑣(𝑡) 
+(5.25) 
+onde 𝑣̂(𝑡) = 𝑔(𝐱(𝑡), 𝛉) e 𝑣(𝑡) ∈{0,1}. 
+O modelo de regressão logística é ajustado para maximizar a probabilidade (ou a fun-
+ção de verossimilhança) do modelo em representar os valores de observados: 
+𝐿(𝛉) = ∏𝑃(𝑣(𝑡)|𝐱(𝑡), 𝛉)
+𝑁
+𝑡=1
+ 
+(5.26) 
+Aplicando a expressão (5.25) em (5.26), temos a expressão da função de verossimi-
+lhança da regressão logística: 
+
+𝐿(𝛉) = ∏𝑣̂(𝑡)𝑣(𝑡)(1 −𝑣̂(𝑡))
+1−𝑣(𝑡)
+𝑁
+𝑡=1
+ 
+(5.27) 
+O produtório da equação (5.27) dificulta o ajuste de parâmetros e o resultado não se 
+altera se o negativo do logaritmo da função de verossimilhança for utilizado para o 
+ajuste de parâmetros como um problema de minimização: 
+𝑙(𝛉) = −log(𝐿(𝛉)) = −∑𝑣(𝑡) log(𝑣̂(𝑡)) + (1 −𝑣(𝑡)) log(1 −𝑣̂(𝑡))
+𝑁
+𝑡=1
+ 
+(5.28) 
+A Figura 5.14 mostra o resultado da função (5.28) calculada para um determinado re-
+gistro. Quando 𝑣(𝑡) = 1, mostrado na Figura 5.14a, 𝑙(𝛉) = −log(𝑣̂(𝑡)), que aumenta 
+exponencialmente à medida que 𝑣̂(𝑡) →0. No caso de 𝑣(𝑡) = 0, mostrado na Figura 
+5.14b, 𝑙(𝛉) = −log(1 −𝑣̂(𝑡)) que aumenta exponencialmente quando 𝑣̂(𝑡) →1. 
+(a) 
+(b) 
+Figura 5.14: Função de custo (5.28): (a) 𝑣(𝑡) = 1; (b) 𝑣(𝑡) = 0. 
+O negativo do logaritmo da função de verossimilhança (cf. equação (5.28)) é mais ade-
+quada para o ajuste de modelos de classificação que o EMQ pela solução de um pro-
+blema de minimização. Os resultados da regressão logística e do modelo linear ajustado 
+pelo MMQ são equivalentes, mas a regressão logística tem uma interpretação probabi-
+lística, que é mais adequada para a tomada de decisão. Entretanto, embora os parâme-
+tros do modelo ocorram não linearmente na expressão da função sigmoide (5.23). Has-
+tie e colaboradores [238] apresentam a solução baseada no método de Newton-Ra-
+phson, que resulta no algoritmo conhecido como mínimos quadrados iterativo ponde-
+rado [406]. O modelo de regressão logística também pode ser ajustado pelo método do 
+gradiente como será apresentado na seção 9.1.2. 
+
+O modelo de regressão logística pode ser estendido para problemas de classificação de 
+múltiplas classes [238][521] e para funções discriminantes não lineares [578]. No caso 
+de múltiplas classes, o modelo é conhecido como regressão softmax e será discutido 
+no Capítulo 9. 
+A Figura 5.15 apresenta o resultado de dois modelos de classificação sobre o conjunto 
+de dados Wine 2D, formado pelo conjunto Wine após a ADL, discutido na Figura 5.10 e 
+na Figura 5.11. A Figura 5.15a apresenta o resultado do classificador bayesiano sim-
+ples; a Figura 5.15b mostra o resultado da regressão logística. Pode-se observar que o 
+resultado da regressão logística é idêntico ao resultado do modelo de classificação li-
+near ajustado pelo MMQ mostrado na Figura 5.11a.  
+ 
+(a) 
+ 
+(b) 
+Figura 5.15: Dados Wine 2D: (a) classificador bayesiano simples; (b) regressão logística. 
+Assim como na regressão, a escolha do melhor modelo deve ser feita a partir de esta-
+tísticas de validação calculadas em validação cruzada, como apresentado a seguir. 
+5.3 Avaliação de Classificadores 
+O problema de classificação é preditivo e, como no caso da regressão linear, é necessá-
+rio evitar o overfitting. O processo de desenvolvimento de um modelo de classificação 
+segue os mesmos passos delineados na seção 3.2, em que o objetivo da etapa de vali-
+dação é a seleção do tipo e da estrutura do modelo mais adequados ao problema. As 
+estatísticas são calculadas em validação cruzada para gerar um modelo com boa capa-
+cidade de generalização. 
+
+O modelo linear ajustado pelo MMQ segue as mesmas hipóteses da regressão linear e 
+o classificador poderia ser avaliado pelas mesmas estatísticas de validação apresenta-
+das na seção 3.3.1. Entretanto, o problema de classificação tem saídas discretas e, ge-
+ralmente, não ordenadas que requerem estatísticas específicas. Esta seção apresenta 
+uma descrição das estatísticas mais utilizadas para avaliação de classificadores. 
+5.3.1 Estatísticas de validação 
+As estatísticas de avaliação de classificadores são calculadas a partir da matriz de con-
+fusão, citada na seção 5.1.1 e apresentada na Tabela 5.2 para duas classes. A matriz de 
+confusão é utilizada em estatística para representar as possíveis soluções de um teste 
+de hipóteses. Em problemas de classificação, as linhas representam as classes observa-
+das e as colunas, as classes preditas pelo modelo. 
+As estatísticas de validação são definidas para problemas de duas classes em que uma 
+classe é chamada arbitrariamente de classe positiva e a outra, de classe negativa. Na 
+Tabela 5.2, a classe 𝐶1 é a classe positiva e a classe 𝐶2, a negativa. 
+Tabela 5.2: Matriz de confusão 
+ 
+𝐶̂1 (Predita) 
+𝐶̂2 (Predita) 
+𝐶1 (Real) 
+VP 
+FN 
+𝐶2 (Real) 
+FP 
+VN 
+ 
+A matriz de confusão é preenchida com o número de registros correspondentes, obti-
+dos, em geral, em validação cruzada, seguindo a seguinte terminologia: 
+▪ Verdadeiros Positivos (VP): é o número de registros da classe 𝐶1 corretamente 
+classificados pelo modelo como classe 𝐶̂1. 
+▪ Falsos Negativos (FN): é o número de registros da classe 𝐶1 classificados pelo 
+modelo como classe 𝐶̂2. 
+▪ Falsos Positivos (FP): é o número de registros da classe 𝐶2 classificados pelo 
+modelo como classe 𝐶̂1. 
+▪ Verdadeiros Negativos (VN): é o número de registros da classe 𝐶2 correta-
+mente classificados pelo modelo como classe 𝐶̂2. 
+
+A avaliação global do classificador é feita pela acurácia do modelo, que é sua taxa de 
+classificação correta, calculada como: 
+𝐴𝐶𝐶=
+𝑉𝑃+ 𝑉𝑁
+𝑉𝑃+ 𝐹𝑃+ 𝐹𝑁+ 𝑉𝑁 
+(5.29) 
+O erro global de classificação é o complemento da acurácia: 
+𝐸𝑅𝑅= 1 −𝐴𝐶𝐶=
+𝐹𝑃+ 𝐹𝑁
+𝑉𝑃+ 𝐹𝑃+ 𝐹𝑁+ 𝑉𝑁 
+(5.30) 
+O erro global destaca a diferença de desempenho de dois classificadores. Por exemplo, 
+um modelo com acurácia de 96% tem o dobro do erro de outro modelo com 98% de 
+acurácia. 
+As estatísticas globais de acurácia e erro não informam sobre o erro que o modelo está 
+realizando para cada classe. Duas medidas frequentemente utilizadas em recuperação 
+da informação podem ser utilizadas para avaliar o desempenho de classificadores 
+[364]: precisão (PRE) e recuperação (REC), também chamada de sensitividade ou re-
+call. Estas medidas são definidas para cada classe como: 
+𝑃𝑅𝐸(𝐶1) =
+𝑉𝑃
+𝑉𝑃+ 𝐹𝑃  𝑃𝑅𝐸(𝐶2) =
+𝑉𝑁
+𝑉𝑁+ 𝐹𝑁 
+(5.31) 
+𝑅𝐸𝐶(𝐶1) =
+𝑉𝑃
+𝑉𝑃+ 𝐹𝑁   𝑅𝐸𝐶(𝐶2) =
+𝑉𝑁
+𝑉𝑁+ 𝐹𝑃 
+(5.32) 
+A precisão mede a capacidade de predição do modelo e a recuperação é sua capacidade 
+de reconhecer os registros da classe correspondente. Em problemas de classificação 
+com múltiplas classes, as medidas de precisão e recall são calculadas para cada classe 
+considerando as demais como a classe negativa. As medidas de precisão e recuperação 
+podem ser combinadas na chamada medida F, definida para a classe 𝐶𝑖 como: 
+𝐹(𝐶𝑖) = 2 𝑃𝑅𝐸(𝐶𝑖). 𝑅𝐸𝐶(𝐶𝑖)
+𝑃𝑅𝐸(𝐶𝑖) + 𝑅𝐸𝐶(𝐶𝑖) 
+(5.33) 
+A medida F representa a média harmônica entre precisão e recall, e indica o desempe-
+nho em termos das duas estatísticas simultaneamente, podendo ser generalizada para 
+variar entre a precisão e o recall através de um parâmetro [516]. 
+Em problemas desbalanceados, as estatísticas de cada classe devem ser consideradas 
+em conjunto para não levar a conclusões equivocadas. Por exemplo, considere um pro-
+blema de duas classes, em que a probabilidade a priori 𝑃(𝐶1) = 90%. Um classificador 
+
+que classifique todos os registros na classe majoritária (𝐶1) vai obter 𝑃𝑅𝐸(𝐶1) = 0.9 e 
+𝑅𝐸𝐶(𝐶1) = 1.0, mas 𝑃𝑅𝐸(𝐶2) = 𝑅𝐸𝐶(𝐶2) = 0.0 para a classe minoritária (𝐶2). 
+A estatística kappa é uma medida global que relaciona a probabilidade de concordân-
+cia observada com a probabilidade de concordância esperada 𝑃(𝐸) [110]. Em modelos 
+de classificação, a concordância observada é medida pela acurácia do classificador 
+(5.29) e a concordância esperada é o resultado que seria obtido por um modelo aleató-
+rio em uma amostra de tamanho infinito. O coeficiente kappa (𝜅) é calculado como: 
+𝜅= 𝐴𝐶𝐶−𝑃(𝐸)
+1 −𝑃(𝐸)  
+(5.34) 
+O valor 𝜅≤1, sendo que 𝜅= 1, indica a concordância completa; 𝜅= 0 indica que 
+𝐴𝐶𝐶= 𝑃(𝐸), isto é, a acurácia é igual à concordância esperada. Um valor 𝜅< 0 indica 
+que o classificador tem um desempenho pior que um resultado puramente aleatório. 
+Landis e Koch [327] sugerem que um valor de  𝜅≥0,8 representa boa concordância e 
+um resultado 0,6 ≤𝜅< 0,8 representa uma concordância razoável. A probabilidade de 
+concordância esperada 𝑃(𝐸) é calculada a partir da matriz de confusão, como: 
+𝑃(𝐸) = 𝑃(𝐶1)𝑃(𝐶̂1) + 𝑃(𝐶2)𝑃(𝐶̂2) 
+(5.35) 
+onde 𝑃(𝐶1) é a probabilidade a priori da classe 𝐶1, 𝑃(𝐶2) é a probabilidade a priori da 
+classe 𝐶2, 𝑃(𝐶̂1) é o percentual de registros preditos como sendo da classe 𝐶̂1 pelo mo-
+delo e 𝑃(𝐶̂2), o percentual de registros preditos como classe 𝐶̂2.  
+Os termos da equação (5.35) são calculados como: 
+𝑃(𝐶1) =
+𝑉𝑃+ 𝐹𝑁
+𝑉𝑃+ 𝐹𝑃+ 𝐹𝑁+ 𝑉𝑁= 𝑁1
+𝑁 
+(5.36) 
+𝑃(𝐶2) =
+𝐹𝑃+ 𝑉𝑁
+𝑉𝑃+ 𝐹𝑃+ 𝐹𝑁+ 𝑉𝑁= 𝑁2
+𝑁 
+(5.37) 
+𝑃(𝐶̂1) =
+𝑉𝑃+ 𝐹𝑃
+𝑉𝑃+ 𝐹𝑃+ 𝐹𝑁+ 𝑉𝑁= 𝑁̂1
+𝑁 
+(5.38) 
+𝑃(𝐶̂2) =
+𝐹𝑁+ 𝑉𝑁
+𝑉𝑃+ 𝐹𝑃+ 𝐹𝑁+ 𝑉𝑁= 𝑁̂2
+𝑁 
+(5.39) 
+Os valores totais observados e preditos de cada classe são mostrados na Tabela 5.3. 
+ 
+
+Tabela 5.3: Totais observados e preditos de cada classe 
+ 
+𝐶̂1 
+𝐶̂2 
+Total 
+𝐶1 
+VP 
+FN 
+𝑁1 
+𝐶2 
+FP 
+VN 
+𝑁2 
+Total 
+𝑁̂1 
+𝑁̂2 
+𝑁 
+ 
+A avaliação de classificadores também é feita graficamente utilizando as taxas de ver-
+dadeiros positivos e de falsos positivos no chamado de espaço ROC, descrito a seguir. 
+5.3.2 Espaço ROC e AUC 
+Na seção 5.1.1, foi visto que, em caso de problemas desbalanceados, a decisão pelo mí-
+nimo erro de classificação favorece a classe majoritária. Em muitos problemas, a classe 
+minoritária é a mais importante e, nesse caso, o erro global não pode ser utilizado para 
+a escolha do classificador. A escolha do classificador em problemas desbalanceados 
+deve favorecer a classe mais importante, aumentando a recuperação de registros de 
+maior custo. 
+O efeito do desbalanceamento do problema sobre o resultado do classificador ajustado 
+pelo mínimo erro de classificação é mostrado na Figura 5.16 que mostra o valor de 
+𝑝(𝑥|𝐶𝑖)𝑃(𝐶𝑖) de cada para um problema de uma variável e duas classes. A situação em 
+que as probabilidades a priori são iguais é mostrada na Figura 5.16a. Nesse caso, as 
+taxas de FP e FN são definidas pela forma e posição das distribuições condicionais. No 
+caso de problemas desbalanceados (Figura 5.16b), o ajuste do modelo pelo mínimo 
+erro de classificação favorece a classe mais frequente (𝐶1), resultando num aumento 
+da taxa de VP e consequente diminuição da taxa de VN. Quando a classe minoritária é 
+a mais importante, o classificador deve favorecer a taxa de VN. Entretanto, o aumento 
+da taxa de VN só pode ser obtido à custa de um aumento da taxa de FN, o que aumenta 
+também o erro global, como foi discutido na seção 5.2.2. 
+
+(a) 
+(b) 
+Figura 5.16: Problemas desbalanceados: (a) 𝑃(𝐶1) = 𝑃(𝐶2); (b) 𝑃(𝐶1) > 𝑃(𝐶2). 
+O espaço ROC (do inglês receiver operating characteristic) foi desenvolvido por opera-
+dores de radar para caracterização do trade-off entre a taxa de detecção e a de falsos 
+alarmes em ambientes com ruído [516][561]. Para avaliação de classificadores, as ta-
+xas de FP e VP obtidas por um classificador são utilizadas como coordenadas do espaço 
+ROC, mostrado na Figura 5.17.  
+ 
+Figura 5.17: Espaço ROC. 
+A taxa de VP (TVP) é o recall da classe positiva 𝑅𝐸𝐶(𝐶1) em (5.32) e a taxa de FP (TFP) 
+é o complemento da taxa de VN (𝑅𝐸𝐶(𝐶2)) chamada de especificidade (SPE). O valor 
+de TFP é calculado como: 
+𝑇𝐹𝑃= 1 −𝑆𝑃𝐸= 1 −
+𝑉𝑁
+𝐹𝑃+ 𝑉𝑁=
+𝐹𝑃
+𝐹𝑃+ 𝑉𝑁 
+(5.40) 
+VN
+VP
+FP
+FN
+FN
+FP
+VN
+VP
+TFP
+TVP
+REC
+SPE
+
+O espaço ROC mostra o desempenho do classificador relacionando o quanto ele acerta 
+da classe positiva e o quanto deixa de errar da classe negativa. O modelo ideal é o ponto 
+(0,1) do gráfico, com 𝑇𝐹𝑃= 0, ou seja, 𝑆𝑃𝐸= 𝑅𝐸𝐶(𝐶2) = 1 e 𝑅𝐸𝐶(𝐶1) = 1. Nesse caso 
+o modelo tem 100% de aproveitamento, pois recupera todos os exemplos de ambas as 
+classes. Classificadores na diagonal do espaço ROC têm 𝑅𝐸𝐶(𝐶1) = 1 −𝑅𝐸𝐶(𝐶2), são 
+modelos com 𝜅= 0, ou seja, têm desempenho equivalente a um modelo aleatório. Os 
+classificadores abaixo da diagonal representam modelos com 𝜅< 0. 
+A área sombreada na Figura 5.17 é uma medida de avaliação de classificadores cha-
+mada de área sob a curva ROC (AUC, na sigla em inglês). A medida AUC é calculada pela 
+área do quadrilátero obtido ao se ligar as coordenadas do classificador aos pontos (0,0) 
+e (1,1) (cf. Figura 5.17). Após algumas simplificações, o valor de AUC é calculado como 
+a média entre a taxa de VP e VN: 
+𝐴𝑈𝐶= 𝑅𝐸𝐶(𝐶1) + 𝑅𝐸𝐶(𝐶2)
+2
+ 
+(5.41) 
+O valor de AUC é calculado pela equação (5.41) para problemas de duas classes. Em 
+problemas de múltiplas classes, um valor de AUC é calculado para cada classe, conside-
+rada a classe positiva, e o valor de AUC total do classificador é calculado pela média do 
+AUC de cada classe ponderada pela estimativa de probabilidade a priori da classe cor-
+respondente [176]:  
+𝐴𝑈𝐶= ∑𝐴𝑈𝐶(𝐶𝑖)𝑃(𝐶𝑖)
+𝑚
+𝑖=1
+ 
+(5.42) 
+onde 𝐴𝑈𝐶(𝐶𝑖) é o valor calculado pela equação (5.41) considerando a classe 𝐶𝑖 como 
+positiva e 𝑃(𝐶𝑖) é a frequência relativa da classe 𝐶𝑖 Outras abordagens para o cálculo 
+do valor total de AUC foram avaliadas por Hand e Till [235]. 
+Um método gráfico de avaliação de modelos no espaço ROC é chamado de curva ROC, 
+que apresenta uma curva contínua no espaço ROC para cada classe. O valor AUC nesse 
+caso é calculado integrando-se a curva ROC pelo método dos trapézios. Entretanto, a 
+curva ROC é independente da frequência das classes [176]. A medida de AUC obtida 
+pela equação (5.41), além de mais eficiente, é sensível às frequências das classes sendo 
+portanto mais adequada em problemas desbalanceados. 
+
+O resultado do valor AUC em problemas desbalanceados pode ser observado no con-
+junto de dados Diabetes das índias Pima, discutido na seção 5.2.2. Nesse problema, a 
+classe positiva é a minoritária, representada por 𝐶2, com 35% dos registros. A Figura 
+5.18 mostra os resultados calculados em validação cruzada para os modelos quadráti-
+cos ajustados pelo MMQ e pelo MMQP utilizando todas as variáveis. 
+Na coluna da esquerda, a Figura 5.18a apresenta os resultados de precisão e recall de 
+cada classe do classificador ajustado com o MMQ e a Figura 5.18c mostra o espaço ROC 
+e o valor de AUC calculado pela equação (5.41) do mesmo modelo. Na coluna da direita, 
+os mesmos resultados são apresentados para o modelo ajustado com o MMQP.  
+ 
+(a) 
+ 
+(b) 
+ 
+(c) 
+ 
+(d) 
+Figura 5.18: Resultados do problema Diabetes das índias Pima: (a) e (c) Modelo ajustado com MMQ; 
+(b) e (d) modelo ajustado com MMQP. 
+
+No modelo ajustado pelo MMQP, a recuperação da classe positiva (𝐶2) é maior, resul-
+tando num valor maior de AUC. O modelo ajustado pelo MMQ obtém menor erro global, 
+influenciado pelo desbalanceamento entre as classes, resultando numa taxa de recupe-
+ração maior da classe negativa (𝐶1). 
+5.4 Aplicações 
+Os modelos de classificação apresentados neste capítulo serão discutidos nesta seção 
+em dois contextos diferentes. Na seção 5.4.1, os algoritmos são comparados numa série 
+de conjuntos de dados benchmark para uma avaliação global do desempenho do algo-
+ritmo. Esse mesmo tipo de teste será repetido nos Capítulos 7 e 8 com os modelos de 
+classificação de inteligência computacional. Na seção 5.4.2, apresentamos um estudo 
+de caso sobre a análise de cancelamentos em um operador de telefonia. 
+5.4.1 Testes benchmark 
+O repositório da Universidade da Califórnia em Irvine (UCI)122 é uma referência na área 
+de ciência de dados e contém diversos conjuntos de dados para avaliação de algoritmos 
+em problemas reais. 
+Um conjunto de 10 benchmarks foi selecionado para a avaliação dos modelos apresen-
+tados neste capítulo: 
+▪ Bayes N: Classificador bayesiano simples (naif) 
+▪ Bayes Q: Classificador bayesiano multivariado (quadrático) 
+▪ Logit: Regressão logística 
+▪ M. Lin. 1: Modelo linear de primeira ordem 
+▪ M. Lin. 2: Modelo linear de segunda ordem 
+Os conjuntos de dados foram selecionados de forma a cobrir uma grande variedade de 
+tipos de problemas de dimensões diferentes, tanto em termos de número de registros 
+quanto de número de variáveis. A Tabela 5.4 apresenta o número de variáveis (𝑝), o 
+número de classes (𝑚) e o número de registros (𝑁) de cada problema. 
+A maioria dos benchmarks são problemas conhecidos na literatura. Os benchmarks 
+Wine e Diabetes das índias Pima já foram utilizados neste capítulo como exemplos de 
+aplicação dos modelos. Nesta avaliação, todos os benchmarks foram utilizados como 
+dados brutos, ou seja, não foi feito nenhum pré-processamento que pudesse interferir 
+
+no desempenho dos modelos. Os algoritmos de ajuste de parâmetros também foram 
+executados em sua forma padrão, ou seja, sem utilizar nenhuma ponderação para com-
+pensar o desbalanceamento das classes. Todos os testes foram realizados em validação 
+cruzada de 10 ciclos, conforme o algoritmo descrito na seção 3.3.2. 
+Tabela 5.4: Conjuntos de dados benchmark 
+Benchmark 
+𝑝 
+𝑚 
+𝑁 
+Íris123 
+4 
+3 
+150 
+Balance124 
+4 
+3 
+625 
+Diabetes125 
+8 
+2 
+768 
+Cancer126 
+9 
+2 
+286 
+Statlog Heart127 
+13 
+2 
+270 
+Wine128 
+13 
+3 
+178 
+Parkinson129 
+17 
+2 
+186 
+Ionosphere130 
+32 
+2 
+351 
+Spambase131 
+57 
+2 
+4601 
+Sonar132 
+60 
+2 
+208 
+ 
+O desempenho dos modelos pode ser avaliado quantitativamente através das métricas 
+de acurácia (ACC), definida na equação (5.29), e da área sobre a curva ROC (AUC), de-
+finida na equação (5.41). Os resultados são apresentados na Tabela 5.5, na qual os va-
+lores em negrito correspondem aos maiores valores de cada métrica para o respectivo 
+benchmark.  
+Os resultados apresentados na Tabela 5.5 mostram que nenhum modelo é melhor em 
+todos os testes, mas indicam que o modelo linear de segunda ordem (M. Lin. 2) obtém 
+os melhores resultados na maioria das vezes. Além disso, os modelos quadráticos (Ba-
+yes Q e M. Lin. 2) obtiveram resultados melhores que seus correspondentes mais sim-
+ples (Bayes N e M. Lin. 1) na maioria dos casos. O modelo de regressão logística (Logit) 
+apresentou resultados próximos aos do modelo linear simples (M. Lin. 1). 
+É importante verificar se o melhor desempenho representa realmente um comporta-
+mento consistente do modelo ou é um resultado obtido em função de fatores aleatórios. 
+Essa avaliação é feita por testes estatísticos não paramétricos [125][195] disponíveis 
+em softwares estatísticos e no software livre KEEL,133 utilizado nesta seção. 
+
+Tabela 5.5: Resultados dos testes benchmark 
+Bayes N 
+Bayes Q 
+Logit 
+M. Lin. 1 
+M. Lin. 2 
+Benchmark 
+𝐴𝐶𝐶 
+𝐴𝑈𝐶 
+𝐴𝐶𝐶 
+𝐴𝑈𝐶 
+𝐴𝐶𝐶 
+𝐴𝑈𝐶 
+𝐴𝐶𝐶 
+𝐴𝑈𝐶 
+𝐴𝐶𝐶 
+𝐴𝑈𝐶 
+Íris 94.67 0.9600 
+98.00 0.9850 
+82.67 0.8697 
+83.33 0.8747 
+95.33 0.9650 
+Balance 90.40 0.9079 
+91.68 0.9469 
+87.04 0.8755 
+87.04 0.8755 
+91.36 0.9171 
+Diabetes 71.88 0.7260 
+74.61 0.7054 
+76.69 0.7145 
+76.30 0.7089 
+77.21 0.7151 
+Cancer 94.58 0.9574 
+95.02 0.9559 
+96.05 0.9512 
+96.05 0.9512 
+97.22 0.9709 
+Statlog Heart 83.70 0.8392 
+82.59 0.8225 
+83.33 0.8275 
+84.07 0.8358 
+84.44 0.8375 
+Wine 97.19 0.9766 
+99.44 0.9958 
+98.88 0.9919 
+98.31 0.9881 
+99.44 0.9958 
+Parkinson 79.49 0.7026 
+80.51 0.8427 
+86.15 0.7889 
+86.15 0.7889 
+86.15 0.8099 
+Ionosphere 60.68 0.6933 
+86.89 0.8803 
+85.75 0.8138 
+86.04 0.8178 
+89.46 0.8602 
+Spambase 90.18 0.8911 
+82.53 0.8474 
+88.63 0.8686 
+88.63 0.8684 
+91.37 0.9006 
+Sonar 72.60 0.7159 
+71.15 0.6992 
+76.92 0.7656 
+75.96 0.7579 
+80.29 0.8010 
+ 
+O teste de hipóteses é uma técnica clássica de estatística que permite avaliar se um 
+conjunto de evidências observadas confirma ou refuta uma hipótese. Nos testes de hi-
+pótese paramétricos, há um modelo da distribuição do processo e o teste é realizado 
+sobre os parâmetros da distribuição. Nos testes chamados não paramétricos, não há 
+um modelo da distribuição dos dados [501]. Na avaliação de classificadores, as hipóte-
+ses são formuladas da seguinte forma: 
+▪ Hipótese nula ℋ0: os modelos apresentam resultados equivalentes; 
+▪ Hipótese alternativa ℋ1: os modelos não apresentam resultados equivalentes. 
+A aceitação da hipótese nula significa que as diferenças de desempenho são devidas às 
+particularidades de cada benchmark [195]. O resultado do teste de hipóteses (paramé-
+trico ou não paramétrico) é o chamado valor-p, que mede a significância estatística das 
+diferenças observadas na avaliação. O valor-p é interpretado como a probabilidade de 
+observar o resultado obtido considerando que a hipótese nula é verdadeira. Em outras 
+palavras, o valor-p representa a probabilidade do chamado erro Tipo I (ou falso nega-
+tivo), de rejeitar a hipótese nula quando, de fato, ela é verdadeira. Quanto menor o va-
+lor-p, menor é a probabilidade de que a hipótese nula seja verdadeira. Tipicamente, a 
+
+hipótese nula é rejeitada se o valor-p < 0.05, que representa confiança estatística de 
+95% na hipótese alternativa. 
+Garcia e colaboradores [195] sugerem que os testes não paramétricos são mais indica-
+dos para avaliação de classificadores. O teste de Friedman, particularmente o chamado 
+Friedman aligned rank, é recomendado quando um número relativamente pequeno de 
+modelos (menor que cinco) são comparados. O teste ordena os resultados obtidos por 
+cada modelo e utiliza as diferenças de ordem para o mesmo benchmark e as diferenças 
+de ordem para o mesmo modelo em benchmarks diferentes [195].  
+Nesta seção, discutimos apenas os resultados do teste Friedman aligned rank. Uma dis-
+cussão detalhada deste e outros métodos é feita por Garcia e colaboradores [195]. Os 
+autores são do grupo de pesquisa responsável pelo desenvolvimento do software livre 
+KEEL [9][10], utilizado para a realização dos testes. O software tem um módulo de tes-
+tes não paramétricos, com várias opções de testes. 
+A Tabela 5.6 mostra os rankings de cada modelo, calculados pelo teste de Friedman a 
+partir dos resultados da Tabela 5.5, e o valor-p correspondente a cada métrica de ava-
+liação. O classificador calculado pelo discriminante linear de segunda ordem (M. Lin. 2) 
+obteve o melhor ranking pelo teste de Friedman pelas duas métricas. O valor-p indica 
+que as probabilidades de erro em considerar as diferenças significativas são, respecti-
+vamente, de 8,26% e 7,95% para as métricas de ACC e AUC. 
+Tabela 5.6: Resultados de teste Friedman aligned rank 
+ 
+ACC 
+AUC 
+Bayes N 
+33.30 
+31.95 
+Bayes Q 
+28.55 
+23.80 
+Logit 
+26.45 
+31.25 
+M. Lin. 1 
+26.75 
+27.35 
+M. Lin. 2 
+12.45 
+13.15 
+Valor-p 
+0.0826 
+0.0795 
+ 
+O grande problema dos testes estatísticos é que, na grande maioria dos casos, não se 
+pode ter 100% de certeza dos resultados. O que o teste estatístico mostra, com uma 
+confiança estatística em torno de 92%, é que o modelo discriminante linear de segunda 
+ordem apresenta um desempenho melhor que os demais. Esse resultado é coerente 
+com o argumento teórico de que o MMQ é mais robusto que a estimativa de parâmetros 
+
+do classificador bayesiano. O teste de hipóteses quantifica esse resultado, que não fica 
+evidente observando-se apenas o melhor resultado de cada benchmark na Tabela 5.5. 
+5.4.2 Análise de cancelamento em telefonia 
+Empresas que operam em ambiente competitivo estão sempre preocupadas em pro-
+mover a fidelização dos clientes de maior valor em sua base, uma vez que a manutenção 
+de um cliente tem menor custo que a captação de novos clientes. Em empresas que 
+oferecem serviços de assinatura, como telefonia e TV paga, um termo muito difundido 
+é a taxa de churn,134 que se refere ao percentual de cancelamentos de assinaturas num 
+determinado período. O desenvolvimento de modelos preditivos de cancelamentos é 
+uma das áreas de aplicação mais ativas de ciência de dados [422][530]. 
+Um exemplo interessante de análise de cancelamentos num operador de telefonia foi 
+apresentado por Cister [107]. A base de dados é uma amostra de clientes considerados 
+de alto valor: empresas com média de quatro linhas móveis e alto consumo. A base de 
+dados original é um conjunto de dados em três dimensões: 1.171 clientes, 10 variáveis 
+de consumo e 12 meses. A amostra de dados foi realizada entre agosto de 2004 e julho 
+de 2005 [107]. 
+A análise apresentada nesta seção foi realizada sobre a média das variáveis de consumo 
+por cliente, uma vez que as variáveis de consumo representavam o faturamento de 
+cada tipo de ligação realizado pelo cliente durante o mês. Dessa forma, foi possível eli-
+minar a dimensão de consumo e trabalhar com uma tabela de clientes por mês, que, 
+após a retirada de 2,5% de outliers, ficou com 1.141 registros. Uma análise preliminar 
+do gráfico de linhas aplicado às médias e desvios padrão de cada variável (Figura 5.19) 
+revelou que o comportamento nos seis primeiros meses da amostra foi praticamente 
+constante, não havendo interesse para o modelo de predição. Com isso, foram selecio-
+nadas as variáveis correspondentes aos seis últimos meses, assinaladas na Figura 5.19, 
+em que a variável 𝑥1 representa o consumo médio seis meses antes do final da amostra 
+(fevereiro de 2005) e a variável 𝑥6 representa o consumo médio no último mês do es-
+tudo (julho de 2005). 
+
+ 
+Figura 5.19: Gráfico de linhas: médias e desvios padrão de cada variável por classe. 
+O objetivo do modelo é a predição dos clientes que abandonaram a companhia após o 
+período da amostra. A classe 𝐶1 representa os clientes que continuaram a assinatura e 
+𝐶2  os clientes que cancelaram a assinatura que, nesse caso, é a classe de maior relevân-
+cia. A Figura 5.19 mostra que o comportamento dos clientes que vieram a cancelar mu-
+dou consideravelmente a partir do nono mês da amostra, aumentando bruscamente e 
+depois diminuindo até valores inferiores aos registrados até o mês oito. As causas 
+dessa mudança de comportamento não foram divulgadas [107]. 
+A Figura 5.20 mostra as principais características da base de dados. As distribui-
+ções das variáveis de consumo médio são razoavelmente assimétricas e as variá-
+veis são bem correlacionadas entre si, à exceção da variável 𝑥6, que representa o 
+consumo no último mês da amostra e que tem um comportamento bem diferente 
+das demais variáveis. 
+Uma das principais características desse problema é o alto grau de desbalanceamento 
+da base, uma vez que a classe dos clientes que cancelaram a assinatura (𝐶2) tem apenas 
+7,17% dos registros.  
+O objetivo nesta seção é avaliar os efeitos da ponderação para compensar o desbalan-
+ceamento das classes nos resultados dos modelos. Os modelos bayesianos e lineares 
+discutidos na seção 5.4.1 foram utilizados na avaliação. Os modelos foram executados 
+de duas formas: sem ponderação para compensar o efeito da probabilidade a priori e 
+com ponderação. No caso dos modelos bayesianos, a ponderação corresponde a retirar 
+o valor de probabilidade a priori do cálculo do valor de probabilidade a posteriori. 
+
+ 
+Figura 5.20: Características da base de cancelamentos. 
+Os resultados de acurácia (ACC) e AUC são apresentados na Tabela 5.7, na qual os va-
+lores máximos de cada métrica em cada tipo de teste estão em negrito. Podemos ob-
+servar que, em todos os modelos, a ponderação resultou em diminuição de ACC e au-
+mento de AUC.  
+Tabela 5.7: Resultados dos modelos 
+Bayes N 
+Bayes Q 
+M. Lin. 1 
+M. Lin. 2 
+Modelo 
+ACC 
+AUC 
+ACC 
+AUC 
+ACC 
+AUC 
+ACC 
+AUC 
+S. Pond. 
+92.82 
+0.5119 
+96.41 
+0.8272 
+92.91 
+0.5179 
+94.40 
+0.6300 
+C. Pond. 
+90.63 
+0.7960 
+88.18 
+0.8814 
+85.29 
+0.8658 
+90.19 
+0.8868 
+ 
+Os gráficos de precisão e recall para cada modelo com e sem ponderação são mostrados 
+na Figura 5.21, na qual a coluna da esquerda representa os resultados sem ponderação 
+e a coluna da direita, os resultados com ponderação. Podemos observar que a ponde-
+ração aumenta a taxa de recuperação (recall) da classe minoritária 𝐶2 em todos os mo-
+delos, que provoca o aumento de AUC. 
+ 
+
+ 
+(a) 
+ 
+(b) 
+ 
+(c) 
+ 
+(d) 
+ 
+(e) 
+ 
+(f) 
+ 
+(g) 
+ 
+(h) 
+Figura 5.21: Precisão e recall, coluna da esquerda sem ponderação e coluna da direita com ponderação: 
+(a) e (b) Bayes N; (c) e (d) Bayes Q; (e) e (f) M. Lin. 1; (g) e (h) M. Lin. 2. 
+
+Em problemas altamente desbalanceados como este, é importante utilizar as métricas 
+adequadas para avaliação dos algoritmos. O classificador bayesiano simples e o modelo 
+linear de primeira ordem, sem ponderação, obtiveram resultados de acurácia próximos 
+à probabilidade a priori da classe majoritária 𝐶1 (92,83%). Consequentemente, esses 
+modelos obtiveram taxas de recuperação muito pequenas da classe minoritária 𝐶2 que, 
+neste exemplo, é a de maior relevância. Esse resultado foi identificado pelo valor de 
+AUC próximo a 0.5 nos dois modelos. 
+5.5 Comentários Finais 
+O problema de reconhecimento de padrões é um problema clássico e há vários livros 
+dedicados ao assunto [43][146][189][521][553]. É muito difícil condensar os tópicos 
+mais importantes num único capítulo. O critério utilizado para a seleção dos assuntos 
+apresentados foi a importância para a formulação do problema de classificação e a re-
+levância para a fundamentação das técnicas de inteligência computacional que serão 
+discutidas nos Capítulos 7, 8 e 9. 
+Alguns assuntos importantes não foram incluídos. Os modelos de árvore de decisão, 
+por exemplo, que estão presentes em praticamente todos os livros de ciência de dados 
+[232][516][561], não foram incluídos. Optou-se por uma fundamentação do problema 
+de classificação baseada no teorema de Bayes. O leitor vai encontrar uma apresentação 
+teórica completa dos modelos de classificação sob a ótica de aprendizado de máquina 
+no excelente livro de Mitchel [392]. Uma discussão mais detalhada dos modelos de ár-
+vore de decisão é apresentada por Quinlan [446]. 
+A formulação da regra de Bayes é bastante adequada para o entendimento do problema 
+de classificação. Mesmo que o classificador não utilize diretamente o teorema de Bayes 
+na sua formulação, os efeitos da probabilidade condicional e, principalmente, da pro-
+babilidade a priori estarão presentes em todo classificador que seja ajustado pela mi-
+nimização do erro de classificação. 
+Nas redes bayesianas [121][125][247][263], a distribuição de probabilidades é defi-
+nida para pares de variáveis selecionadas e o modelo é representado através de um 
+grafo. O modelo de redes bayesianas busca um compromisso entre as propriedades 
+teóricas do teorema de Bayes e a dificuldade de estimação de parâmetros em proble-
+
+mas de alta dimensionalidade. Uma apresentação bastante completa do tema é encon-
+trada no livro de Koller e Friedman [316] e no curso do Coursera.135 A obtenção da 
+estrutura do grafo não é tarefa trivial, embora existam algoritmos eficientes [125]. 
+Em geral, para uma amostra de tamanho finito, o problema de identificar a distribuição 
+de probabilidades do processo que gerou a amostra é mais complexo que encontrar 
+uma função discriminante [98]. Dessa forma, os modelos de classificação mais moder-
+nos buscam diretamente encontrar a função discriminante com base nas observações 
+disponíveis. A minimização do erro de classificação no conjunto de treinamento para 
+um modelo de estrutura fixa é a abordagem mais comum. Nos modelos de máquina de 
+vetor de suporte (SVM, na sigla em inglês) [478][532], o erro de classificação é limitado 
+e o ajuste de parâmetros busca um modelo maximizando a margem de separação entre 
+as classes, o que corresponde à minimização da estrutura do modelo. Esse tipo de mo-
+delo, que começou a se difundir na área de ciência de dados a partir de meados da dé-
+cada de 1990, será apresentado no Capítulo 7. Recentemente, redes neurais têm se des-
+tacado em problemas de classificação, principalmente em aplicações complexas como 
+visão computacional e processamento de linguagem natural. As redes neurais serão 
+apresentadas no Capítulo 9. 
+Há diversas abordagens para o tratamento de problemas desbalanceados na literatura 
+[90][273]. A abordagem mais comum é a reamostragem de dados para compensar o 
+desbalanceamento. O algoritmo SMOTE [89] realiza essa abordagem de forma eficiente 
+e os resultados são bastante satisfatórios, principalmente quando utilizado com um 
+modelo de árvore de decisão.  
+A avaliação de algoritmos por testes estatísticos não paramétricos tem se difundido nas 
+áreas de inteligência computacional e ciência de dados [195]. Entretanto, é importante 
+observar que o desempenho de um algoritmo sobre um conjunto de testes benchmark 
+vale apenas para aquele conjunto e não significa que o algoritmo terá um desempenho 
+melhor em todos os problemas. Na prática, a melhor abordagem é sempre a busca do 
+melhor desempenho para o problema em questão, evitando alguma preferência ad hoc 
+sobre um tipo particular de modelo.

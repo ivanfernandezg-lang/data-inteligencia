@@ -1,0 +1,263 @@
+% =============================================================================
+%  Resumen Capítulo 3 — REGRESIÓN LINEAL
+%  Libro: Evsukoff, A. (2020). Inteligência Computacional: Fundamentos e
+%         Aplicações. Río de Janeiro: E-papers.
+% =============================================================================
+\input{_preambulo}
+
+\title{\sffamily\bfseries Capítulo 3 — Regresión Lineal\\
+       \large Mínimos cuadrados, regularización y validación de modelos}
+\author{Resumen de estudio}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+
+\begin{conceito}
+La \textbf{regresión lineal} ajusta un modelo
+$\hat{y}(t)=f(\mathbf{x}(t);\boldsymbol\theta)$ que relaciona variables
+de entrada $\mathbf{x}\in\R^p$ con una variable de salida numérica
+$y\in\R$. ``Lineal'' se refiere a la \emph{linealidad en los
+parámetros}, no necesariamente en los regresores: el modelo polinomial y
+las funciones de base también caen en esta categoría. Es el primer
+modelo a ajustar en cualquier aplicación --- simple, barato,
+interpretable y, en muchos problemas reales, su diferencia frente a un
+modelo no lineal es inferior al 5\%.
+\end{conceito}
+
+\section{El problema de regresión y el modelo lineal}
+
+La relación real $y=f(\mathbf{x})$ es desconocida; se observan pares
+$(\mathbf{x}(t),y(t))$ contaminados por ruido. El modelo aproxima esa
+relación por
+\begin{formula}
+\[
+\hat{y}(t)=\hat{\mathbf{x}}(t)\,\boldsymbol\theta\T
+=\sum_{i=1}^{n}\hat{x}_i(t)\,\theta_i,
+\]
+donde $\hat{\mathbf{x}}(t)\in\R^n$ es el vector de \textbf{regresores} y
+$\boldsymbol\theta=(\theta_1,\dots,\theta_n)$ los parámetros.
+\end{formula}
+
+Casos típicos:
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Lineal simple (1\textsuperscript{er} orden):}
+        $\hat{\mathbf{x}}=[1,\mathbf{x}]$, el modelo es un hiperplano,
+        $n=p+1$.
+  \item \textbf{Polinomial de grado $r$:}
+        $\hat{\mathbf{x}}=[1,\mathbf{x},\mathbf{x}^2,\dots,\mathbf{x}^r]$,
+        $n=r p+1$ despreciando términos cruzados.
+  \item \textbf{Funciones de base $h_i(\mathbf{x})$:} permiten
+        cualquier no linealidad fija en las entradas, manteniendo el
+        ajuste lineal en los $\theta_i$ (Capítulo~7).
+\end{itemize}
+
+El residuo en el registro $t$ es $e(t)=y(t)-\hat{y}(t)$. El
+\emph{overfitting} (sobreajuste) ocurre cuando la complejidad del
+modelo excede lo que la muestra soporta: el modelo pasa a representar
+el ruido. La Figura~3.4 del libro muestra cómo un polinomio de grado~10
+ajustado a $N=20$ puntos generados por $y=x^2+\varepsilon$ adquiere
+parámetros de magnitud absurda (hasta $\sim 130$) y pierde capacidad
+de generalización.
+
+\section{Método de Mínimos Cuadrados (MMC)}
+
+La función de evaluación clásica es el \textbf{error cuadrático medio}
+\[
+\mathrm{ECM}(\boldsymbol\theta) =
+\frac{1}{N}\sum_{t=1}^{N}\bigl(y(t)-\hat{y}(t)\bigr)^2
+= \frac{1}{N}\bigl(\mathbf{Y}-\hat{\mathbf{X}}\boldsymbol\theta\T\bigr)\T
+        \bigl(\mathbf{Y}-\hat{\mathbf{X}}\boldsymbol\theta\T\bigr).
+\]
+Bajo la hipótesis de residuos con distribución normal, media nula y
+varianza constante (estacionariedad), \textbf{minimizar el ECM
+equivale a maximizar la verosimilitud}; el MMC entrega parámetros de
+mínima varianza (Gauss--Markov).
+
+Anulando $\partial \mathrm{ECM}/\partial\boldsymbol\theta=
+-\tfrac{2}{N}\hat{\mathbf{X}}\T(\mathbf{Y}-\hat{\mathbf{X}}\boldsymbol\theta\T)$
+se llega a las \textbf{ecuaciones normales}
+\begin{formula}
+\[
+\hat{\mathbf{X}}\T\hat{\mathbf{X}}\,\boldsymbol\theta\T
+= \hat{\mathbf{X}}\T\mathbf{Y},
+\quad\Longrightarrow\quad
+\boldsymbol\theta^{*}=
+\bigl(\hat{\mathbf{X}}\T\hat{\mathbf{X}}\bigr)^{-1}\hat{\mathbf{X}}\T\mathbf{Y},
+\]
+con \emph{matriz pseudoinversa}
+$\hat{\mathbf{X}}^{+}=(\hat{\mathbf{X}}\T\hat{\mathbf{X}})^{-1}
+\hat{\mathbf{X}}\T$ y \emph{matriz sombrero}
+$\mathbf{H}=\hat{\mathbf{X}}\hat{\mathbf{X}}^{+}$ tal que
+$\hat{\mathbf{Y}}=\mathbf{H}\mathbf{Y}$.
+\end{formula}
+
+\subsection{Interpretación geométrica}
+
+Cada columna de $\hat{\mathbf{X}}$ es un vector en $\R^N$; las $n$
+columnas generan un \emph{subespacio del modelo}. El MMC \textbf{proyecta
+ortogonalmente} $\mathbf{Y}$ sobre ese subespacio, dejando el residuo
+ortogonal al modelo:
+\[
+\hat{\mathbf{Y}}\T(\mathbf{Y}-\hat{\mathbf{X}}\boldsymbol\theta^{*})=\mathbf{0}.
+\]
+Consecuencia: la dimensión del modelo debe cumplir $n<N$, en caso
+contrario el modelo es más complejo que la muestra. La \textbf{maldición
+de la dimensionalidad} (Bellman) hace que, en alta dimensión, el número
+de muestras necesarias para una cobertura razonable crezca
+exponencialmente.
+
+\section{Sesgo, varianza y regularización}
+
+\subsection{Descomposición sesgo--varianza}
+
+Para una entrada fija $\mathbf{x}$ con valor real $y_r=\E(y)$,
+\[
+\E\bigl((y_r-\hat{y})^2\bigr)
+= \underbrace{\bigl(y_r-\E(\hat{y})\bigr)^2}_{\text{sesgo}^2}
++ \underbrace{\E\bigl((\hat{y}-\E(\hat{y}))^2\bigr)}_{\text{varianza}}.
+\]
+\begin{itemize}[leftmargin=1.2cm]
+  \item Modelo \textbf{demasiado simple}: \emph{sesgo alto}, varianza
+        baja (\emph{underfitting}).
+  \item Modelo \textbf{demasiado complejo para la muestra}: sesgo bajo,
+        \emph{varianza alta} (\emph{overfitting}).
+\end{itemize}
+La regularización busca \textbf{cambiar un poco de sesgo por mucha
+reducción de varianza}, mejorando el error esperado.
+
+\subsection{Regularización de Tikhonov (\emph{ridge regression})}
+
+Se penaliza la norma del vector de parámetros minimizando
+\begin{formula}
+\[
+\mathrm{ECMR}(\mu,\boldsymbol\theta)=
+\frac{1}{N}\bigl\|\mathbf{Y}-\hat{\mathbf{X}}\boldsymbol\theta\T\bigr\|^2
++\mu\,\|\boldsymbol\theta\|^2,
+\quad\mu\geq 0.
+\]
+La solución es
+$\boldsymbol\theta_{\mu}^{*}=
+\bigl(\hat{\mathbf{X}}\T\hat{\mathbf{X}}+\mu\mathbf{I}\bigr)^{-1}
+\hat{\mathbf{X}}\T\mathbf{Y}$.
+\end{formula}
+
+El efecto es \textbf{numérico}: el número de condición de la matriz de
+los coeficientes cambia de $\kappa=\lambda_{\max}/\lambda_{\min}$ a
+$(\lambda_{\max}+\mu)/(\lambda_{\min}+\mu)$, garantizando estabilidad
+incluso cuando $\hat{\mathbf{X}}\T\hat{\mathbf{X}}$ es singular o casi
+singular (regresores muy correlacionados). Hoerl, Kennard y Baldwin
+sugieren
+$\mu=\tfrac{n}{N-n}\,\|\mathbf{Y}-\hat{\mathbf{X}}\boldsymbol\theta\T\|^2/
+\|\boldsymbol\theta\|^2$.
+
+\subsection{Regularización por componentes principales}
+
+Si $\hat{\mathbf{X}}=\mathbf{U}\mathbf{S}\mathbf{V}\T$ es la SVD,
+\[
+\boldsymbol\theta_{r}^{*}=
+\sum_{i=1}^{r}\frac{\mathbf{u}_i\T\mathbf{Y}}{s_i}\mathbf{v}_i,
+\quad r\leq \mathrm{rank}(\hat{\mathbf{X}}).
+\]
+Truncar en los $r$ mayores valores singulares \textbf{descarta las
+direcciones inestables} (asociadas a $s_i$ minúsculos), produciendo
+una solución de menor norma y mejor condicionada. Equivale a aplicar el
+MMC sólo en las componentes principales de la matriz de regresores.
+
+\section{Validación de modelos}
+
+\subsection{Estadísticas sobre el residuo}
+
+La descomposición $\mathrm{SST}=\mathrm{SSR}+\mathrm{SSRes}$ separa
+variabilidad total, explicada y residual. Se definen:
+\begin{align*}
+R^2 &= 1-\frac{\mathrm{SSRes}}{\mathrm{SST}}
+     = 1-\frac{\sum (y(t)-\hat{y}(t))^2}{\sum(y(t)-\bar{y})^2}, \\
+\mathrm{RMS} &= \sqrt{\tfrac{1}{N}\textstyle\sum e^2(t)}, \\
+\mathrm{MAE} &= \tfrac{1}{N}\textstyle\sum |e(t)|, \\
+\mathrm{MAPE} &= \tfrac{1}{N}\textstyle\sum |e(t)/y(t)|, \\
+\rho_{y\hat{y}} &= \mathrm{Corr}(y,\hat{y}).
+\end{align*}
+$R^2\approx 1$ es deseable; $R^2\leq 0$ indica que el modelo es peor
+que la media. Para variables con gran amplitud, usar $R^2_{\log}$.
+
+La \textbf{varianza de los residuos} se estima por
+$\hat\sigma^2=\tfrac{1}{N-n}\sum e^2(t)$ (denominador $N-n$ por grados
+de libertad). Bajo normalidad, intervalo de confianza al 95\% para la
+predicción en $\hat{\mathbf{x}}_0$:
+\[
+\hat{y}_0 \pm 2\sqrt{\hat\sigma^2 \hat{\mathbf{x}}_0\T
+(\hat{\mathbf{X}}\T\hat{\mathbf{X}})^{-1}\hat{\mathbf{x}}_0}.
+\]
+La normalidad de los residuos se diagnostica por histograma y gráfico
+de probabilidad normal.
+
+\subsection{Validación cruzada}
+
+Calcular las estadísticas en el propio conjunto de entrenamiento
+favorece modelos con \emph{overfitting}. Criterios penalizados como
+AIC y BIC ayudan pero no siempre aciertan. La solución práctica es la
+\textbf{validación cruzada de $K$ ciclos} (Algoritmo~3.1):
+
+\begin{enumerate}[leftmargin=1.2cm]
+  \item Particionar $\mathcal{T}$ en $K$ subconjuntos
+        aproximadamente iguales.
+  \item Para cada $i=1,\dots,K$: ajustar el modelo en
+        $\mathcal{T}\setminus\mathcal{T}_i$ y evaluar en
+        $\mathcal{T}_i$.
+  \item Concatenar las predicciones $\hat{\mathbf{Y}}_i$ y calcular las
+        estadísticas globales.
+\end{enumerate}
+
+Casos especiales: \emph{leave-one-out} ($K=N$) es el estimador más
+preciso pero el más caro y sensible a la muestra; valores típicos
+$K=5$ o $K=10$ ofrecen buen compromiso.
+
+\section{Aplicaciones}
+
+\begin{aplicacao}
+\textbf{Pollution} (contaminación del aire y mortalidad, EE.UU.,
+1959--1961, 60~registros, 15~variables). La eliminación de
+\emph{outliers} (12\%) eleva $R^2$ de 0{,}41 a 0{,}60. La regularización
+de Tikhonov con $\mu=0{,}01$ sobre los datos sin \emph{outliers} produce
+el mejor modelo: $R^2=0{,}61$, $\mathrm{RMS}=0{,}206$,
+$\mathrm{MAPE}=18{,}5\%$. La combinación ``eliminación de
+\emph{outliers} + regularización'' confirma la intuición de la
+descomposición sesgo--varianza.
+\end{aplicacao}
+
+\begin{aplicacao}
+\textbf{Elevación adiabática de temperatura del hormigón}
+(Eletrobrás Furnas, 136~registros, 14~entradas físico-químicas, 3
+salidas paramétricas). La variable $y_1$ (temperatura final) es la más
+fácil ($R^2=0{,}78$); $y_3$ es la más difícil ($R^2=0{,}39$). La
+regularización mejora ligeramente todos los indicadores. El problema
+es intrínsecamente no lineal; modelos basados en redes neuronales y
+sistemas \emph{fuzzy} (Capítulos~8--9) entregan predicciones más
+precisas.
+\end{aplicacao}
+
+\section{Comentarios finales}
+
+\begin{enumerate}[leftmargin=1.2cm]
+  \item Modelar es \textbf{elegir}: estructura $\rightarrow$ ajuste de
+        parámetros $\rightarrow$ validación. La elección de la
+        estructura es la etapa de mayor impacto.
+  \item El MMC es elegante y óptimo bajo sus hipótesis, pero
+        inestable cuando $n$ es grande comparado con $N$; la
+        \textbf{regularización} (Tikhonov o componentes principales)
+        es la defensa estándar.
+  \item Siempre validar en datos \textbf{no vistos} (validación
+        cruzada). Las estadísticas sobre el conjunto de entrenamiento
+        pueden enmascarar \emph{overfitting}.
+  \item La eliminación de \emph{outliers} puede mejorar mucho el
+        ajuste, pero debe aplicarse con cautela: se descartan
+        justamente los registros más difíciles.
+  \item El capítulo siguiente (4) extiende este arsenal a las
+        \emph{series temporales} y los \emph{sistemas dinámicos
+        lineales} (AR, MA, ARMA, ARX, ARMAX, OE, Box \& Jenkins,
+        ecuaciones de estado).
+\end{enumerate}
+
+\end{document}

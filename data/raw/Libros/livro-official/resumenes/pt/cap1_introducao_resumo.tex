@@ -1,0 +1,252 @@
+% =============================================================================
+%  Resumo Capítulo 1 — INTRODUÇÃO
+%  Livro: Evsukoff, A. (2020). Inteligência Computacional: Fundamentos e
+%         Aplicações. Rio de Janeiro: E-papers.
+% =============================================================================
+\input{_preambulo}
+
+\title{\sffamily\bfseries Capítulo 1 — Introdução\\
+       \large Inteligência Computacional para Ciência de Dados}
+\author{Resumo de estudo}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+
+\begin{conceito}
+A \textbf{inteligência computacional} é um conjunto de paradigmas
+computacionais para o desenvolvimento e aplicação de sistemas inteligentes
+em problemas complexos do mundo real. Inclui métodos estatísticos,
+aprendizado de máquina, sistemas \emph{fuzzy}, redes neurais, máquinas de
+vetor de suporte e algoritmos evolucionários, frequentemente integrados em
+abordagens híbridas. A \textbf{ciência de dados} é a disciplina que reúne
+matemática, estatística, computação e engenharia com o conhecimento do
+domínio de cada aplicação para extrair modelos e conhecimento a partir de
+dados.
+\end{conceito}
+
+\section{Da inteligência artificial à inteligência computacional}
+
+A pergunta filosófica ``pode uma máquina pensar?'', formulada por
+Wittgenstein nos anos 1920 e operacionalizada por Alan Turing em 1950 com
+o célebre \textbf{teste de Turing}, marca o início da reflexão sobre o
+comportamento inteligente em máquinas. A inteligência artificial (IA)
+nasce no fim dos anos 1950 da integração entre lógica, ciência da
+computação e neurofisiologia. Logo cedo se distinguem duas correntes:
+
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Simbolista}: lógicos matemáticos que constroem provadores
+        de teoremas e, mais tarde, \emph{sistemas especialistas} baseados
+        em regras e fatos.
+  \item \textbf{Conexionista}: pesquisadores que simulam o processamento
+        cerebral por meio de neurônios artificiais. O \emph{Perceptron} de
+        Rosenblatt (1957) é o marco inicial, mas suas limitações como
+        classificador linear estagnam a área.
+\end{itemize}
+
+A redescoberta do algoritmo de \textbf{retropropagação do erro} em 1986
+(artigo de Rumelhart, Hinton e Williams na \emph{Nature}) reabilita os
+modelos conexionistas e permite o ajuste de redes neurais de múltiplas
+camadas para problemas não lineares complexos, como o reconhecimento de
+dígitos manuscritos. Nas décadas de 1980--1990 surgem novos paradigmas:
+\textbf{sistemas fuzzy}, \textbf{máquinas de vetor de suporte (SVM)},
+\textbf{algoritmos genéticos}. Sua integração ficou conhecida como
+\emph{soft computing} ou \emph{inteligência computacional}, hoje
+englobando também os métodos clássicos de estatística e \emph{machine
+learning}. A partir de 2012, o sucesso das \textbf{redes neurais
+profundas} (\emph{deep learning}), executadas em GPUs, alcança ou supera o
+desempenho humano em tarefas de visão computacional e processamento de
+linguagem natural.
+
+Em paralelo, a explosão de dados digitais (Internet, dispositivos móveis a
+partir de 2007, sensores e \emph{Internet of Things}) deu origem ao termo
+\emph{big data} (2010) e consolidou o ecossistema atual da ciência de
+dados, dominado por linguagens abertas (Python, R) e bibliotecas livres
+(scikit-learn, Pandas, TensorFlow).
+
+\section{Ciência de dados e o processo de descoberta de conhecimento}
+
+No método científico clássico, hipóteses teóricas dão origem a modelos
+verificados pela observação. A ciência de dados \emph{inverte
+parcialmente} esse fluxo: o objetivo é induzir modelos diretamente dos
+dados, em geral coletados sem planejamento experimental, e portanto
+sujeitos a ruído, incertezas e viés amostral. Um modelo é sempre uma
+representação \emph{indireta} do processo real, válida apenas no domínio
+da amostra que o gerou.
+
+\begin{conceito}
+\textbf{KDD — Knowledge Discovery in Databases}: processo cíclico que vai
+da seleção de dados até a interpretação dos modelos, passando por
+limpeza, transformação, modelagem e validação. Se os objetivos não são
+atingidos, retorna-se a etapas anteriores com novos dados ou ferramentas.
+\end{conceito}
+
+As etapas típicas do processo são:
+\begin{enumerate}[label=\textbf{(\arabic*)}, leftmargin=1.2cm]
+  \item \textbf{Seleção de dados}: escolha do subconjunto e das variáveis
+        relevantes (com participação de especialistas do domínio).
+  \item \textbf{Pré-processamento}: limpeza, tratamento de valores
+        ausentes, detecção de \emph{outliers}, padronização e
+        transformações lineares (Capítulo 2).
+  \item \textbf{Modelagem}: ajuste de modelos preditivos ou descritivos
+        (Capítulos 3--9).
+  \item \textbf{Avaliação}: estatísticas de validação, validação cruzada,
+        comparação entre modelos.
+  \item \textbf{Interpretação e implantação}: comunicação dos resultados e
+        integração à plataforma operacional.
+\end{enumerate}
+
+Os termos \emph{mineração de dados} e \emph{ciência de dados} são
+frequentemente usados como sinônimos. O autor sugere a seguinte
+distinção: \emph{ciência de dados} refere-se ao corpo de conhecimento
+necessário; \emph{mineração de dados} ao processo concreto de construir
+modelos a partir de dados.
+
+\section{Modelos: definições e taxonomia}
+
+Um \textbf{modelo} é, neste livro, uma representação matemática
+simplificada de um sistema ou processo real, obtida a partir dos dados de
+uma amostra. Quanto à natureza do conhecimento empregado distinguem-se:
+
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Modelos de conhecimento (analíticos)}: derivados das leis
+        fundamentais da física ou do conhecimento humano formalizado.
+  \item \textbf{Modelos de comportamento (entrada/saída)}: induzidos
+        diretamente a partir de observações; é o caso típico da ciência
+        de dados.
+\end{itemize}
+
+Quanto ao objetivo, as aplicações dividem-se em \textbf{preditivas} (com
+variáveis de saída a serem estimadas) e \textbf{descritivas} (sem
+variável-alvo, busca-se uma representação dos dados). A taxonomia de
+algoritmos de aprendizado é igualmente fundamental:
+
+\begin{center}\small
+\begin{tabular}{@{}l p{8.6cm}@{}}
+\toprule
+\textbf{Paradigma} & \textbf{Ideia} \\
+\midrule
+Supervisionado    & Pares $(\bm{x},y)$ disponíveis; ajusta-se
+$f:\bm{x}\mapsto y$. Inclui regressão e classificação. \\
+Não supervisionado & Apenas $\bm{x}$; busca-se estrutura (grupos, regras
+de associação, representação latente). \\
+Semi-supervisionado & Pequena fração dos dados rotulada; usa-se a parte
+não rotulada para melhorar o modelo. \\
+Por reforço       & O modelo (agente) interage com um ambiente e ajusta-se
+por sinais de recompensa. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Regressão}
+
+Dadas variáveis de entrada $\bm{x}\in\R^p$ e uma saída numérica
+$y\in\R$, a regressão busca uma função
+\[
+\hat{y} = f(\bm{x};\bm{\theta})
+\]
+cujo \textbf{erro de predição} $e=y-\hat{y}$ seja minimizado em algum
+sentido (tipicamente quadrático). Na regressão linear,
+$f(\bm{x})=\bm{\theta}\T\bm{x}$, eventualmente com regressores não
+lineares (\emph{features}) das entradas. A precisão do modelo é avaliada
+em dados de teste, distintos do conjunto de treinamento. Esses tópicos
+são desenvolvidos nos Capítulos~3 (regressão linear) e~4 (séries
+temporais e sistemas dinâmicos).
+
+\subsection{Classificação}
+
+Na classificação, ou \textbf{reconhecimento de padrões}, a saída é uma
+classe $y\in\{C_1,\dots,C_K\}$, geralmente discreta e não ordenada. O
+classificador pode ser visto como uma busca por \textbf{funções
+discriminantes}, lineares ou não, que dividem o espaço de entrada em
+regiões associadas a cada classe. Distingue-se entre classes
+\emph{linearmente separáveis}, \emph{separáveis não linearmente} e
+\emph{não separáveis}; neste último caso, o erro mínimo (\emph{taxa de
+Bayes}) é estritamente positivo. O exemplo histórico é o conjunto Iris
+de Fisher (1936), com quatro variáveis numéricas e três classes.
+
+\subsection{Análise de agrupamentos (\emph{clustering})}
+
+Sem variável de saída, busca-se particionar os dados em grupos de
+registros similares. O grande desafio é a \textbf{validação}, pois sem
+rótulos não há erro de classificação a minimizar; usam-se índices que
+refletem propriedades geométricas (compacidade intracluster, separação
+intercluster) cuja interpretação depende fortemente do analista e do
+especialista do domínio. O número de grupos costuma ser parâmetro de
+entrada do algoritmo. As principais abordagens (partição, hierárquicas,
+espectral) são tratadas no Capítulo~6.
+
+\subsection{Outros problemas e técnicas}
+
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Regras de associação}: encontram coocorrências
+        frequentes entre itens (cesta de mercado, sistemas de
+        recomendação).
+  \item \textbf{Aprendizado da representação}: novos métodos não
+        supervisionados que produzem representações latentes úteis para
+        outras tarefas (Capítulo~9).
+  \item \textbf{\emph{Ensembles}}: combinação de múltiplos modelos para
+        elevar o desempenho preditivo, técnica vencedora em competições
+        como o Prêmio Netflix.
+\end{itemize}
+
+\section{Recursos: bibliografia, repositórios e softwares}
+
+\paragraph{Referências teóricas.} Hastie, Tibshirani \& Friedman
+(\emph{Elements of Statistical Learning}); Bishop (\emph{Pattern
+Recognition and Machine Learning}); Duda, Hart \& Stork (\emph{Pattern
+Classification}); Theodoridis \& Koutroumbas; Webb. Para temas
+específicos: Haykin (redes neurais), Pedrycz \& Gomide (\emph{fuzzy}),
+Schölkopf \& Smola (SVM e métodos de núcleo), Vapnik (teoria do
+aprendizado estatístico), Goodfellow, Bengio \& Courville (\emph{Deep
+Learning}, 2016). Para mineração de dados: Han \& Kamber; Tan, Steinbach
+\& Kumar; Aggarwal; Zaki \& Meira.
+
+\paragraph{Recursos online.} Cursos abertos (Coursera, Stanford, MIT;
+notavelmente o curso de \emph{Machine Learning} de Andrew Ng); o portal
+KDnuggets (P.~Piatetsky-Shapiro); repositórios de dados como o
+\emph{UCI Machine Learning Repository} e a plataforma de competições
+Kaggle. Eventos de referência: KDD, ICDM, NeurIPS, ICML; na área de IC,
+o WCCI (FUZZ-IEEE, IJCNN, IEEE CEC).
+
+\paragraph{Softwares.} O ecossistema divide-se em três camadas:
+
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Comerciais integrados}: SAS, IBM SPSS Modeler, Statistica;
+        Oracle e Microsoft SQL Server Data Mining (mineração dentro do
+        banco de dados); Azure ML, Amazon ML (nuvem).
+  \item \textbf{Livres com interface gráfica}: Weka (Waikato, 1997, em
+        Java), RapidMiner, KNIME, Orange (Python/C++).
+  \item \textbf{Linguagens abertas com bibliotecas}: \textbf{Python}
+        (NumPy, SciPy, Pandas, scikit-learn) e \textbf{R} são, segundo
+        as enquetes do KDnuggets, as mais utilizadas atualmente. O
+        \textbf{Matlab} segue forte em engenharia.
+\end{itemize}
+
+\section{Comentários finais}
+
+O capítulo introdutório fixa o vocabulário e o panorama da disciplina.
+Três ideias devem ser retidas para os próximos capítulos:
+
+\begin{enumerate}[leftmargin=1.2cm]
+  \item Um modelo de ciência de dados é \textbf{inseparável da
+        amostra} que o gerou; sua validade limita-se ao domínio
+        amostrado.
+  \item O processo KDD é \textbf{iterativo}: pré-processamento,
+        modelagem e validação retroalimentam-se até atingir os objetivos
+        da aplicação.
+  \item A inteligência computacional é \textbf{plural}: combina
+        estatística, aprendizado de máquina, redes neurais, sistemas
+        \emph{fuzzy} e otimização. A escolha do método deve guiar-se
+        pelo problema, pelos dados disponíveis e pela necessidade de
+        interpretabilidade.
+\end{enumerate}
+
+Os capítulos seguintes desenvolvem este programa: o Capítulo~2 trata o
+\textbf{pré-processamento}; os Capítulos~3 e~4, a \textbf{regressão}
+clássica e dinâmica; o Capítulo~5, a \textbf{classificação}; o
+Capítulo~6, a \textbf{análise de agrupamentos}; e os Capítulos 7--9 os
+modelos não lineares de inteligência computacional propriamente ditos.
+
+\end{document}

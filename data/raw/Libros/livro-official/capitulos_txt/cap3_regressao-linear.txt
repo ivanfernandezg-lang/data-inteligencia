@@ -1,0 +1,1423 @@
+3    REGRESSÃO LINEAR 
+A regressão linear é uma técnica clássica da estatística cujo objetivo é o ajuste de um 
+modelo que relaciona uma ou mais variáveis de entrada, ou independentes, com uma 
+ou mais variáveis de saída, ou dependentes. Em ciência de dados, a regressão (linear 
+ou não linear) também é chamada de predição [232]. Em inteligência computacional, 
+utiliza-se frequentemente o termo aproximação de funções [298].  
+O modelo de regressão linear permite que os desafios associados ao desenvolvimento 
+de modelos complexos sejam apresentados de uma forma clara e analítica. Os conceitos 
+introduzidos neste capítulo servirão de base para modelos não lineares apresentados 
+nos Capítulos 7, 8 e 9. Na prática, o modelo linear é sempre o primeiro que o analista 
+deve construir devido a sua simplicidade, baixo custo computacional e também para 
+obter um limite inferior de desempenho para modelos não lineares. Não são raros os 
+problemas em que a diferença de desempenho entre um modelo linear e outro modelo 
+mais elaborado (como uma rede neural, por exemplo) seja menor que 5%. Entretanto, 
+há casos em que a relação entre as variáveis de entrada e saída é intrinsecamente não 
+linear e modelos mais complexos obtêm melhores resultados.  
+Neste capítulo, apresentamos o problema de regressão linear e sua solução através do 
+método dos mínimos quadrados. Em seguida, abordamos o dilema entre bias e variân-
+cia, que é essencial para o desenvolvimento de um bom modelo. As técnicas de regula-
+rização, ou suavização de modelos, são também discutidas neste capítulo. Finalmente, 
+introduzimos as estatísticas para validação de modelos de regressão, que também se-
+rão utilizadas para avaliação de modelos não lineares. 
+
+3.1 O Problema de Regressão 
+Conforme apresentado no Capítulo 2, o conjunto de dados é representado neste livro 
+por 𝒯= {(𝐱(𝑡), 𝐲(𝑡)), 𝑡= 1 …  𝑁}, onde cada registro é formado por pares ordenados 
+(𝐱(𝑡), 𝐲(𝑡)), sendo 𝐱(𝑡) ∈ℛ𝑝 o vetor das variáveis de entrada e 𝐲(𝑡) ∈ℛ𝑞 o vetor das 
+variáveis de saída.  
+As variáveis de entrada não numéricas podem ser transformadas num conjunto de va-
+riáveis binárias chamadas variáveis indicadoras ou dummy [399]. As variáveis de saída 
+não numéricas caracterizam o problema de classificação que será abordado no Capí-
+tulo 5. Nesse capítulo, a regressão linear é apresentada considerando variáveis de en-
+trada numéricas e uma única variável de saída numérica, ou seja, 𝑞= 1 e 𝑦(𝑡) ∈ℛ. Os 
+problemas de regressão de saídas múltiplas podem, na maioria dos casos, ser modela-
+dos por modelos independentes de saída simples. 
+No problema de regressão linear simples, uma única variável de entrada (𝑝= 1) se re-
+laciona linearmente com a variável de saída pela equação da reta 𝑦(𝑡) = 𝑎𝑥(𝑡) + 𝑏 (cf. 
+Figura 3.1). Na prática, a relação real não pode ser observada e os dados contêm per-
+turbações de diversas origens, como erro de leitura, efeito de variáveis não observadas 
+etc. Dessa forma, os registros observados, armazenados no conjunto de dados, contém 
+perturbações, como os pontos em azul na Figura 3.1. O modelo é ajustado a partir des-
+ses registros observados e, portanto, incorpora os erros de observação em seus parâ-
+metros, sendo descrito por 𝑦̂(𝑡) = 𝑎̂𝑥(𝑡) + 𝑏̂, onde 𝑦̂(𝑡) é o valor da variável de saída 
+calculado pelo modelo e 𝑎̂ e 𝑏̂ são os parâmetros ajustados. O erro de ajuste ou resíduo 
+do modelo é a diferença entre os valores observado e calculado pelo modelo da variá-
+vel de saída, isto é, 𝑒(𝑡) = 𝑦(𝑡) −𝑦̂(𝑡), para cada registro do conjunto de treinamento. 
+O que se espera é que o modelo seja o mais próximo possível da relação real, pois sa-
+bemos que as perturbações têm origem aleatória. Assim, quanto mais próximo da rela-
+ção real, melhor será o desempenho do modelo para a predição de novos dados, ou seja, 
+registros diferentes dos que foram armazenados conjunto de treinamento, mas gera-
+dos com a mesma distribuição.  
+
+ 
+Figura 3.1: Exemplo de regressão linear. 
+Na hipótese da relação entre a variável de entrada e saída ser linear, os parâmetros do 
+modelo podem ser facilmente ajustados pela minimização do erro total no conjunto de 
+treinamento. O problema é que, na prática, não se conhece ou não há elementos para 
+determinar o tipo de função que relaciona as variáveis de entrada e saída. A variedade 
+de softwares e alternativas de modelagem é tão grande que, frequentemente, o analista 
+pode ajustar um modelo cuja complexidade é maior do que a complexidade da relação, 
+como mostra a Figura 3.2a. Nesse caso, diz-se que ocorreu sobre ajuste, ou overfitting, 
+no jargão de ciência de dados. 
+(a) 
+(b) 
+Figura 3.2: Exemplo de regressão linear com overfitting: (a) treinamento; (b) teste. 
+O overfitting é um efeito indesejado, pois, como as perturbações são aleatórias, uma 
+nova amostra de teste pode produzir dados diferentes dos que foram utilizados para o 
+b
+bˆ
+)
+tan(
+
+=
+→a
+)ˆ
+tan(
+ˆ
+ˆ
+
+
+=
+→a
+
+treinamento e, nesse caso, o erro produzido pelo modelo mais complexo é maior que 
+aquele que seria obtido por um modelo mais próximo da relação ideal (cf. Figura 3.2b). 
+O raciocínio desenvolvido anteriormente para o modelo linear simples contém os ele-
+mentos principais e resume o problema de regressão: como ajustar um modelo a partir 
+de dados observados que seja o mais próximo possível da relação real entre as variá-
+veis que geraram a amostra. A obtenção do modelo, portanto, depende da escolha ade-
+quada da forma da relação entre as variáveis de entrada e saída, que é a estrutura do 
+modelo. Essa relação é geralmente representada por uma função matemática definida 
+por um conjunto de parâmetros. O ajuste dos parâmetros do modelo é feito pela mini-
+mização do erro (ou resíduo) entre os valores observados e calculados pelo modelo da 
+variável de saída no conjunto de treinamento. O método de ajuste de parâmetros da 
+regressão linear é o método dos mínimos quadrados, apresentado na seção 3.1.2, mas 
+antes definimos o modelo linear na próxima seção. 
+3.1.1 O Modelo linear 
+O modelo de regressão linear calcula uma estimativa 𝑦̂(𝑡) ∈ℛ da variável de saída a 
+partir das variáveis de entrada 𝐱(𝑡) ∈ℛ𝑝 e dos parâmetros do modelo como: 
+𝑦̂(𝑡) = 𝑓̂(𝐱(𝑡), 𝛉) = 𝐱̂(𝑡)𝛉T = ∑𝑥̂𝑖(𝑡)𝜃𝑖
+𝑛
+𝑖=1
+ 
+(3. 1) 
+onde os elementos do vetor 𝐱̂(𝑡) ∈ℛ𝑛 são chamados regressores do modelo e o vetor 
+de parâmetros 𝛉= (𝜃1, … , 𝜃𝑛). A notação 𝑓̂(𝐱(𝑡), 𝛉) indica que a previsão de 𝑦̂(𝑡) cal-
+culada no ponto 𝐱(𝑡) depende dos parâmetros 𝛉. 
+O modelo 𝑓̂(𝐱(𝑡), 𝛉) é uma aproximação da função real 𝑦(𝑡) = 𝑓(𝐱(𝑡)), que relaciona 
+as variáveis de entrada com a saída observada, que em geral é desconhecida. 
+O termo “linear” de regressão linear indica que o modelo é linear nos parâmetros, ou 
+seja, que o valor de saída é calculado como uma combinação linear dos regressores. No 
+modelo linear simples, ou linear de primeira ordem, os regressores são as próprias va-
+riáveis de entrada e o modelo é um hiperplano. Nesse caso, o vetor de regressores é 
+𝐱̂(𝑡) = [1, 𝐱(𝑡)], onde o primeiro regressor é incluído para o ajuste do termo indepen-
+dente. O vetor de parâmetros tem dimensão 𝑛= 𝑝+ 1 e o modelo escrito como: 
+
+𝑦̂(𝑡) = 𝑓̂(𝐱(𝑡), 𝛉) = 𝜃0 + ∑𝑥𝑖(𝑡)𝜃𝑖
+𝑝
+𝑖=1
+ 
+(3.2) 
+A formulação da regressão linear é geral o suficiente para acomodar outras estruturas 
+de modelos mais complexos. Nesse caso, a formulação do modelo é uma combinação 
+linear dos regressores, mas seu resultado é uma função não linear. De uma forma geral, 
+o vetor de regressores é escrito como 𝐱̂(𝑡) = (1, ℎ1(𝐱(𝑡)), … , ℎ𝑛(𝐱(𝑡))), onde ℎ𝑖(𝐱(𝑡)) 
+são chamadas funções de base [238], como será visto no Capítulo 7. 
+Um exemplo de modelo linear que resulta em funções não lineares é o modelo polino-
+mial, em que ℎ𝑖(𝐱(𝑡)) = 𝐱(𝑡)𝑖. O modelo linear polinomial de grau 𝑟 é escrito na forma: 
+𝑦̂(𝑡) = 𝑓(𝐱(𝑡), 𝛉) = 𝜃0 + ∑𝐱(𝑡)𝑖𝛉𝑖
+T
+𝑟
+𝑖=1
+ 
+(3.3) 
+onde o vetor de regressores 𝐱̂(𝑡) = [1, 𝐱(𝑡), 𝐱(𝑡)2, … , 𝐱(𝑡)𝑟], desprezando-se os termos 
+cruzados; 𝛉𝑖= (𝜃𝑖1, … , 𝜃𝑖𝑝) é o vetor de parâmetros de cada termo do polinômio e o 
+vetor de parâmetros do modelo  𝛉= [𝜃0, 𝛉1, … , 𝛉𝑟], que tem 𝑛= (𝑟. 𝑝) + 1 elementos.  
+O ajuste dos parâmetros do modelo linear é realizado pela minimização do erro médio 
+quadrático. O algoritmo de ajuste mais simples para regressão linear é o método dos 
+mínimos quadrados, apresentado a seguir. 
+3.1.2 Método dos mínimos quadrados 
+O resultado do modelo geralmente não é igual ao valor observado da variável de saída 
+e haverá sempre um erro ou resíduo 𝑒(𝑡) = 𝑦(𝑡) −𝑦̂(𝑡) (cf. Figura 3.1). Uma citação 
+atribuída a George Box diz que “todos os modelos estão errados, alguns são úteis”. 
+A qualidade de um modelo de dados é medida por uma função de avaliação que mede 
+a discrepância entre o valor observado e o valor calculado pelo modelo [98]. A função 
+de avaliação utilizada em problemas de regressão linear é o erro médio quadrático 
+(EMQ), calculado no conjunto de treinamento: 
+EMQ(𝛉) = 1
+𝑁∑(𝑦(𝑡) −𝑦̂(𝑡))
+2
+𝑁
+𝑡=1
+= 1
+𝑁∑(𝑦(𝑡) −𝑓̂(𝐱(𝑡), 𝛉))
+2
+𝑁
+𝑡=1
+ 
+(3.4) 
+
+O EMQ é uma medida de distância entre o valor observado e o valor predito pelo mo-
+delo em cada registro do conjunto de treinamento. Estatisticamente, o EMQ pressupõe 
+que o resíduo 𝑒(𝑡) = 𝑦(𝑡) −𝑦̂(𝑡) tem distribuição normal, de média nula e variância 
+constante. Essa hipótese considera implicitamente que o processo que gerou os dados 
+é estacionário, ou seja, que as características estatísticas permanecem estáveis. Nesse 
+caso, a minimização do EMQ corresponde a maximizar a função de verossimilhança en-
+tre o modelo e a variável de saída [84][399], como será visto na seção 9.2.2 
+Se as hipóteses são satisfeitas, o ajuste dos parâmetros do modelo é realizado pela mi-
+nimização do EMQ, o que caracteriza o método dos mínimos quadrados (MMQ). O 
+MMQ produz os parâmetros de mínima variância [238]. Entretanto, nem sempre todas 
+as hipóteses são satisfeitas, mas, mesmo assim, o MMQ obtém bons resultados. 
+A apresentação do MMQ é mais elegante considerando a matriz de saída 𝐘, cujos ele-
+mentos são os valores das variáveis de saída de todos os registros do conjunto de trei-
+namento, e a matriz 𝐗̂, cujas linhas contêm os regressores dos registros do conjunto de 
+treinamento. Nesse caso, o EMQ é escrito como: 
+EMQ(𝛉) = 1
+𝑁(𝐘−𝐗̂𝛉T)
+T(𝐘−𝐗̂𝛉T) 
+(3.5) 
+onde 𝐗̂ = [
+𝑥̂1(1)
+⋯
+𝑥̂𝑛(1)
+⋮
+⋱
+⋮
+𝑥̂1(𝑁)
+⋯
+𝑥̂𝑛(𝑁)
+], 𝛉T = [
+𝜃1
+⋮
+𝜃𝑛
+] e, no caso de saída simples, 𝐘= [
+𝑦(1)
+⋮
+𝑦(𝑁)
+]. 
+Os parâmetros que minimizam o EMQ são calculados a partir da derivada do EMQ em 
+relação a 𝛉, escrita como: 
+𝜕𝐸𝑀𝑄(𝛉)
+𝜕𝛉
+= −2
+𝑁𝐗̂T(𝐘−𝐗̂𝛉T) 
+(3.6) 
+A solução é obtida igualando a derivada do EMQ a zero, o que resulta no seguinte sis-
+tema linear de equações, chamado de equações normais do MMQ: 
+𝐗̂T𝐗̂𝛉T = 𝐗̂T𝐘 
+(3.7) 
+Considerando que a matriz de regressores tem posto completo, isto é, 𝑟𝑎𝑛𝑘(𝐗̂) = 𝑛, a 
+solução do sistema linear (3.6) pode ser calculada como 
+𝛉∗= (𝐗̂T𝐗̂)
+−1𝐗̂T𝐘 
+(3.8) 
+
+onde a matriz (𝐗̂T𝐗̂)
+−1𝐗̂T é chamada de pseudoinversa de 𝐗̂.  
+Os valores preditos pelo modelo para os registros do conjunto de treinamento podem 
+ser calculados a partir da solução (3.8) como: 
+𝐘̂ = 𝐗̂𝛉∗= 𝐗̂(𝐗̂T𝐗̂)
+−1𝐗̂T𝐘= 𝐇𝐘 
+(3.9) 
+A matriz 𝐇= 𝐗̂(𝐗̂T𝐗̂)
+−1𝐗̂T, de dimensão 𝑁× 𝑁, é chamada de “matriz chapéu” 
+[238][399], pois “coloca o chapéu” em 𝐘. 
+A solução do MMQ pela equação (3.8) é computacionalmente complexa, pois envolve o 
+cálculo da inversa da matriz 𝐗̂T𝐗̂. Caso o posto da matriz de regressores não seja com-
+pleto, a equação (3.8) pode se tornar instável numericamente. Há alternativas para o 
+cálculo dos parâmetros do modelo linear que serão discutidas na seção 3.2.  
+3.1.3 Interpretação geométrica 
+O método dos mínimos quadrados tem uma interpretação geométrica mostrada na Fi-
+gura 3.3. Suponha que cada registro observado da variável de saída representa uma 
+coordenada no espaço 𝑁-dimensional, chamado de espaço amostral, de forma que o 
+conjunto de registros da variável de saída define o vetor 𝐘∈ℛ𝑁. Cada coluna da matriz 
+de regressores 𝐗̂ ∈ℛ𝑁×𝑛 também é um vetor no espaço amostral e as 𝑛 colunas da ma-
+triz de regressores definem um subespaço de dimensão 𝑛, chamado subespaço do mo-
+delo, representado pela área em cinza na Figura 3.3. 
+Todos os modelos lineares 𝐘̂ = 𝐗̂𝛉T, ou seja, todas as combinações lineares dos regres-
+sores, estão definidos no subespaço do modelo. A distância entre 𝐘̂ = 𝐗̂𝛉T e o vetor de 
+observações 𝐘 é calculada como: 
+𝑑𝑖𝑠𝑡(𝛉) = ‖𝐘−𝐗̂𝛉T‖ = √(𝐘−𝐗̂𝛉T)
+T(𝐘−𝐗̂𝛉T) 
+(3.10) 
+A equação (3.10) mostra que o EMQ(𝛉) = 𝑑𝑖𝑠𝑡2(𝛉)/𝑁, de forma que a solução 𝛉∗ que 
+minimiza o EMQ produz o resíduo de menor norma 𝐿2. Dessa forma, o modelo deve ser 
+ortogonal ao resíduo: 
+𝐘̂T(𝐘−𝐗̂𝛉∗) = 𝟎 
+(3.11) 
+A equação (3.11) indica que o resíduo não deve ser correlacionado com os resultados 
+do modelo. Na prática o EMQ não é nulo e a igualdade apresentada na equação (3.11) 
+
+não se verifica, mas esse resultado fornece um teste para validação do modelo de re-
+gressão linear. Outras estatísticas de validação serão discutidas na seção 3.3. 
+A Figura 3.3 mostra um exemplo da interpretação geométrica discutida no caso do de 
+um modelo linear simples de uma amostra de dimensão 𝑁= 3 registros. O exemplo foi 
+gerado com o conjunto de dados 𝒯= {(0.2,0.6), (0.5,0.2), (0.7,0.9)}. A matriz 𝐗̂ = [𝟏, 𝐗] 
+é a matriz de regressores que define o subespaço vetorial do modelo (em cinza), for-
+mado pelo vetor 𝟏, cujos elementos são todos 1, e o vetor 𝐗= [0.2,0.5,0.7]T, cujos ele-
+mentos são os registros da variável de entrada.  
+O resultado do ajuste do modelo pelo MMQ é o vetor de parâmetros 𝛉∗= [0.35,0.44]T, 
+que resulta na estimativa 𝐘̂ = [0.44,0.58,0.67]T. Observe que o vetor de resíduos é or-
+togonal ao vetor de estimativas localizado no subespaço vetorial do modelo (em cinza). 
+ 
+Figura 3.3: Interpretação geométrica do método dos mínimos quadrados. 
+A interpretação geométrica também mostra intuitivamente que a dimensão do espaço 
+de modelo não pode ser maior que a dimensão do espaço amostral, isto é, 𝑛< 𝑁. Caso 
+contrário, o modelo seria mais complexo que a própria amostra. A modelagem pode ser 
+entendida como um processo de compactação da informação em que os 𝑁 registros da 
+amostra são representados pelos 𝑛 parâmetros do modelo. 
+A dimensão da amostra em relação à dimensão do modelo é uma questão importante e 
+que tem grande influência na qualidade do modelo. Quanto maior o tamanho da amos-
+tra, melhor é o desempenho do MMQ. Na prática, o número de registros de uma amos-
+X
+1
+Yˆ
+Y
+Y
+Y
+ˆ
+−
+
+tra pode não ser muito grande quando há um custo associado à observação dos regis-
+tros. Para obter uma amostragem relativamente densa em espaços de alta dimensiona-
+lidade, o número de registros necessários aumenta exponencialmente com o número 
+de variáveis de entrada. Em espaços de alta dimensão, os dados se tornam altamente 
+esparsos. Hastie, Tibshirani e Friedman [238] mostram um exemplo em que conside-
+ram uma amostragem uniforme num hipercubo de lado unitário. Nesse caso, para um 
+problema de dimensão 𝑝= 10, é necessário utilizar 80% de cada dimensão para cap-
+turar 10% dos dados. Esse efeito é conhecido na literatura como a “maldição da dimen-
+sionalidade” [98][238].  
+Na próxima seção, apresentamos um exemplo simples no qual se discute o efeito da 
+escolha da estrutura do modelo no resultado da modelagem. 
+3.1.4 Exemplo sintético 
+Neste exemplo, o conjunto de dados foi gerado a partir da função 𝑦= 𝑥2, adicionando 
+uma perturbação aleatória de média nula e desvio padrão 0.2. A Figura 3.4a mostra o 
+conjunto de dados e a função 𝑦= 𝑥2 no domínio da amostra. 
+Foram gerados três modelos a partir desse conjunto de dados: um modelo linear sim-
+ples ou polinomial de grau 𝑟= 1; um polinomial de grau 𝑟= 2; e um polinomial de 
+grau 𝑟= 10. Como nesse problema a variável de entrada tem apenas uma dimensão, a 
+expressão do modelo polinomial da equação (3.3) se reduz a  𝑦̂(𝑡) = 𝜃0 + ∑
+𝑥𝑖𝜃𝑖
+𝑟
+𝑖=1
+ e o 
+modelo tem 𝑛= 𝑟+ 1 parâmetros. 
+Os resultados do ajuste de cada um desses modelos são mostrados, respectivamente, 
+nas Figura 3.4b, Figura 3.4c e Figura 3.4d. O modelo linear simples não representa bem 
+a relação real, que é mais complexa. No caso do modelo polinomial 𝑟= 10, a complexi-
+dade do modelo é muito superior à da relação e seu resultado foi corrompido pela pre-
+sença do ruído. No caso do modelo polinomial de grau 𝑟= 2, o resultado do modelo é 
+muito próximo da função 𝑦= 𝑥2 utilizada para gerar a amostra, pois o modelo foi ajus-
+tado com a estrutura correta. 
+A Tabela 3.1 mostra os parâmetros ajustados para cada um dos modelos. Podemos ob-
+servar que o modelo linear simples é praticamente a média da variável de saída. No 
+caso do modelo polinomial de grau 𝑟= 2, os parâmetros ajustados pelo MMQ corres-
+pondem aos da relação real até a primeira casa decimal. No caso do modelo polinomial 
+
+de grau 𝑟= 10, alguns parâmetros têm valores muito grandes em relação à escala da 
+variável de saída, o indica que o ajuste realizado por esse modelo não foi adequado. 
+(a) 
+(b) 
+(c) 
+(d) 
+Figura 3.4: Exemplo de ajuste de parâmetros pelo MMQ: (a) conjunto de dados; (b) modelo linear puro; 
+(c) modelo polinomial de grau 2; (d) modelo polinomial de grau 10. 
+O exemplo apresentado na Figura 3.4 mostra que o overfitting ocorre quando a com-
+plexidade do modelo é inadequada para a amostra. Entretanto, o MMQ pode ajustar 
+adequadamente um modelo, mesmo de complexidade inadequada, quando o conjunto 
+de dados for suficientemente grande. A Figura 3.5 mostra o resultado do modelo poli-
+nomial de grau 10 no caso de uma amostra com 𝑁= 200 e 𝑁= 400 registros. 
+Podemos observar que, mesmo com a complexidade do modelo sendo maior que a da 
+relação real, um modelo adequado é ajustado com maior número de registros. Dessa 
+forma, o overfitting ocorre quando a complexidade do modelo é maior que a da relação 
+e, adicionalmente, o tamanho da amostra é pequeno em relação à complexidade do mo-
+
+delo que se pretende ajustar. Há técnicas de combinação de modelos (chamadas de en-
+sembles) como o Boosting [185][186] que exploram a ponderação do conjunto de dados 
+de treinamento para o aumento de desempenho dos modelos. A relação entre a com-
+plexidade do modelo e o tamanho da amostra será explorada no Capítulo 7. 
+Tabela 3.1: Parâmetros ajustados dos modelos da Figura 3.4 
+𝛉 
+𝑟= 1  
+𝑟= 2  
+𝑟= 10  
+𝜃0 
+0.4131 
+0.0104 
+-0.1394 
+𝜃1 
+-0.0325 
+-0.0325 
+-0.8151 
+𝜃2 
+ 
+1.0983 
+8.455 
+𝜃3 
+ 
+ 
+6.2056 
+𝜃4 
+ 
+ 
+-53.2585 
+𝜃5 
+ 
+ 
+-15.7255 
+𝜃6 
+ 
+ 
+132.2678 
+𝜃7 
+ 
+ 
+16.2839 
+𝜃6 
+ 
+ 
+-133.545 
+𝜃9 
+ 
+ 
+-5.9739 
+𝜃10 
+ 
+ 
+47.2605 
+ 
+ 
+(a) 
+ 
+(b) 
+Figura 3.5: Efeito do número de registros no modelo de grau 10: (a) 𝑁= 200; (b) 𝑁= 400. 
+No MMQ, mesmo com uma amostra reduzida, é possível controlar a complexidade do 
+modelo e encontrar uma solução estável para o sistema linear (3.7) através de técnicas 
+de regularização, apresentadas a seguir. 
+
+3.2 Regularização 
+O desenvolvimento de um modelo em ciência de dados é, essencialmente, um processo 
+de escolha, muitas vezes chamado de treinamento ou “aprendizado” [98], que pode ser 
+resumido nas seguintes etapas: 
+1. Pré-seleção de um conjunto de funções ℱ que pode conter um elemento capaz 
+de ajustar o mapeamento entrada-saída representado pelo conjunto de treina-
+mento. Em geral, esse passo é definido pela escolha do tipo de modelo. 
+2. Definição de um conjunto de hipóteses ou conhecimento a priori que estabelece 
+restrições à família de funções ℱ como solução do problema. Essas restrições 
+visam limitar o espaço de soluções a um subconjunto ℱ∗⊆ℱ e, em alguns casos, 
+podem ser definidas através de parâmetros. Esse passo é chamado de seleção 
+da estrutura do modelo. 
+3. Definição de uma medida (ou função) de avaliação da qualidade de uma instân-
+cia 𝑓∈ℱ∗. A função de avaliação é utilizada na formulação de um problema de 
+otimização cuja solução define a aproximação ótima 𝑓∗. 
+4. Utilização de um algoritmo de otimização para o problema formulado em 3) cuja 
+solução são os parâmetros ajustados do modelo. 
+No caso do exemplo sintético da seção 3.1.4, o passo (1) corresponde à seleção do mo-
+delo polinomial de grau 𝑟. No passo (2), foram selecionadas três estruturas de modelos 
+através da escolha do grau do polinômio. O processo indutivo associado ao MMQ é a 
+minimização do EMQ e a solução é definida pela equação (3.8). Ao longo deste livro, 
+alternativas para cada um desses passos serão apresentadas para que se possa encon-
+trar a melhor solução em diferentes problemas. 
+Atualmente, o analista tem à sua disposição uma grande variedade de modelos em sof-
+twares livres e comerciais. Em muitos casos, o problema de ovefitting não se mostra tão 
+óbvio quanto no exemplo apresentado pela Figura 3.4d. Dessa forma, é importante en-
+tender as causas de overfitting para construir bons modelos, ou seja, modelos com boa 
+capacidade de generalização. 
+A regularização é uma técnica que permite reduzir a complexidade do modelo para a 
+obtenção de um modelo mais estável que permita melhor generalização para dados 
+
+diferentes dos que foram utilizados no ajuste de parâmetros. As técnicas de regulariza-
+ção estão fortemente associadas à relação bias e variância, apresentada a seguir. 
+3.2.1 Bias e variância 
+A estimativa de um modelo com overfitting depende da amostra utilizada para o ajuste 
+do modelo. A parcela do EMQ (cf. equação (3.4)) calculada para um ponto qualquer 𝐱(𝑡) 
+do conjunto de treinamento é uma estimativa do valor esperado* do erro quadrático 
+nesse ponto quando o número de amostras 𝑁→∞ [187]: 
+lim
+𝑁→∞(𝑦(𝑡) −𝑓̂(𝐱(𝑡), 𝛉))
+2 = 𝐸((𝑦𝑟(𝑡) −𝑓̂(𝐱(𝑡), 𝛉))
+2) 
+(3.12) 
+onde 𝑦𝑟(𝑡) = 𝐸(𝑦(𝑡)) é o valor da função real em 𝐱(𝑡). 
+A equação (3.12) é válida para qualquer registro do conjunto de treinamento e pode-
+mos escrever 𝑦𝑟(𝑡) = 𝑦𝑟 e 𝑓(𝐱(𝑡), 𝛉) = 𝑦̂ para simplificar a notação. O valor esperado 
+do erro quadrático em 𝐱(𝑡) pode ser decomposto em dois fatores [238] como: 
+𝐸((𝑦𝑟−𝑦̂)2) = (𝑦𝑟−𝐸(𝑦̂))
+2 + 𝐸((𝑦̂ −𝐸(𝑦̂))
+2) 
+= 𝑏𝑖𝑎𝑠2 + 𝑣𝑎𝑟𝑖â𝑛𝑐𝑖𝑎 
+(3.13) 
+O termo (𝑦𝑟−𝐸(𝑦̂)) é chamado bias teórico do modelo e o termo 𝐸((𝑦̂ −𝐸(𝑦̂))
+2) é 
+chamado de variância teórica do modelo. O bias é, então, a diferença entre o valor real 
+da função em 𝐱(𝑡) e o valor esperado da aproximação naquele ponto. A variância é o 
+valor esperado da diferença entre uma estimativa do modelo e o valor esperado de to-
+das as estimativas. 
+Uma aproximação do cálculo do valor esperado pode ser feita pela média em várias 
+realizações da variável aleatória, o que permite uma visualização do efeito do bias e da 
+variância nos resultados do ajuste dos modelos do exemplo da Figura 3.4. Para isso, 10 
+amostras de 𝑁= 20 registros foram geradas a partir da função 𝑦𝑟= 𝑥2 + 𝜀, onde o ru-
+ído 𝜀 foi gerado por uma distribuição normal 𝜀~𝑁(0,0.2). O bias e a variância em todos 
+os pontos foram calculados pela decomposição (3.13). Para se ter uma ideia desses va-
+lores para cada modelo, foi calculada a média para todos os pontos, uma vez que os 
+ 
+* O valor esperado é definido como 𝐸(𝑥) = ∫
+𝑥𝑝(𝑥)𝑑𝑥
+∞
+−∞
+, onde 𝑝(𝑥) é a função densidade de probabili-
+dades da variável aleatória. O valor esperado pode ser aproximado pela média aritmética de todas as 
+realizações da variável aleatória [400]. 
+
+valores da variável de entrada permanecem os mesmos para todas as amostras. O re-
+sultado é mostrado na Figura 3.6a para o modelo linear simples e na Figura 3.6b para 
+o modelo polinomial de grau 10. Nos dois gráficos da Figura 3.6, a curva verde apre-
+senta a função real 𝑦𝑟= 𝑥2, os pontos das amostras são mostrados em azul, o modelo 
+ajustado 𝑦̂ com cada amostra em vermelho e a média dos modelos entre todas as amos-
+tras em preto. 
+Os dois casos apresentam uma estrutura inadequada, como já foi discutido. O modelo 
+linear simples apresenta o bias elevado, mas uma variância pequena, enquanto o mo-
+delo de grau 10 apresenta um bias pequeno e uma alta variância, mostrando que é mais 
+sensível à amostra que o primeiro.  
+(a) 
+(b) 
+Figura 3.6: Bias e variância: (a) modelo linear simples; (b) modelo de grau 10. 
+Os resultados dos modelos ajustados com a estrutura correta, ou seja, um polinômio de 
+grau 2, são mostrados na Figura 3.7. Podemos observar que o modelo com a estrutura 
+correta é capaz de minimizar simultaneamente o bias e a variância e que a média de 
+todos os modelos aproxima bem a função real. 
+A simulação anterior permite concluir que o bias acontece quando a complexidade do 
+modelo é inferior à da função real e que a variância é o efeito da instabilidade de mo-
+delos muito complexos em relação ao tamanho da amostra. O objetivo das técnicas de 
+regularização é a redução da variância de um modelo de alta complexidade para que o 
+modelo se torne adequado à complexidade do problema, mantendo o bias baixo. 
+
+ 
+Figura 3.7: Bias e variância no modelo de grau 2. 
+A Figura 3.8 mostra o conceito de regularização como uma forma de reduzir a variância 
+do modelo. A Figura 3.8 utiliza os elementos da decomposição do erro quadrático em 
+bias e variância na equação (3.13). O círculo cinza no centro da figura representa o con-
+junto de valores possíveis da amostra, cujo centro é o valor real da função 𝑦𝑟. O valor 
+observado na amostra difere do valor real devido ao erro de observação 𝑒𝑜= 𝑦−𝑦𝑟. A 
+partir de uma estrutura de modelo definida, o ajuste pelo MMQ produz uma estimativa 
+𝑦̂, cuja diferença em relação ao valor observado é o resíduo do modelo 𝑒= 𝑦−𝑦̂. Con-
+siderando todas as amostras possíveis, a variância do modelo 𝐸((𝑦̂ −𝐸(𝑦̂))2) é repre-
+sentada pelo círculo laranja maior. Com essa estrutura, o modelo produzido pelo MMQ, 
+considerando uma amostra infinita de dados, é o valor esperado do modelo 𝐸(𝑦̂). O bias 
+do modelo é a diferença entre o valor real e o valor esperado do modelo. 
+A técnica de regularização visa a uma redução do espaço do modelo, que vai produzir 
+uma estimativa de complexidade reduzida 𝑦̂′ para o valor observado 𝑦. Essa estimativa, 
+apesar de apresentar um resíduo do modelo 𝑒= 𝑦−𝑦̂′ maior, está mais próxima do 
+resultado que seria obtido com uma amostra infinita 𝐸(𝑦̂′), de forma que a variância 
+da estimativa do modelo reduzido 𝐸((𝑦̂′ −𝐸(𝑦̂′))2) é menor. O bias da estimativa do 
+modelo reduzido pode ser maior, mas a soma EMQ que considera bias e variância pode 
+ser menor para o resultado do modelo reduzido que para o resultado do modelo inicial. 
+
+ 
+Figura 3.8: Conceito de regularização. Adaptado de [238]. 
+O conceito de regularização descrito anteriormente será formalizado matematica-
+mente em duas técnicas amplamente difundidas nas próximas seções. 
+3.2.2 Regularização de Tikhonov 
+Na regressão linear, o overfitting ocorre porque o modelo é muito complexo para o ta-
+manho da amostra e o problema torna-se mal condicionado, ou seja, a solução do sis-
+tema linear (3.7) é muito sensível à amostra e torna-se instável. Para contornar esse 
+problema, é necessário reduzir a complexidade do modelo, seja modificando direta-
+mente a sua estrutura, seja aplicando algum tratamento numérico que permita o ajuste 
+de um modelo menos complexo. 
+O método clássico de regularização foi proposto por Tikhonov para a solução de siste-
+mas lineares mal condicionados [524]. Na estatística, o método de Tikhonov foi intro-
+duzido por Hoerl e Kennard [255] e chamado de ridge regression.  
+A regularização de Tikhonov é uma técnica de controle de complexidade do modelo 
+através da aplicação de uma penalidade sobre o vetor de parâmetros. A solução é ob-
+tida pela minimização do erro médio quadrático regularizado (EMQR): 
+𝐸𝑀𝑄𝑅(𝜇, 𝛉) = 1
+𝑁∑(𝑦(𝑡) −𝑓̂(𝐱(𝑡), 𝛉))
+2
+𝑁
+𝑡=1
++ 𝜇‖𝛉‖2 
+(3.14) 
+
+onde 𝜇≥0 é o parâmetro de regularização que controla a aplicação da penalidade. Ob-
+serve que, como 𝜇≥0, 𝐸𝑀𝑄𝑅(𝜇, 𝛉) ≥𝐸𝑀𝑄(𝛉), o que é coerente com o raciocínio apre-
+sentado na Figura 3.8. 
+No modelo linear, o EMQR é escrito utilizando a notação vetorial como: 
+𝐸𝑀𝑄𝑅(𝜇, 𝛉) = 1
+𝑁(𝐘−𝐗̂𝛉T)
+T(𝐘−𝐗̂𝛉T) + 𝜇𝛉𝛉T 
+(3.15) 
+onde 𝐗̂ = [
+𝑥̂1(1)
+⋯
+𝑥̂𝑛(1)
+⋮
+⋱
+⋮
+𝑥̂1(𝑁)
+⋯
+𝑥̂𝑛(𝑁)
+], 𝛉T = [
+𝜃1
+⋮
+𝜃𝑛
+] e 𝐘= [
+𝑦(1)
+⋮
+𝑦(𝑁)
+], como na equação (3.5). 
+A minimização do EMQR seguindo o mesmo procedimento anterior resulta no sistema 
+linear (𝐗̂T𝐗̂ + 𝜇𝐈)𝛉T = 𝐗̂T𝐘, cuja solução é calculada como: 
+𝛉𝜇
+∗= (𝐗̂T𝐗̂ + 𝜇𝐈)
+−1𝐗̂T𝐘 
+(3.16) 
+onde 𝐈 é a matriz identidade. 
+A regularização de Tikhonov atua no condicionamento da matriz de coeficientes 𝐗̂T𝐗̂ 
+através do parâmetro de regularização 𝜇. 
+O condicionamento de uma matriz 𝐀 reflete a sensibilidade da solução de um sistema 
+linear em que a matriz 𝐀 é a matriz de coeficientes. Se a matriz 𝐀 for mal condicionada, 
+pequenas alterações no termo independente podem causar grandes variações na solu-
+ção. O condicionamento de uma matriz quadrada 𝐀 é medido pelo número de condi-
+ção, definido como 𝜅(𝐀) = ‖𝐀‖‖𝐀−1‖, e calculado a partir dos seus autovalores [206]: 
+𝜅(𝐀) = 𝜆𝑚𝑎𝑥
+𝜆𝑚𝑖𝑛
+ 
+(3.17) 
+onde 𝜆𝑚𝑎𝑥 e 𝜆𝑚𝑖𝑛 são, respectivamente, o maior e o menor autovalor de 𝐀. 
+A equação (3.17) mostra que, se 𝜆𝑚𝑖𝑛→0, o número de condição da matriz 𝜅(𝐀) →∞ 
+e a matriz tende a ser singular. O menor autovalor 𝜆𝑚𝑖𝑛= 0 indica que há colunas line-
+armente dependentes, ou seja, a matriz tem posto deficiente e o sistema linear é inde-
+terminado. Um valor do número de condição grande, por exemplo, 𝜅(𝐀) > 1.000, in-
+dica que o condicionamento da matriz é próximo do singular e que a solução do sistema 
+linear é instável, sendo muito sensível a perturbações. 
+
+No caso da regressão linear, a matriz de coeficientes no MMQ (cf. equação (3.7)) é a 
+matriz 𝐗̂T𝐗̂ e o termo independente, 𝐗̂T𝐘. A existência de regressores altamente corre-
+lacionados provoca o mau condicionamento da matriz 𝐗̂T𝐗̂ e resulta na instabilidade 
+na solução, o que, no contexto do problema de regressão, significa overfitting. Em ou-
+tras palavras, um modelo muito complexo (em relação ao tamanho da amostra) resulta 
+em problemas de condicionamento na matriz 𝐗̂T𝐗̂ e instabilidade na solução. Esse 
+efeito pode ser observado pelos valores do vetor de parâmetros 𝛉 na solução para o 
+modelo de grau 10 mostrado na Tabela 3.1. 
+Na regularização de Tikhonov, a adição de uma constante à diagonal principal da ma-
+triz 𝐗̂T𝐗̂ altera seu número de condição como:  
+𝜅(𝐀) = 𝜆𝑚𝑎𝑥+ 𝜇
+𝜆𝑚𝑖𝑛+ 𝜇 
+(3.18) 
+Dessa forma, mesmo que a matriz 𝐗̂T𝐗̂ seja singular e que 𝜆𝑚𝑖𝑛= 0, a matriz 𝐗̂T𝐗̂ + 𝜇𝐈 
+será estável numericamente e a solução (3.16) poderá ser calculada adequadamente. 
+O controle do condicionamento da matriz de regressores foi a principal motivação para 
+a introdução do método de Tikhonov na regressão linear [255]. Atualmente, o pro-
+blema de regularização através da minimização do EMQR (3.14) tem sido tratado como 
+uma técnica geral de controle da complexidade de modelos [98][238][478]. 
+Na regularização de Tikhonov, o parâmetro de regularização deve ser informado ou 
+calculado automaticamente [399]. Hoerl, Kennard e Baldwin [256] apresentam a se-
+guinte proposta para o cálculo do parâmetro 𝜇:  
+𝜇=
+𝑛
+(𝑁−𝑛)
+‖𝐘−𝐗̂𝛉T‖
+𝟐
+‖𝛉‖𝟐
+ 
+(3.19) 
+onde 𝑛 é o número de parâmetros e 𝛉 é a solução do MMQ sem regularização. O termo 
+‖𝐘−𝐗̂𝛉T‖
+𝟐(𝑁−𝑛)
+⁄
+ é uma estimativa da variância do resíduo (cf. equação (3.30)). 
+A regularização de Tikhonov pode ser entendida num contexto de seleção de modelos 
+através do ajuste do parâmetro de regularização 𝜇, cuja variação permite uma regula-
+gem contínua de estrutura do modelo, o que pode ser interessante em alguns casos. 
+A Figura 3.9 apresenta o conjunto de dados do exemplo discutido na seção 3.1.4 com o 
+resultado do ajuste do modelo polinomial de grau 10 pela minimização EMQR, com dois 
+
+valores para o parâmetro de regularização. A Figura 3.9a mostra o ajuste com o valor 
+obtido pela equação (3.19) com 𝜇= 1 × 10−5 e a Figura 3.9b mostra o resultado obtido 
+com o valor 𝜇= 0.1 escolhido de forma ad hoc.  
+(a) 
+(b) 
+Figura 3.9: Modelo de grau 10 com regularização: (a) 𝜇= 1 × 10−5; (b) 𝜇= 0.1. 
+A Tabela 3.2 mostra os valores dos parâmetros. O resultado obtido sem regularização 
+(𝜇= 0.0) foi incluído para facilitar a comparação. 
+Tabela 3.2: Parâmetros ajustados dos modelos da Figura 3.9 
+𝛉 
+𝜇= 0.0  
+𝜇= 1 × 10−5  
+𝜇= 0.1  
+𝜃0 
+-0.1394 
+   -0.0556 
+    0.0567 
+𝜃1 
+-0.8151 
+   -0.7044 
+   -0.1218 
+𝜃2 
+8.4550 
+    4.2082 
+    0.6766 
+𝜃3 
+6.2056 
+    4.7143 
+    0.1997 
+𝜃4 
+-53.2585 
+  -18.5496 
+    0.4438 
+𝜃5 
+-15.7255 
+  -10.2949 
+    0.0189 
+𝜃6 
+132.2678 
+   33.0619 
+    0.2380 
+𝜃7 
+16.2839 
+    8.9882 
+   -0.0538 
+𝜃6 
+-133.5450 
+  -18.2708 
+   -0.0253 
+𝜃9 
+-5.9739 
+   -2.7254 
+   -0.0693 
+𝜃10 
+47.2605 
+    0.6354 
+   -0.2803 
+ 
+A solução robusta do MMQ também pode ser obtida evitando as componentes associa-
+das aos autovalores próximos de zero, através do método das componentes principais. 
+
+3.2.3 Regularização por componentes principais 
+Na seção 2.4.2, vimos que a decomposição em valores singulares (SVD) permite elimi-
+nar colunas linearmente dependentes de uma matriz através de uma transformação 
+linear ortogonal. A SVD permite uma solução robusta de sistemas lineares conside-
+rando apenas as colunas linearmente independentes da matriz de coeficientes. 
+Considere a SVD da matriz de regressores 𝐗̂ = 𝐔𝐒𝐕T aplicada ao ajuste de parâmetros 
+do MMQ pela equação (3.8): 
+𝛉∗= (𝐗̂T𝐗̂)
+−1𝐗̂T𝐘= (𝐕𝐒𝟐𝐕T)−1𝐕𝐒𝐔T𝐘= 𝐕𝐒−1𝐔T𝐘 
+(3.20) 
+Uma solução estável do MMQ pode ser obtida utilizando apenas as 𝑟≤𝑟𝑎𝑛𝑘(𝐗̂) colu-
+nas linearmente independentes da matriz de regressores como: 
+𝛉𝑟
+∗= ∑(𝐮𝑖
+T𝐘
+𝑠𝑖
+) 𝐯𝑖
+𝑟
+𝑖=1
+ 
+(3.21) 
+onde 𝐮𝑖 e 𝐯𝑖 são as colunas de 𝐔 e 𝐕 e 𝑠𝑖 é o valor singular correspondente.  
+A soma dos 𝑟≤𝑟𝑎𝑛𝑘(𝐗̂) termos associados aos maiores valores singulares evita a uti-
+lização de valores muito pequenos de 𝑠𝑖, que provocam a instabilidade da solução, 
+como mostra a equação (3.21). Dessa forma, a solução (3.21) não utiliza todas as colu-
+nas de 𝐔 e 𝐕, tal forma que ‖𝛉𝑟
+∗‖ < ‖𝛉∗‖. Ela pode, então, ser vista como a solução re-
+duzida do MMQ e, portanto, uma técnica de regularização. 
+A decomposição SVD da matriz de regressores 𝐗̂ é equivalente à decomposição em au-
+tovalores e autovetores da matriz 𝐗̂T𝐗̂, como foi visto na seção 2.4.2. A solução da equa-
+ção (3.21) corresponde à aplicação do MMQ aos componentes principais da matriz de 
+regressores, o que dá nome ao método. 
+A regularização por componentes principais também pode ser utilizada como uma 
+forma de seleção de modelos pela variação do parâmetro 𝑟≤𝑟𝑎𝑛𝑘(𝐗̂). Em muitos sof-
+twares, a solução (3.21) é utilizada como uma solução robusta do sistema linear (3.16) 
+com 𝑟 ≈𝑟𝑎𝑛𝑘(𝐗̂), o que fica transparente para o usuário. 
+Para comparação com os resultados anteriores, a Figura 3.10 apresenta os resultados 
+do ajuste do modelo polinomial de grau 10 pelo método de componentes principais. A 
+Figura 3.10a mostra o ajuste com o valor obtido com 𝑟= 𝑟𝑎𝑛𝑘(𝐗̂) = 9 e a Figura 3.10b, 
+o resultado obtido com o valor 𝑟= 5 escolhido de forma ad hoc.  
+
+(a) 
+(b) 
+Figura 3.10: Modelo de grau 10 com regularização: (a) 𝑟= 9; (b) 𝑟= 5. 
+A Tabela 3.2 mostra os valores dos parâmetros. O resultado obtido sem regularização 
+(𝑟= 11) também foi incluído para facilitar a comparação. 
+Tabela 3.3: Parâmetros ajustados dos modelos da Figura 3.10 
+𝛉 
+𝑟= 11  
+𝑟= 9  
+𝑟= 5  
+𝜃0 
+-0.1394 
+   -0.0408 
+    0.0248 
+𝜃1 
+-0.8151 
+   -0.5505 
+   -0.0447 
+𝜃2 
+8.4550 
+    3.3565 
+    0.8601 
+𝜃3 
+6.2056 
+    2.6037 
+   -0.0054 
+𝜃4 
+-53.2585 
+  -11.0903 
+    0.4039 
+𝜃5 
+-15.7255 
+   -2.5260 
+    0.0083 
+𝜃6 
+132.2678 
+   10.7787 
+    0.1023 
+𝜃7 
+16.2839 
+   -1.5235 
+    0.0146 
+𝜃6 
+-133.5450 
+    8.4170 
+   -0.0871 
+𝜃9 
+-5.9739 
+    1.9788 
+    0.0178 
+𝜃10 
+47.2605 
+  -10.3956 
+   -0.2107 
+ 
+3.3 Validação de Modelos 
+A abordagem clássica para validação de modelos de regressão linear é o teste das hi-
+póteses do MMQ [399]. O desempenho do modelo depende, principalmente, da escolha 
+da melhor estrutura ou de parâmetros de regularização. Dessa forma, a seleção do mo-
+delo é feita a partir de estatísticas e procedimentos de validação. 
+
+As estatísticas de validação medem o desempenho do modelo num determinado con-
+junto de dados. A forma mais efetiva de avaliar a capacidade de predição do modelo é 
+verificar as estatísticas de validação em dados diferentes daqueles utilizados para o 
+ajuste dos parâmetros. A validação cruzada, utilizando as estatísticas de validação do 
+modelo, é um método eficiente e prático para a avaliação da qualidade preditiva do 
+modelo. As principais estatísticas de validação para regressão linear são apresentadas 
+na próxima seção e a validação cruzada é apresentada na seção 3.3.2. 
+3.3.1 Estatísticas de validação 
+As estatísticas de validação são calculadas a partir do resíduo em cada registro: 
+𝑒(𝑡) = 𝑦(𝑡) −𝑦̂(𝑡), 𝑡= 1, … , 𝑁 
+(3.22) 
+A análise de variância do modelo é feita a partir da decomposição [399]: 
+∑(𝑦(𝑡) −𝑦̅)2
+𝑁
+𝑡=1
+= ∑(𝑦̂(𝑡) −𝑦̅)2
+𝑁
+𝑡=1
++ ∑(𝑦(𝑡) −𝑦̂(𝑡))
+2
+𝑁
+𝑡=1
+ 
+(3.23) 
+onde 𝑦̅ representa a média da variável de saída. 
+A equação (3.23) pode ser escrita como 𝑆𝑆𝑇= 𝑆𝑆𝑅+ 𝑆𝑆𝑅𝑒𝑠, onde 𝑆𝑆𝑇 é a soma de qua-
+drados totais, que representa a variabilidade total da variável de saída; 𝑆𝑆𝑅 é a soma 
+dos quadrados da regressão, que representa a porção da variabilidade total explicada 
+pelo modelo; e 𝑆𝑆𝑅𝑒𝑠 é a soma de quadrados dos resíduos, que representa a porção da 
+variabilidade total que não pode ser explicada pelo modelo. 
+O coeficiente de determinação 𝑅2 mede o percentual da variabilidade total que é ex-
+plicada pelo modelo como [399]: 
+𝑅2 = 𝑆𝑆𝑅
+𝑆𝑆𝑇
+= ∑
+(𝑦̂(𝑡) −𝑦̅)2
+𝑁
+𝑡=1
+∑
+(𝑦(𝑡) −𝑦̅)2
+𝑁
+𝑡=1
+= 1 −𝑆𝑆𝑅𝑒𝑠
+𝑆𝑆𝑇
+= 1 −
+∑
+(𝑦(𝑡) −𝑦̂(𝑡))
+2
+𝑁
+𝑡=1
+∑
+(𝑦(𝑡) −𝑦̅)2
+𝑁
+𝑡=1
+ 
+(3.24) 
+O coeficiente de determinação 𝑅2 ≤1 uma vez que 𝑆𝑆𝑇 é fixo e 𝑆𝑆𝑅𝑒𝑠≤𝑆𝑆𝑇. O valor 
+𝑅2 ≈1 indica um resultado adequado pois a maior parte da variabilidade total é expli-
+cada pelo modelo. Intuitivamente, o coeficiente de determinação compara o erro do 
+modelo estimado pelo erro da média da variável saída. Se o erro do modelo é da mesma 
+ordem de grandeza do erro da média, o valor 𝑅2 ≈0 indica que o modelo não consegue 
+
+explicar as observações melhor que a média da variável de saída. Em alguns casos, o 
+valor 𝑅2 < 0 indica que o modelo é pior que a média da variável de saída. 
+O coeficiente de determinação é muito sensível aos valores mais altos da variável de 
+saída uma vez que os erros são elevados ao quadrado. Para avaliação de valores meno-
+res, pode-se utilizar o coeficiente de determinação calculado sobre os logaritmos dos 
+valores observados e preditos: 
+𝑅𝑙𝑜𝑔
+2
+= 1 −
+∑
+(log(𝑦(𝑡)) −log(𝑦̂(𝑡)))
+2
+𝑁
+𝑡=1
+∑
+(log(𝑦(𝑡)) −log(𝑦(𝑡))
+̅̅̅̅̅̅̅̅̅̅̅̅)
+2
+𝑁
+𝑡=1
+ 
+(3.25) 
+onde log(𝑦(𝑡))
+̅̅̅̅̅̅̅̅̅̅̅̅ é a média do logaritmo dos valores observados. 
+Uma estatística muito utilizada para avaliação de modelos é a raiz quadrada do EMQ, 
+conhecida como RMS:* 
+𝑅𝑀𝑆= √1
+𝑁∑𝑒2(𝑡)
+𝑁
+𝑡=1
+= √1
+𝑁∑(𝑦(𝑡) −𝑦̂(𝑡))
+2
+𝑁
+𝑡=1
+ 
+(3.26) 
+O resultado do RMS tem a mesma escala da variável de saída e pode ser analisado no 
+contexto do problema. 
+Uma estatística de validação similar ao RMS é o erro absoluto médio (MAE)†: 
+𝑀𝐴𝐸= 1
+𝑁∑|𝑦(𝑡) −𝑦̂(𝑡)|
+𝑁
+𝑡=1
+ 
+(3.27) 
+O erro absoluto médio percentual (MAPE)‡ é uma variante do MAE que apresenta os 
+erros de forma relativa: 
+𝑀𝐴𝑃𝐸= 1
+𝑁∑|𝑦(𝑡) −𝑦̂(𝑡)
+𝑦(𝑡)
+|
+𝑁
+𝑡=1
+ 
+(3.28) 
+A estatística MAPE é uma medida relativa e deve ser utilizada com cautela se a variável 
+de saída for padronizada pela estimativa dos z-scores, pois pode resultar em erros de 
+ 
+* Root Mean Square. 
+† Mean Absolute Error. 
+‡ Mean Absolute Percentual Error. 
+
+arredondamento e, eventualmente, divisão por zero. Quando a variável de saída não 
+contém o valor nulo, o resultado em forma percentual permite uma avaliação intuitiva 
+da qualidade do modelo. 
+Uma estatística adimensional para avaliação do desempenho do modelo é a correlação 
+entre os resultados do modelo e os valores observados da variável de saída: 
+𝜌𝑦𝑦̂ =
+∑
+(𝑦(𝑡) −𝑦̅)(𝑦̂(𝑡) −𝑦̌)
+𝑁
+𝑡=1
+√𝑉𝑎𝑟(𝑦)√𝑉𝑎𝑟(𝑦̂)
+ 
+(3.29) 
+onde 𝑦̌ = 1
+𝑁∑
+𝑦̂(𝑡)
+𝑁
+𝑡=1
+ é a média dos resultados do modelo. 
+O valor de correlação 𝜌𝑦𝑦̂ ≤1; quanto mais próximo de 1, melhor a qualidade do mo-
+delo. O resultado de correlação também pode ser avaliado no gráfico de projeção entre 
+o valor observado e o previsto da variável de saída.  
+Se a estrutura selecionada pelo modelo representa adequadamente a relação, uma es-
+timativa da variância dos resíduos é calculada como: 
+𝑉𝑎𝑟(𝑒) = 𝜎̂2 = 
+1
+𝑁−𝑛∑𝑒2(𝑡)
+𝑁
+𝑡=1
+= 
+1
+𝑁−𝑛∑(𝑦(𝑡) −𝑦̂(𝑡))
+2
+𝑁
+𝑡=1
+ 
+(3.30) 
+onde 𝑛 é o número de regressores do modelo. 
+Quando a distribuição do resíduo pode ser representada adequadamente por uma dis-
+tribuição normal, é possível calcular um intervalo de confiança do resultado do modelo 
+para um valor de entrada arbitrário 𝐱̂0 do vetor de regressores. A estimativa da vari-
+ância do modelo no ponto 𝐱̂0 é calculada como [399]:  
+𝑉𝑎𝑟(𝑦̂0) = 𝜎̂2𝐱̂0
+T(𝐗̂T𝐗̂)
+−1𝐱̂0 
+(3.31) 
+onde 𝑦̂0 é o valor do modelo no ponto 𝐱̂0 e 𝜎̂2 é a estimativa da variância do resíduo 
+calculada pela equação (3.30). 
+O intervalo que contém o valor esperado da relação real 𝑦𝑟= 𝐸(𝑦0), onde 𝑦0 é o valor 
+observado em 𝐱̂0, com confiança estatística de 𝜉% é calculado como [399]: 
+𝑦̂0 −𝑡𝜉,𝑑√𝑉𝑎𝑟(𝑦̂0) ≤𝑦𝑟≤𝑦̂0 + 𝑡𝜉,𝑑√𝑉𝑎𝑟(𝑦̂0) 
+(3.32) 
+
+onde 𝑑= 𝑁−𝑛 é o número de graus de liberdade e 𝑡𝜉,𝑑 é o valor da distribuição t de 
+Student. A distribuição t pode ser aproximada pela normal para 𝑑≥30, de forma que 
+o intervalo de confiança com 95% de significância pode ser aproximado por: 
+𝑦̂0 −2.0√𝑉𝑎𝑟(𝑦̂0) ≤𝑦𝑟≤𝑦̂0 + 2.0√𝑉𝑎𝑟(𝑦̂0) 
+(3.33) 
+A Figura 3.11 mostra o resultado do modelo linear de duas das três variáveis de saída 
+do problema Contrete Slump.104 A Figura 3.11a mostra o resultado da variável de saída 
+𝑦3, em que o modelo tem um bom desempenho, e a Figura 3.11b, o resultado da variável 
+𝑦1, em que o desempenho do modelo não é bom. 
+(a) 
+(b) 
+Figura 3.11: Resultados do modelo linear do problema Contrete Slump: (a) 𝑦3; (b) 𝑦1. 
+A Figura 3.12 mostra as estatísticas de validação correspondentes. As estatísticas 𝑅2 e 
+𝑅𝑙𝑜𝑔
+2  são apresentadas subtraídas da unidade para que o melhor modelo tenha sempre 
+o menor valor. As barras vermelhas indicam o resultado da previsão realizada pela mé-
+dia e servem como referência. 
+A comparação da distribuição dos resíduos com a distribuição normal 𝑁(0, 𝜎̂2) permite 
+avaliar graficamente a qualidade do modelo. Resíduos com distribuição normal indi-
+cam que o ajuste realizado pelo MMQ foi de boa qualidade. A Figura 3.13 mostra os 
+histogramas dos resíduos e os gráficos de probabilidade normal dos resultados apre-
+sentados na Figura 3.12 e na Figura 3.11. 
+ 
+
+(a) 
+(b) 
+Figura 3.12: Resultados do modelo linear do problema Concrete Slump: (a) 𝑦3; (b) 𝑦1. 
+(a) 
+(b) 
+(c) 
+(d) 
+Figura 3.13: Distribuição do resíduo no problema Slump: (a) e (b) 𝑦3; (c) e (d) 𝑦1. 
+
+As estatísticas de validação calculadas diretamente sobre o conjunto de treinamento 
+não são úteis para a escolha do melhor modelo, pois um modelo com overfitting tem 
+bom desempenho no conjunto de treinamento. A avaliação da capacidade de predição 
+do modelo diretamente sobre o conjunto de treinamento pode ser avaliada por estatís-
+ticas como os critérios de Akaike (AIC) [7] e de Schwartz (BIC) [481], cujos resultados 
+nem sempre correspondem ao desempenho efetivo do modelo. Na prática, utiliza-se o 
+procedimento de validação cruzada para estimar a capacidade de predição do modelo, 
+como descrito a seguir. 
+3.3.2 Validação cruzada 
+A maneira mais simples de estimar o desempenho do modelo num conjunto de dados 
+diferente do que foi utilizado para o ajuste é dividir o conjunto de dados 𝒯 em dois 
+subconjuntos: o conjunto de treinamento 𝒯1 e o conjunto de teste 𝒯2, respectivamente 
+com 𝑁1 e 𝑁2 registros (tipicamente 𝑁1 = 2𝑁3
+⁄  e 𝑁2 = 𝑁3
+⁄ ). O conjunto de treina-
+mento é utilizado para o ajuste de parâmetros e o conjunto de teste é utilizado para 
+estimar o desempenho do modelo. Essa abordagem supõe que os dois conjuntos são 
+amostras representativas do processo, o que pode não acontecer se o conjunto de da-
+dos não for grande o suficiente. Além disso, as estatísticas de validação ficam muito 
+dependentes da partição e uma permutação dos registros pode gerar variações impor-
+tantes nas estatísticas de validação. 
+A validação cruzada é um procedimento simples que permite avaliar adequadamente 
+o desempenho do modelo em dados diferentes do conjunto de treinamento. Na valida-
+ção cruzada, o conjunto de dados é dividido em 𝐾 subconjuntos e a validação é reali-
+zada em 𝐾 ciclos: para cada ciclo o modelo é ajustado utilizando 𝐾−1 subconjuntos e 
+avaliado no subconjunto remanescente. O procedimento é descrito pelo Algoritmo 3.1, 
+mostrado esquematicamente na Figura 3.14. 
+As estatísticas de validação podem ser calculadas sobre o resultado de cada ciclo 𝐘̂𝑖 e o 
+resultado é apresentado em termos de média e desvio padrão dos resultados em todos 
+os ciclos. Em conjuntos de dados pequenos, as estatísticas de validação não são signifi-
+cativas quando calculadas sobre um subconjunto com 𝑁𝐾
+⁄  registros. Dessa forma, é 
+preferível concatenar os resultados em cada ciclo num vetor de resultados 𝐘̂, que tem 
+o mesmo número de registros que o conjunto de treinamento, e calcular as estatísticas 
+
+de validação sobre esses resultados. Observe que todos os elementos do vetor 𝐘̂ foram 
+calculados com registros diferentes daqueles utilizados para o ajuste dos modelos. 
+Algoritmo 3.1: Validação cruzada de 𝐾 ciclos 
+Entrada: 
+Conjunto de dados 𝒯= {(𝐱(𝑡), 𝑦(𝑡)), 𝑡= 1 … 𝑁} e número de ci-
+clos 𝐾 
+Saída:  
+Vetor com resultados do modelo 𝐘̂ = [𝑦̂(1), … , 𝑦̂(𝑁)]T 
+01 
+Início 
+02 
+Dividir o conjunto 𝒯 em 𝐾 subconjuntos 𝒯𝑖, 𝑖= 1, … , 𝐾 aproxi-
+madamente iguais 
+03 
+Para 𝑖= 1 …  𝐾: 
+04 
+Definir o conjunto de treinamento 𝒯𝑇𝑅= ⋃
+𝒯𝑗
+𝑗≠𝑖
+ 
+05 
+Ajustar os parâmetros do modelo utilizando 𝒯𝑇𝑅 
+06 
+Estimar o resultado do modelo no conjunto 𝒯𝑇𝐸= 𝒯𝑖  
+07 
+Armazenar o resultado no vetor 𝐘̂𝑖 
+08 
+Fim Para 
+09 
+Concatenar resultados 𝐘̂ = [𝐘̂1
+T, … , 𝐘̂𝐾
+T]
+T 
+10 
+Fim 
+ 
+ 
+Figura 3.14: Validação cruzada de 𝐾 ciclos: Tr são os subconjuntos de treinamento,  
+Te são os subconjunto de teste 
+Uma escolha importante na validação cruzada é o número de ciclos 𝐾. No caso particu-
+lar de 𝐾= 𝑁, chamada de leave-one-out (LOO), em cada ciclo, 𝑁−1 registros são utili-
+zados para o treinamento e a estimativa do modelo é feita com apenas um registro. 
+Ciclo 1:
+Ciclo 2:
+Ciclo 3:
+Ciclo K:
+Avaliação:
+. . .
+. . .
+. . .
+. . .
+. . .
+. . .
+. . .
+. . .
+. . .
+1
+2
+3
+K
+. . .
+Te
+Tr
+Tr
+Tr
+Tr
+Te
+Tr
+Tr
+Tr
+Tr
+Te
+Tr
+Tr
+Tr
+Tr
+Te
+Te
+Te
+Te
+Te
+
+Apesar do custo computacional, a validação cruzada LOO é a melhor estimativa de de-
+sempenho do modelo em dados diferentes do conjunto de dados disponível, mas é 
+muito sensível à amostra e pode ter resultados diferentes para amostras diferentes 
+[238]. A escolha mais usual é 𝐾= 5 ou 𝐾= 10, número de registros [238][63]. 
+3.4 Aplicações 
+3.4.1 Conjunto de dados Pollution  
+O conjunto de dados Pollution105 é um problema utilizado frequentemente como exem-
+plo da aplicação da regularização de Tikhonov [375]. O conjunto de dados, que relaci-
+ona poluição do ar com mortalidade, contém 60 registros com os valores de 15 variá-
+veis observados entre 1959 e 1961 em áreas metropolitanas dos EUA. A variável de 
+saída representa a média de mortalidade nas áreas observadas no mesmo período. 
+A Figura 3.15 mostra o box-plot das variáveis padronizadas pelas estimativas dos z-
+scores e a matriz de correlação. Podemos observar a presença de variáveis bastante 
+correlacionadas (𝑥12 e 𝑥13).  
+(a) 
+ 
+(b) 
+Figura 3.15: Conjunto de dados Pollution: (a) box-plot; (b) matriz de correlação. 
+A Figura 3.16 apresenta a visualização do gráfico de projeção e o data image. Podemos 
+observar a existência de algumas variáveis com distribuições assimétricas (𝑥12 a 𝑥13) e 
+a presença de pelo menos um registro outlier, representado pela linha e coluna em ver-
+melho no data image. 
+ 
+
+ 
+(a) 
+ 
+(b) 
+Figura 3.16: Conjunto de dados Pollution: (a) gráficos de projeção; (b) data image. 
+A Figura 3.17 apresenta o gráfico de projeção e o data image do conjunto de dados após 
+a remoção de 12% (sete registros) da base, como descrito na seção 2.3.2. Podemos ob-
+servar pela Figura 3.17b um padrão mais homogêneo da similaridade entre os regis-
+tros, ainda que um registro se mostre discrepante em relação aos demais. 
+ 
+(a) 
+(b) 
+Figura 3.17: Conjunto de dados Pollution sem outliers: (a) gráficos de projeção; (b) data image. 
+A Figura 3.18 apresenta os resultados obtidos em validação cruzada do modelo linear 
+simples com os parâmetros ajustados pelo MMQ sem regularização, sem a remoção de 
+outliers. Podemos observar que a distribuição do resíduo não é bem ajustada pela dis-
+tribuição normal, o que pode ser um indício de que o ajuste realizado pelo MMQ não foi 
+adequado. 
+
+(a) 
+(b) 
+(c) 
+(d) 
+Figura 3.18: Resultados do MMQ no conjunto de dados Pollution. (a) Estatísticas de validação;  
+(b) correlação real x predito; (c) histograma do resíduo; (d) probabilidade normal do resíduo. 
+A Figura 3.19 mostra os resultados do modelo linear aplicado ao conjunto de dados 
+sem outliers. Podemos observar que o gráfico de probabilidade normal do resíduo in-
+dica que o ajuste dos dados sem outliers foi de melhor qualidade que o anterior. O coe-
+ficiente de correlação entre o valor real e o valor predito também demonstra o melhor 
+desempenho do modelo nos dados sem outliers. 
+Os valores das estatísticas de validação são resumidos na  
+Tabela 3.4. O resultado também não melhora com a utilização de modelos polinomiais 
+de ordem superior. O modelo linear regularizado com parâmetro calculado pela equa-
+ção (3.19) ajustado nos dados sem outliers não resultou numa variação importante das 
+
+estatísticas. Finalmente, utilizando o valor 𝜇= 0.01 para o parâmetro de regularização 
+nos dados sem outliers, obtemos uma pequena melhora nas estatísticas.  
+(a) 
+(b) 
+(c) 
+(d) 
+Figura 3.19: Resultados do conjunto de dados Pollution sem outliers: (a) estatísticas de validação;  
+(b) correlação real x predito; (c) histograma do resíduo; (d) probabilidade normal do resíduo. 
+ 
+Tabela 3.4: Comparação das estatísticas de validação 
+Modelo 
+RMS 
+MAPE 
+𝑅2 
+MMQ  
+0.2537 
+22.98% 
+0.4107 
+MMQ s/ outliers 
+0.2078 
+18.93% 
+0.6039 
+MMQ Reg. c/outliers 
+0.2316 
+20.52% 
+0.5091 
+MMQ Reg. s/outliers 
+0.2094 
+18.99% 
+0.5976 
+MMQ Reg. 𝜇= 0.01 
+0.2057 
+18.51% 
+0.6118 
+
+ 
+Nesse exemplo, a regularização e a retirada de outliers aumentam o desempenho do 
+modelo linear, mas o efeito das duas técnicas combinadas não produz uma alteração 
+significativa no resultado. A retirada de outliers melhora os resultados das estatísticas 
+de validação nesse exemplo, pois a remoção de outliers foi realizada sobre todo o con-
+junto de dados, antes da validação cruzada. 
+É importante observar que, mesmo para um exemplo simples, o número de opções de 
+modelos diferentes pode aumentar muito se todas as alternativas forem exploradas 
+durante o processo de validação de modelos. 
+3.4.2 Previsão da elevação adiabática de temperatura do concreto 
+O estudo apresentado nesta seção foi realizado em parceria com o Departamento de 
+Engenharia Civil da Eletrobrás Furnas [174][166]. O trabalho foi realizado a partir dos 
+registros de ensaios de elevação adiabática de temperatura realizados no Laboratório 
+de Concretos de Furnas com corpos de prova de amostras de concretos utilizados na 
+construção das principais barragens de usinas hidrelétricas brasileiras [18]. 
+O principal componente do concreto é o cimento, que, em contato com a água, produz 
+reação exotérmica, ganhando, assim, resistência mecânica. O ensaio de elevação adia-
+bática de temperatura do concreto é um experimento controlado que mede a elevação 
+de temperatura produzida por um corpo de prova de concreto. A temperatura final do 
+ensaio é uma função principalmente da formulação e da concentração do cimento uti-
+lizado. Entretanto, os demais componentes da mistura exercem influência na forma da 
+função de elevação de temperatura, que é não linear. 
+O conhecimento do calor gerado pelo concreto é importante na construção de estrutu-
+ras de grande porte, como barragens, por exemplo. Os esforços gerados pela dilatação 
+do material devido à transferência de calor podem ser excessivos, podendo causar ra-
+chaduras na estrutura já construída durante a concretagem de um novo bloco.  
+Os esforços gerados pela dilatação do concreto podem ser calculados a partir de mode-
+los numéricos da estrutura. Entretanto, a previsão da quantidade de calor gerada por 
+modelos analíticos é complexa e os modelos existentes para a previsão do calor gerado 
+
+só podem ser utilizados em condições limitadas [174]. Modelos de inteligência compu-
+tacional podem ser utilizados para a previsão de calor gerado pelas misturas utilizadas 
+na composição do concreto no Brasil [166]. 
+Os dados para o estudo foram cedidos pelo Laboratório de Concreto de Furnas [174] e 
+apresenta 136 registros de 14 variáveis de entrada do problema, apresentadas na Ta-
+bela 3.5. As variáveis são de dois tipos: cinco variáveis descrevem a composição quí-
+mica do cimento utilizado no concreto e nove variáveis, os demais elementos utilizados 
+na mistura e a temperatura inicial do ensaio. 
+Cada registro do conjunto de dados original apresenta a evolução de temperatura do 
+corpo de prova. Os registros representam observações a cada hora nas primeiras 24 
+horas e diariamente até o 28º dia, resultando 52 registros de tempo. Tendo em vista o 
+grande número de valores ausentes e a dificuldade em modelar um problema com 52 
+variáveis de saída, a elevação de temperatura foi aproximada por uma função não li-
+near de três parâmetros, que são utilizados como variáveis de saída no modelo de re-
+gressão [174]. 
+Tabela 3.5: Descrição das variáveis de entrada 
+Variável 
+Descrição 
+𝑥1 
+Concentração de 𝐶𝑎𝑂  
+ (%) 
+𝑥2 
+Concentração de 𝑆𝑖2𝑂2  
+ (%) 
+𝑥3 
+Concentração de 𝐴𝑙2𝑂3  
+ (%) 
+𝑥4 
+Concentração de 𝐹𝑒2𝑂3  
+ (%) 
+𝑥5 
+Concentração de 𝑆𝑂3  
+ (%) 
+𝑥6 
+Consumo de cimento  
+(Kg/m3) 
+𝑥7 
+Finura Blaine  
+(cm2/g) 
+𝑥6 
+Adição de pozolana  
+(Kg/m3) 
+𝑥9 
+Adição de escória  
+(Kg/m3) 
+𝑥10 
+Adição de cinza volante 
+(Kg/m3) 
+𝑥11 
+Consumo de água  
+(Kg/m3) 
+𝑥12 
+Consumo de aditivos  
+(Kg/m3) 
+𝑥13 
+Consumo de agregados  
+(Kg/m3) 
+𝑥14 
+Temperatura inicial  
+(oC) 
+ 
+
+A Figura 3.20a mostra a matriz de distâncias entre os registros. A Figura 3.20b apre-
+senta a matriz de correlação das variáveis, onde são destacadas as variáveis de compo-
+sição do cimento, as concentrações dos aditivos e as variáveis de saída. Os aditivos que 
+têm maiores correlações com as variáveis de saída são: consumo de cimento (𝑥6), con-
+sumo de água (𝑥11) e consumo de agregados (𝑥13). 
+ 
+(a) 
+ 
+(b) 
+Figura 3.20: Variáveis de entrada. (a) matriz de distâncias; (b) matriz de correlação. 
+Os resultados do ajuste feito pelo MMQ simples e com regularização são mostrados na 
+Tabela 3.6. O método com regularização apresenta resultados ligeiramente melhores, 
+principalmente para a variável de saída 𝑦3. A variável de saída 𝑦1, que representa a 
+temperatura final do concreto após a hidratação, é a que apresentou os melhores re-
+sultados, tendo em vista que seu comportamento é bastante correlacionado com o con-
+sumo de cimento, conforme apresentado no exemplo da análise de correlação canônica 
+na seção 2.4.4. Os resultados do modelo MMQ com regularização são apresentados na 
+Figura 3.21 e ilustram os comentários acima. 
+ 
+Tabela 3.6: Comparação das estatísticas de validação 
+Saída 
+Modelo 
+RMS 
+MAPE 
+𝑅2 
+𝑦1 
+MMQ  
+0.1598 
+13.03% 
+0.7686 
+MMQ Reg.  
+0.1573 
+13.07% 
+0.7756 
+𝑦2 
+MMQ  
+0.2178 
+16.21% 
+0.5700 
+MMQ Reg.  
+0.2170 
+15.91% 
+0.5730 
+𝑦3 
+MMQ  
+0.2669 
+17.15% 
+0.3540 
+MMQ Reg.  
+0.2591 
+16.45% 
+0.3911 
+
+ 
+(a) 
+(b) 
+(c) 
+(d) 
+ 
+(e) 
+ 
+(f) 
+Figura 3.21: Resultados: (a) e (b) 𝑦1; (c) e (d) 𝑦2; (e) e (f) 𝑦3. 
+Os resultados foram obtidos com as variáveis de saída padronizadas e servem para a 
+escolha da melhor estrutura e/ou abordagem de ajuste. As previsões do modelo devem 
+
+ser calculadas na escala original das variáveis. Além disso, as variáveis de saída repre-
+sentam os parâmetros de uma função de aproximação da elevação adiabática. A Figura 
+3.22 mostra o melhor e o pior ajuste realizados pelo modelo MMQ com regularização 
+em relação aos valores observados de elevação de temperatura. A curva em azul mos-
+tra a aproximação realizada com os parâmetros utilizados como variável de saída e a 
+curva em vermelho mostra a aproximação realizada com os parâmetros previstos pelo 
+modelo. Podemos verificar que o pior ajuste é bem distante dos valores observados. Na 
+Figura 3.22, o tempo é mostrado em escala logarítmica para facilitar a visualização da 
+elevação de temperatura nas primeiras horas da reação de hidratação. 
+(a) 
+(b) 
+Figura 3.22: Resultados: (a) melhor ajuste; (b) pior ajuste. 
+O modelo de elevação adiabática de temperatura é complexo e altamente não linear 
+[174]. Resultados mais precisos foram obtidos com modelos de redes neurais [174] e 
+sistemas fuzzy [166]. 
+3.5 Comentários Finais 
+Neste capítulo, apresentamos os principais conceitos de regressão linear pelo método 
+dos mínimos quadrados. As principais características do processo de modelagem dis-
+cutidas neste capítulo estão presentes em qualquer modelo preditivo. 
+O conceito mais importante introduzido neste capítulo é de que o processo de modela-
+gem é, essencialmente, de escolha. O desenvolvimento do modelo segue três etapas 
+principais: identificação da estrutura; ajuste de parâmetros e validação. A escolha da 
+
+estrutura é a etapa mais importante e a que tem maior influência sobre o resultado. O 
+ajuste de parâmetros implica a solução de um problema de otimização, que, na regres-
+são linear, é feito pelo método dos mínimos quadrados (MMQ). Tendo em vista os pro-
+blemas numéricos que surgem da modelagem de sistemas complexos com um número 
+reduzido de observações, as técnicas de regularização são úteis para garantir a estabi-
+lidade dos resultados. A validação do modelo visa predizer o seu comportamento em 
+dados diferentes daqueles utilizados para o ajuste. O procedimento de validação cru-
+zada é simples e efetivo para a obtenção de estatísticas de validação confiáveis. 
+Os resultados no problema Pollution mostram que a retirada de outliers resulta no au-
+mento de desempenho dos modelos. É importante observar que esse procedimento 
+deve ser utilizado com cautela, pois a retirada de valores extremos resulta na exclusão 
+de valores com potencial para os maiores erros na regressão e, portanto, redução das 
+estatísticas de validação. Entretanto, a retirada de outliers favorece que a distribuição 
+do resíduo seja mais simétrica e, consequentemente, que as hipóteses do MMQ sejam 
+confirmadas, resultando em modelos de melhor qualidade. 
+O problema de elevação adiabática de temperatura é complexo e ilustra como, na rea-
+lidade, é importante realizar transformações nos dados existentes para a construção 
+do conjunto de dados. Dessa forma, a capacidade do analista de encontrar alternativas 
+é determinante para a obtenção de um bom resultado. 
+No próximo capítulo, os modelos lineares introduzidos neste capítulo serão utilizados 
+para previsão de séries temporais e sistemas dinâmicos lineares.

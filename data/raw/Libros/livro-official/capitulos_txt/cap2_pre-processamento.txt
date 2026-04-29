@@ -1,0 +1,1485 @@
+2    PRÉ-PROCESSAMENTO 
+O pré-processamento inclui a seleção, limpeza e transformação de dados. O objetivo 
+dessa etapa é a preparação do conjunto de dados que será utilizado para o ajuste do 
+modelo, chamado de conjunto de treinamento. Em geral, a etapa de pré-processa-
+mento consome de 60% a 80% do tempo de todo o processo de mineração de dados e 
+fornece informações importantes que vão orientar a análise e o ajuste dos modelos. 
+Este capítulo introduz os conjuntos de dados encontrados em aplicações de ciência de 
+dados. A seguir, são apresentados os principais conceitos estatísticos de métodos ex-
+ploratórios necessários para o entendimento dos dados e, principalmente, para a inter-
+pretação adequada dos resultados da visualização. As técnicas de limpeza de dados e 
+as transformações lineares mais importantes são apresentadas na sequência. Algumas 
+aplicações que utilizam os conceitos discutidos no capítulo são apresentadas no final. 
+2.1 Conjuntos de Dados 
+Há uma diferença entre dado, informação e conhecimento [451]. Dado é o registro de 
+um fato, informação é o fato analisado no seu contexto e conhecimento, característica 
+inerentemente humana, é a interpretação da informação num contexto específico vi-
+sando à sua aplicação. Por exemplo, o preço de uma ação num determinado instante na 
+bolsa de valores é um dado; a variação do preço da ação é uma informação; e a inter-
+pretação dessa informação no contexto da conjuntura econômica do momento para a 
+tomada de decisão de investimento é o conhecimento. 
+
+Uma metáfora bem-humorada que enfatiza a importância da apresentação da informa-
+ção é mostrada na Figura 2.1.  
+ 
+Figura 2.1: Data Cake. Fonte: epigraphics.com.87 
+Os dados utilizados numa aplicação podem ser estruturados ou não estruturados. Da-
+dos estruturados são aqueles organizados em tabelas, nas quais as linhas são os regis-
+tros que representam as observações e as colunas, as variáveis ou as características 
+observadas em cada registro, frequentemente chamadas de atributos. Os dados não 
+estruturados são aqueles que, na sua forma bruta, não são tabulados. Exemplos de da-
+dos não estruturados são imagens, sons, textos, estruturas gráficas etc. Neste livro se-
+rão considerados principalmente os modelos de dados estruturados. Modelos de dados 
+não estruturados, principalmente de textos e de estruturas na forma de grafos (redes), 
+têm sido cada vez mais importantes em ciência de dados [295]. 
+Os dados estruturados são armazenados em bases de dados, de onde são selecionados 
+para o ajuste dos modelos. Em sistemas corporativos, os dados podem estar armaze-
+nados em diversas bases diferentes. Nesse caso, a extração de dados pode se tornar 
+extremamente complexa e é realizada por processos chamados ETL (extract, transform 
+and load). Em ambientes mais simples, a seleção é feita diretamente a partir da base de 
+dados e o conjunto de dados se apresenta na forma de uma tabela ou arquivo de dados. 
+
+Num conjunto de dados estruturados, cada linha ou registro contém os valores obser-
+vados de um conjunto de variáveis. As variáveis podem ser contínuas, discretas orde-
+nadas ou discretas não ordenadas. As variáveis contínuas armazenam valores numéri-
+cos do tipo real; as variáveis discretas ordenadas armazenam valores do tipo inteiro; 
+enquanto as variáveis discretas não ordenadas armazenam valores categóricos ou no-
+minais. As variáveis binárias são um tipo especial de variáveis discretas que tem ape-
+nas dois valores. Tipicamente, um conjunto de dados pode conter variáveis de diversos 
+tipos. A maioria dos algoritmos de estatística e inteligência computacional trabalha 
+com variáveis numéricas. Nesse caso, as variáveis categóricas são transformadas num 
+conjunto de variáveis binárias chamadas variáveis indicadoras (ou dummy).* Há algo-
+ritmos especializados em modelos de variáveis nominais – em geral, essa área é conhe-
+cida com aprendizado simbólico [392][451].  
+Neste livro, para facilitar o tratamento matemático dos algoritmos, as variáveis são 
+consideradas numéricas (contínuas ou discretas) e as variáveis nominais são transfor-
+madas em variáveis indicadoras binárias no pré-processamento.  
+Um conjunto de dados é representado por 𝒯= {(𝐱(𝑡), 𝐲(𝑡)), 𝑡= 1 …  𝑁}. Cada registro 
+é formado pelo par ordenado (𝐱(𝑡), 𝐲(𝑡)), onde 𝐱(𝑡) é o vetor† que contém os valores 
+das variáveis de entrada e 𝐲(𝑡), o vetor contendo os valores das variáveis alvo ou de 
+saída. Sem perda de generalidade, os vetores de variáveis de entrada e saída são escri-
+tos como 𝐱(𝑡) ∈ℛ𝑝 e 𝐲(𝑡) ∈ℛ𝑞, onde 𝑝 e 𝑞 são, respectivamente, o número de variá-
+veis de entrada e de saída. As variáveis nominais são codificadas como variáveis indi-
+cadoras que, assim como as variáveis inteiras, são um subconjunto das variáveis reais. 
+Problemas de saídas múltiplas (𝑞> 1) podem ser representados como múltiplos pro-
+blemas de saída simples se as variáveis de saída forem desacopladas, ou seja, o valor 
+de uma saída não interfere no valor de outra. Nesse caso, um modelo independente é 
+desenvolvido para cada saída. Em problemas descritivos, não há variáveis de saída e o 
+conjunto de dados contém apenas variáveis de entrada.  
+ 
+* Uma variável nominal com 𝑛 valores é codificada com 𝑛 variáveis binárias chamadas variáveis indica-
+doras, em que cada variável indica a observação de um valor nominal da variável original. 
+† Vetores e matrizes são grafados em negrito, vetores em letras minúsculas e matrizes em letras maiús-
+culas. Valores escalares são grafados em itálico. Letras maiúsculas gravadas em cursiva, como 𝒜, ℬ etc., 
+indicam conjuntos. Letras gregas serão usadas para indicar parâmetros de modelos. 
+
+Alguns problemas apresentam características especiais que interferem na interpreta-
+ção do conjunto de dados. Em problemas dinâmicos, existe uma dependência intrínseca 
+entre uma observação e as observações precedentes. Nesse caso, as variáveis são séries 
+temporais em que os registros são apresentados em sequência e o índice 𝑡= 1 …  𝑁 
+representa um instante de tempo. Os problemas em que a ordem das observações não 
+é relevante são chamados estáticos e, nesse caso, qualquer permutação dos registros 
+no conjunto de dados produz o mesmo resultado. Em problemas georreferenciados, 
+existe uma dependência espacial entre as observações e cada registro está associado a 
+duas (ou três) variáveis que representam as coordenadas da observação. Os problemas 
+chamados espaço-temporais combinam essas duas características: contêm variáveis 
+espaciais e os registros são armazenados em sequência. Este livro não aborda especifi-
+camente problemas espaciais ou espaço-temporais, apenas a modelagem de sistemas 
+dinâmicos lineares no Capítulo 4. 
+Para a apresentação matemática dos algoritmos, o conjunto de dados é representado 
+por matrizes. A matriz (de variáveis) de entrada é a matriz 𝐗, de dimensão 𝑁× 𝑝, e a 
+matriz (de variáveis) de saída é a matriz 𝐘, de dimensão 𝑁× 𝑞. As dimensões das ma-
+trizes indicam que os registros estão organizados em linhas e, para cada registro, os 
+vetores* de variáveis de entrada e saída. 
+A notação apresentada anteriormente será utilizada ao longo do livro. Essa notação 
+unificada facilita o entendimento dos algoritmos e a transposição de conceitos de mo-
+delos lineares para os modelos não lineares. 
+A próxima seção apresenta a primeira etapa na exploração de dados: a caracterização 
+e visualização de dados. 
+2.2 Caracterização Estatística 
+A caracterização estatística de dados é uma das etapas mais importantes na ciência de 
+dados. Essa fase permite o entendimento dos dados e facilita a análise dos resultados 
+dos algoritmos. 
+ 
+* Matematicamente, um vetor é uma lista de valores e pode ser tratado como linha ou coluna na multi-
+plicação com matrizes. Neste livro são utilizados vetores linha. 
+
+Estatisticamente, um conjunto de dados é tratado como uma amostra de um processo 
+estocástico, ou seja, um processo cujo comportamento é imprevisível, mas pode ser 
+descrito estatisticamente através de uma função de distribuição de probabilidades. O 
+conceito de amostra é muito importante em ciência de dados, uma vez que os modelos 
+serão ajustados a partir de uma amostra e não o processo estocástico. Essa é uma dife-
+rença importante entre a abordagem de inteligência computacional e a abordagem es-
+tatística, na qual em geral se busca a modelagem do processo [98], a partir de uma hi-
+pótese sobre a distribuição de probabilidades. 
+A maioria dos algoritmos de ciência de dados pressupõe implicitamente que o processo 
+que gerou a amostra representada pelo conjunto de dados é estacionário, ou seja, não 
+varia com o tempo. Dessa forma, podemos utilizar um conjunto de dados coletados 
+num determinado instante para realizar predições em outro momento uma vez que o 
+processo permanece o mesmo entre o tempo de coleta da amostra e a realização da 
+predição. Entretanto, essa hipótese pode não ser verdadeira e, nesse caso, os modelos 
+não terão bons resultados de predição. Esse é tipicamente o caso da modelagem de 
+processos altamente complexos como o mercado financeiro. A caracterização e mode-
+lagem de problemas dinâmicos será abordada no Capítulo 4. Neste capítulo, é apresen-
+tada a caracterização e visualização de dados de problemas estáticos. 
+2.2.1 Análise monovariável 
+O primeiro passo na caracterização estatística de uma amostra é o cálculo de estatísti-
+cas das variáveis. Uma estatística é qualquer função obtida a partir de uma amostra. As 
+estatísticas da amostra, em geral, são calculadas para as variáveis de entrada do con-
+junto de dados, mas podem ser calculadas também para as variáveis de saída. As prin-
+cipais estatísticas são: 
+▪ média, uma medida do valor central da amostra: 
+𝜇≈𝑥̅𝑖= 1
+𝑁∑𝑥𝑖(𝑡)
+𝑁
+𝑡=1
+, 𝑖= 1 … 𝑝 
+(2.1) 
+
+▪ variância, uma medida da dispersão da amostra: 
+𝑉𝑎𝑟(𝑥𝑖) ≈𝜎̂𝑖
+2 =
+1
+𝑁−1 ∑(𝑥𝑖(𝑡) −𝑥̅𝑖)2
+𝑁
+𝑡=1
+, 𝑖= 1 … 𝑝 
+(2.2) 
+O desvio padrão estimado da variável 𝜎̂𝑖≈√𝑉𝑎𝑟(𝑥𝑖) é comumente utilizado para a 
+caracterização da dispersão de uma variável, pois seu valor tem a escala da variável. 
+Em amostras muito grandes de processos estacionários, a média da amostra é uma boa 
+estimativa da média do processo. Esse resultado é conhecido na estatística como a “lei 
+dos grandes números”. Da mesma forma, a variância da amostra converge para a vari-
+ância do processo com o aumento do número de registros da amostra. Em conjuntos 
+de dados pequenos, deve-se tomar cuidado ao utilizar essas estatísticas como estima-
+tivas de suas correspondentes do processo. 
+A média e a variância são os parâmetros que definem a função de densidade de proba-
+bilidades normal 𝑁(𝜇, 𝜎2), calculada como: 
+𝑓(𝑥) =
+1
+√2𝜋𝜎2 𝑒𝑥𝑝(−
+(𝑥−𝜇)2
+2𝜎2
+) 
+(2.3) 
+A Figura 2.2a apresenta exemplos da distribuição normal com diversos valores de mé-
+dia e desvio padrão (𝜎). Quanto maior o desvio padrão, maior a dispersão dos dados e, 
+consequentemente, menor a probabilidade da média. Na Figura 2.2b, as funções de dis-
+tribuição de probabilidades cumulativa dos exemplos mostrados na Figura 2.2a. 
+(a) 
+(b) 
+Figura 2.2: Distribuição normal: (a) função de densidade de probabilidades; (b) função de 
+probabilidades cumulativa. Fonte: Wikipédia.88 
+
+A função de distribuição de probabilidades normal, ou simplesmente distribuição nor-
+mal, é muito importante na estatística. Um dos principais resultados envolvendo a dis-
+tribuição normal é o teorema central do limite. O teorema estabelece que a distribuição 
+da média de amostras de processos estacionários gerados com qualquer distribuição, 
+de média e variância constantes, converge para uma distribuição normal com a média 
+do processo. 
+A distribuição normal é representada matematicamente por uma função gaussiana que 
+possui diversas propriedades e é utilizada em inúmeras aplicações. Em inteligência 
+computacional, a função gaussiana aparece como uma função de base para o desenvol-
+vimento de vários tipos de modelos, como será apresentado no Capítulo 7. 
+Outras estatísticas importantes para a caracterização de dados são: 
+▪ valores extremos: mínimo e máximo; 
+▪ a mediana: é o valor que divide o conjunto de dados em subconjuntos iguais, 
+ou seja, 50% dos registros são maiores que a mediana, 50% são menores que a 
+mediana. A mediana é o percentil 50 da amostra; 
+▪ o percentil 𝑃 é o valor que divide o conjunto de dados de forma que 𝑃% dos 
+registros são menores ou iguais a esse valor;  
+▪ a faixa interquartil é o intervalo compreendido entre o percentil 25 e o per-
+centil 75, respectivamente chamados de primeiro quartil (𝑄1) e terceiro quartil 
+(𝑄3), sendo a mediana o segundo quartil (𝑄2); 
+▪ a moda, calculada apenas para variáveis discretas, é o valor observado com 
+maior frequência.  
+A mediana é uma medida de centralidade da amostra que é insensível a distribuições 
+assimétricas. A média pode dar uma ideia equivocada do valor central de um conjunto 
+de dados na presença de valores aberrantes (outliers) ou distribuições assimétricas. A 
+comparação entre a média e a mediana permite detectar facilmente assimetrias na dis-
+tribuição dos dados. Distribuições assimétricas podem gerar modelos tendenciosos. Da 
+mesma forma, as medidas de dispersão dependem da forma da distribuição. A variân-
+cia da amostra só tem sentido em distribuições simétricas; no caso de distribuições 
+assimétricas, deve-se utilizar a faixa interquartil. 
+A Tabela 2.1 apresenta o resultado das estatísticas para as variáveis de entrada do con-
+junto de dados das flores Iris. Pela comparação entre os valores de média e mediana 
+
+(percentil 50), percebe-se uma assimetria na distribuição da variável 𝑥3. Ao avaliar as 
+estatísticas, é importante observar a escala das variáveis. No caso das Flores Íris, todas 
+as variáveis representam uma medida em centímetros e, portanto, é possível realizar a 
+comparação direta de valores de diferentes variáveis. No caso geral, em que as variá-
+veis representam medidas distintas, recomenda-se que a análise seja feita sobre as va-
+riáveis padronizadas (cf. seção 2.3.1). 
+Tabela 2.1: Estatísticas básicas do problema Íris 
+ 
+𝑥1 
+𝑥2 
+𝑥3 
+𝑥4 
+Mínimos 
+43,0 
+20,0 
+10,0 
+1,0 
+Máximos 
+79,0 
+44,0 
+69,0 
+25,0 
+Médias 
+58,4 
+30,6 
+37,6 
+12,0 
+Desvios 
+8,3 
+4,4 
+17,7 
+7,6 
+Percentil 25 
+51,0 
+28,0 
+16,0 
+3,0 
+Percentil 50 
+58,0 
+30,0 
+43,5 
+13,0 
+Percentil 75 
+64,0 
+33,0 
+51,0 
+18,0 
+ 
+Em problemas de classificação, é interessante avaliar as variáveis por classe. O gráfico 
+de linhas permite que se faça uma avaliação visual das diferenças entre os registros de 
+cada variável por classe e pode ajudar a identificar as variáveis mais relevantes para a 
+separação das classes. No gráfico de linhas, cada variável é um valor no eixo horizontal 
+e cada registro é uma linha ligando as variáveis em seu valor correspondente. A Figura 
+2.3 mostra um exemplo de gráfico de linhas para o conjunto de dados Íris com variáveis 
+padronizadas (cf. seção 2.3.1). Podemos observar que as classes podem ser mais bem 
+separadas no plano formado pelas variáveis 𝑥3 e 𝑥4. Essa mesma conclusão será con-
+firmada por outros tipos de gráficos mostrados. 
+ 
+Figura 2.3: Gráficos de linha do problema Íris. 
+
+Há várias funções de distribuição de probabilidades89, com aplicações em diversas 
+áreas. A distribuição de cada variável pode ser avaliada qualitativamente através de 
+histogramas ou diagramas de frequência. Um histograma é uma representação gráfica 
+da distribuição de probabilidade da variável (cf. Figura 2.4). Há diversos métodos es-
+tatísticos para o ajuste da função de distribuição de probabilidades [146][238], bem 
+como livros inteiros dedicados ao assunto [482][490]. 
+ 
+Figura 2.4: Histogramas e ajuste de distribuições. 
+As técnicas de inteligência computacional geralmente não levam em conta hipóteses 
+sobre a distribuição de probabilidades que gerou a amostra. Entretanto, a análise dos 
+histogramas é fundamental para o entendimento dos dados e para dar suporte à análise 
+dos resultados do modelo. A avaliação visual dos histogramas pode revelar caracterís-
+ticas indesejáveis na distribuição dos dados, como assimetria e distribuições multimo-
+dais (cf. Figura 2.5). Nesses casos, as estimativas de média e desvio padrão podem per-
+der completamente o sentido. 
+(a) 
+(b) 
+Figura 2.5: Histogramas: (a) distribuição assimétrica; (b) distribuição multimodal. 
+
+Em problemas de classificação, os histogramas podem ser calculados por classe, o que 
+permite a análise da distribuição de cada classe no universo da variável. Os histogra-
+mas separados por classes das variáveis no conjunto de dados Íris são mostrados na 
+Figura 2.6. Nesse exemplo, os dados são mais misturados nas variáveis 𝑥1 e 𝑥2 que nas 
+variáveis 𝑥3 e 𝑥4, como observado no gráfico de linhas da Figura 2.3. As variáveis 𝑥3 e 
+𝑥4 apresentam um comportamento multimodal. Entretanto, ao separar por classes, ve-
+rifica-se que cada concentração de dados corresponde a uma classe, o que pode ser 
+bastante útil para a construção de classificadores. 
+Figura 2.6: Histogramas das distribuições das variáveis por classe no problema Íris. 
+É possível verificar qualitativamente se uma amostra foi gerada por um processo de 
+distribuição normal através do gráfico de probabilidade normal. Nesse tipo de gráfico, 
+se a amostra foi gerada por um processo de distribuição normal, os pontos aparecem 
+alinhados; no caso de uma distribuição não normal, há uma curvatura no gráfico. A Fi-
+gura 2.7 apresenta os histogramas de uma amostra de duas variáveis e os respectivos 
+gráficos de distribuição normal. As Figura 2.7a e 2.7c mostram a distribuição de uma 
+
+variável que pode ser representada por um processo de distribuição normal; as Figura 
+2.7b e 2.7d mostram a distribuição de uma variável gerada por um processo que não 
+corresponde à distribuição normal. 
+(a) 
+(b) 
+(c) 
+(d) 
+Figura 2.7: Histogramas e gráficos de probabilidade normal: (a) e (c) amostra gerada por distribuição 
+normal; (b) e (d) amostra gerada por distribuição não normal. 
+2.2.2 Análise multivariada 
+A análise das características de cada variável é importante, mas é preciso também con-
+siderar igualmente as características multivariadas do processo.  
+A principal estatística multivariada estimada a partir de uma amostra é a matriz de 
+covariâncias 𝚺̂ ∈ℛ𝑝×𝑝, cujos elementos 𝜎̂𝑖𝑗
+2 = 𝐶𝑜𝑣(𝑥𝑖, 𝑥𝑗) são calculados como:  
+𝐶𝑜𝑣(𝑥𝑖, 𝑥𝑗) ≈𝚺̂ =
+1
+𝑁−1 ∑(𝑥𝑖(𝑡) −𝑥̅𝑖)(𝑥𝑗(𝑡) −𝑥̅𝑗)
+𝑁
+𝑡=1
+, 𝑖= 1 …  𝑝, 𝑗= 1 …  𝑝 
+(2.4) 
+
+onde 𝑥̅𝑖 e 𝑥̅𝑗 são, respectivamente, as médias calculadas para cada variável. 
+A estimativa da matriz de covariâncias pode ser calculada diretamente pela expressão 
+vetorial: 
+𝚺̂ =
+1
+𝑁−1 ∑(𝐱(𝑡) −𝐱̅)T(𝐱(𝑡) −𝐱̅)
+𝑁
+𝑡=1
+ 
+(2.5) 
+onde 𝐱̅ ∈ℛ𝑝 é o vetor de médias das variáveis em que cada componente é a média de 
+cada variável definida pela equação (2.1). 
+Assim como a variância, a matriz de covariâncias da amostra converge para a matriz 
+de covariâncias do processo quando o número de registros da amostra aumenta. A ma-
+triz de covariâncias é simétrica (𝜎̂𝑖𝑗
+2 = 𝜎̂𝑗𝑖
+2) e definida positiva;* os elementos na diago-
+nal da matriz de covariâncias correspondem às variâncias das variáveis corresponden-
+tes, isto é, 𝜎̂𝑖𝑖
+2 = 𝜎̂𝑖
+2, onde 𝜎̂𝑖
+2 é calculado pela equação (2.2). 
+A matriz de covariâncias 𝚺 e o vetor de médias das variáveis 𝛍 são os parâmetros que 
+determinam a função de distribuição normal multivariada do processo: 
+𝑓(𝐱) =
+1
+√2𝜋|𝚺|
+𝑒𝑥𝑝(−1
+2(𝐱−𝛍)𝚺−1(𝐱−𝛍)T) 
+(2.6) 
+onde |𝚺| é o determinante da matriz de covariâncias. Na prática, a distribuição normal 
+é calculada pela equação (2.6) com a matriz de covariâncias estimadas 𝚺̂ e o vetor de 
+médias estimadas 𝐱̅.  
+A matriz de covariâncias indica o grau de acoplamento de cada par de variáveis. Caso 
+as variáveis sejam estatisticamente independentes, ou seja, a variação de uma variável 
+não influencia na variação da outra, os termos fora da diagonal da matriz de covariân-
+cias são nulos, isto é, 𝜎̂𝑖𝑗
+2 = 0, para 𝑖≠𝑗. Quando há dependência linear entre as variá-
+veis, os elementos 𝜎̂𝑖𝑗
+2 > 0 indicam a dependência linear positiva, quando as variações 
+são no mesmo sentido, e 𝜎̂𝑖𝑗
+2 < 0 indicam dependência linear negativa, quando as vari-
+ações ocorrem em sentidos opostos. 
+A matriz de covariâncias depende da escala das variáveis e, em geral, é mais apropriado 
+utilizar valores padronizados. O coeficiente de correlação de Pearson, ou simplesmente 
+ 
+* Uma matriz 𝐀 é definida positiva se 𝐱𝐀𝐱T > 0, ∀𝐱. 
+
+coeficiente de correlação, é uma medida padronizada da covariância de duas variá-
+veis e é calculado como: 
+𝐶𝑜𝑟𝑟(𝑥𝑖, 𝑥𝑗) ≈𝜌̂𝑖𝑗=
+𝐶𝑜𝑣(𝑥𝑖, 𝑥𝑗)
+√𝑉𝑎𝑥(𝑥𝑖)𝑉𝑎𝑟(𝑥𝑗)
+ 
+(2.7) 
+O coeficiente de correlação varia no intervalo [−1, 1] e quanto mais o valor absoluto é 
+próximo de 1, mais as variáveis são correlacionadas, positiva ou negativamente. A ma-
+triz de correlação é a matriz cujos elementos são os coeficientes de correlação 𝜌̂𝑖𝑗. 
+Os gráficos de projeção, mostrados na Figura 2.8, ilustram o aspecto de variáveis inde-
+pendentes com correlação positiva ou negativa. 
+(a) 
+(b) 
+(c) 
+Figura 2.8: Gráfico de projeção das variáveis: (a) 𝜌̂𝑖𝑗= 0; (b) 𝜌̂𝑖𝑗> 0; (c) 𝜌̂𝑖𝑗< 0. 
+O coeficiente de correlação representa uma medida da redundância entre duas variá-
+veis. Variáveis totalmente correlacionadas (positiva ou negativamente) representam 
+essencialmente a mesma informação e uma delas poderia ser descartada. Entretanto, 
+exceto no caso de correlação total, não é possível decidir sobre qual variável remover 
+apenas a partir da informação de correlação. A análise de componentes principais 
+(ACP), apresentada na seção 2.4.1, tem como objetivo projetar o conjunto de dados 
+num espaço de menor dimensão de variáveis independentes. 
+É importante observar que o coeficiente de correlação mede apenas a dependência li-
+near, portanto um resultado 𝜌̂𝑖𝑗= 0 não representa que não há relação entre as variá-
+veis, apenas que a relação não é linear.  
+A correlação entre as variáveis também pode ser visualizada através dos gráficos de 
+projeção das variáveis nos planos bidimensionais formados pela combinação de todas 
+
+as variáveis duas a duas. Esse gráfico, também chamado de matriz scatter plot, apre-
+senta os histogramas na diagonal.  
+O gráfico de projeção do conjunto de dados Íris é apresentado na Figura 2.9, na qual as 
+cores indicam as classes. O gráfico apresenta uma informação redundante uma vez que 
+os gráficos da diagonal superior são os mesmos da diagonal inferior com os eixos tro-
+cados. O gráfico de projeção também confirma que as classes estão mais separadas no 
+plano formado pelas variáveis 𝑥3 e 𝑥4. 
+ 
+Figura 2.9: Gráfico de projeção do conjunto de dados Íris. 
+Os gráficos de projeção são uma importante ferramenta de visualização, mas sua utili-
+zação requer precauções. Inicialmente, é importante observar que cada gráfico apre-
+senta uma projeção do espaço das variáveis num plano bidimensional. Dessa forma, os 
+dados, principalmente em problemas de classificação, aparecem mais misturados do 
+que são na realidade. Em problemas com um número muito grande de variáveis, a vi-
+sualização do gráfico de projeção torna-se muito difícil. Em problemas desse tipo, é 
+mais indicado utilizar uma visualização qualitativa da matriz de correlação, como mos-
+tra a Figura 2.10 para o caso do problema Ionosphere,90 que tem 𝑝= 32 variáveis. 
+
+ 
+Figura 2.10: Visualização qualitativa da matriz de correlação no problema Ionosphere. 
+2.2.3 Matriz de distâncias e similaridades 
+A análise multivariada previamente apresentada é realizada principalmente a partir do 
+cálculo da matriz de correlação entre as variáveis. A correlação entre duas variáveis 
+pode ser entendida como uma medida de similaridade entre elas. A avaliação da simi-
+laridade (ou distância) entre os registros pode revelar características importantes do 
+conjunto de dados, como a presença de outliers, por exemplo. As medidas de distância 
+também são utilizadas para preenchimento de valores ausentes (cf. seção 2.3.3) e pela 
+maioria dos algoritmos de análise de agrupamentos. Nesta seção, apresentamos uma 
+introdução às métricas de distância no caso de variáveis numéricas.  
+Uma função de distância é uma métrica 𝑑𝑖𝑠𝑡: ℛ𝑝× ℛ𝑝→ℛ se satisfaz as seguintes pro-
+priedades [516]:  
+a) não negatividade: 
+𝑑𝑖𝑠𝑡(𝛎, 𝛖) ≥0, ∀ 𝛎, 𝛖 ∈ℛ𝑝,  
+𝑑𝑖𝑠𝑡(𝛎, 𝛖) = 0, ∀ 𝛎= 𝛖;  
+b) simetria: 
+𝑑𝑖𝑠𝑡(𝛎, 𝛖) = 𝑑𝑖𝑠𝑡(𝛖, 𝛎), ∀ 𝛎, 𝛖 ∈ℛ𝑝;  
+c) desigualdade triangular: 
+𝑑𝑖𝑠𝑡(𝛎, 𝛏) ≤𝑑𝑖𝑠𝑡(𝛎, 𝛖) + 𝑑𝑖𝑠𝑡(𝛖, 𝛏), ∀ 𝛎, 𝛖, 𝛏∈ℛ𝑝. 
+As funções de similaridade também são utilizadas em algoritmos de agrupamento e 
+análise de outliers. Uma função de similaridade 𝑠𝑖𝑚: ℛ𝑝× ℛ𝑝→[0,1] satisfaz a propri-
+edade de não negatividade, sendo que 𝑠𝑖𝑚(𝛎, 𝛖) = 1,  apenas se 𝛎= 𝛖, e a propriedade 
+
+de simetria. Entretanto nem todas as funções de similaridade satisfazem a propriedade 
+de desigualdade triangular, não podendo ser consideradas como métricas. 
+Diversas funções distância são utilizadas em ciência de dados. As mais importantes são: 
+▪ distância euclidiana (ou norma 𝐿2): é a extensão da fórmula clássica da geome-
+tria para 𝑝 dimensões: 
+𝑑𝑖𝑠𝑡𝐸(𝛎, 𝛖) = ‖𝛎−𝛖‖ = √∑(𝜈𝑖−𝜐𝑖)2
+𝑝
+𝑖=1
+ 
+(2.8) 
+▪ distância de Mahalanobis: é a distância geométrica ponderada pelo inverso da 
+matriz de covariâncias estimada no conjunto de dados: 
+𝑑𝑖𝑠𝑡Σ(𝛎, 𝛖) = √(𝛎−𝛖)𝚺̂−1(𝛎−𝛖)T 
+(2.9) 
+▪ distância de Minkowski: é uma generalização da distância euclidiana: 
+𝑑𝑖𝑠𝑡𝑟(𝛎, 𝛖) = (∑|𝜈𝑖−𝜐𝑖|𝑟
+𝑝
+𝑖=1
+)
+1
+𝑟
+ 
+(2.10) 
+▪ distância de Manhattan (norma 𝐿1): é um caso particular da distância de Min-
+kowski com 𝑟= 1:  
+𝑑𝑖𝑠𝑡1(𝛎, 𝛖) = ∑|𝜈𝑖−𝜐𝑖| = ∑𝑎𝑏𝑠(𝜈𝑖−𝜐𝑖)
+𝑝
+𝑖=1
+𝑝
+𝑖=1
+ 
+(2.11) 
+▪ distância de Chebyshev (norma 𝐿∞): é a distância de Minkowski com 𝑟→∞: 
+𝑑𝑖𝑠𝑡∞(𝛎, 𝛖) = lim
+𝑟→∞(∑|𝜈𝑖−𝜐𝑖|𝑟
+𝑝
+𝑖=1
+)
+1
+𝑟
+= max
+𝑖(|𝜈𝑖−𝜐𝑖|) 
+(2.12) 
+As funções de similaridade mais comumente empregadas são: 
+▪ similaridade do cosseno: 
+𝑠𝑖𝑚𝐶(𝛎, 𝛖) =
+〈𝛎, 𝛖〉
+‖𝛎‖‖𝛖‖ 
+(2.13) 
+
+onde 〈𝛎, 𝛖〉= 𝛎𝛖T = ∑
+𝜈𝑖𝜐𝑖
+𝑝
+𝑖=1
+ é o produto escalar e ‖𝛎‖ = √〈𝛎, 𝛎〉 é a norma quadrática 
+(𝐿2) de 𝛎; 
+▪ similaridade gaussiana: 
+𝑠𝑖𝑚𝐺(𝛎, 𝛖) =  𝑒𝑥𝑝(−‖𝛎−𝛖‖2
+2𝜎2
+) 
+(2.14) 
+onde 𝜎 é um parâmetro de dispersão. 
+Para cada função de distância (ou similaridade) é possível calcular uma matriz de dis-
+tâncias (ou similaridades) do conjunto de dados. Em geral, apenas as variáveis de en-
+trada são utilizadas para detecção de outliers, preenchimento de valores ausentes ou 
+análise de agrupamento. Dessa forma, a matriz de distâncias calculada sobre o conjunto 
+de treinamento 𝒯= {𝐱(𝑡), 𝑡= 1 …  𝑁} é a matriz 𝐃∈ℛ𝑁×𝑁, na qual cada elemento 
+𝑑𝑖𝑗= 𝑑𝑖𝑠𝑡(𝐱(𝑖), 𝐱(𝑗)). Analogamente, a matriz de similaridades 𝐀∈[0,1]𝑁×𝑁 e cada 
+elemento 𝑎𝑖𝑗= 𝑠𝑖𝑚(𝐱(𝑖), 𝐱(𝑗)). 
+Tendo em vista que a matriz de distâncias (ou similaridades) é simétrica, o cálculo dos 
+elementos da matriz triangular envolve 𝑁(𝑁−1) 2
+⁄  operações. A complexidade com-
+putacional 𝒪(𝑁2) pode ser um problema no caso de 𝑁 muito grande. 
+A visualização da matriz de similaridades (ou distâncias) permite uma análise de todo 
+o conjunto de dados, independentemente do número de variáveis. O gráfico, chamado 
+de data image, é uma matriz da dimensão do número de registros em que cada ele-
+mento é um valor numa escala de cores que representa a distância ou similaridade en-
+tre os registros correspondentes. O data image é empregado para detecção de outliers 
+[365] e para avaliação da qualidade de agrupamentos [239]. 
+A Figura 2.11 apresenta um exemplo de visualização do conjunto de dados Íris utili-
+zando a distância euclidiana e a similaridade gaussiana. O conjunto de dados contém 
+50 registros de cada classe e todos os registros são ordenados pela classe. Observa-se 
+na Figura 2.11 a presença de três grupos de registros fortemente similares entre si, 
+representados pelos três quadrados azuis (vermelhos) na Figura 2.11a (Figura 2.11b), 
+representando valores baixos (altos) de distâncias (similaridades). Observando o grá-
+fico de projeção da Figura 2.9, é possível verificar que, no problema Íris, a classe 1 (Iris 
+setosa) é separada das demais e que a classe 2 (Iris versicolor) e a classe 3 (Iris virginica) 
+
+são mais próximas entre si. O mesmo efeito pode ser verificado nos gráficos da Figura 
+2.11, em que as classes 2 e 3 formam praticamente um grupo de dados. 
+(a) 
+(b) 
+Figura 2.11: Data image. (a) Distância euclidiana; (b) similaridade gaussiana. 
+Há outros gráficos que permitem a análise de um conjunto de dados. Na verdade, a vi-
+sualização de dados é uma área de pesquisa em grande atividade [490].  
+Após a caracterização estatística, o conjunto de dados deve ser pré-processado para 
+formar o conjunto de treinamento para o ajuste dos modelos, como descrito a seguir. 
+2.3 Limpeza de Dados 
+O processo de mineração de dados (cf. Figura 1.1) começa com a seleção do conjunto 
+de dados brutos da base de dados. O conjunto de dados brutos não é adequado para o 
+ajuste dos modelos pois pode conter variáveis irrelevantes, valores espúrios (outliers) 
+ou ausentes, variáveis redundantes ou algum outro tipo de problema específico. 
+Uma análise preliminar do conjunto de dados pode identificar se alguma variável de 
+entrada não interfere no problema por ter todos os valores idênticos (𝜎̂𝑖= 0). Nesse 
+caso, essa variável (na verdade, uma constante) deve ser eliminada. Outro problema 
+comum é a presença de uma variável que simplesmente identifica os registros, o que 
+também não contribui para o modelo, de forma que deve ser descartada. 
+Nesta seção, apresentamos alguns procedimentos genéricos que são empregados como 
+prática padrão em ciência de dados. Processamentos mais específicas podem ser ne-
+cessárias dependendo da aplicação. 
+
+2.3.1 Padronização de variáveis 
+O conjunto de dados brutos frequentemente contém variáveis expressas em escalas 
+diferentes, o que pode interferir nos resultados dos algoritmos. A padronização é uma 
+transformação cujo objetivo é produzir variáveis de mesma escala. 
+Há diversas técnicas de padronização. No caso mais simples, os valores da variável são 
+escalados no intervalo [0,1], pelos valores de máximo e de mínimo: 
+𝑥̂𝑖(𝑡) =
+𝑥𝑖(𝑡) −min
+𝑡=1…𝑁(𝑥𝑖(𝑡))
+max
+𝑡=1…𝑁(𝑥𝑖(𝑡)) −min
+𝑡=1…𝑁(𝑥𝑖(𝑡)) 
+(2.15) 
+Esse tipo de padronização, no entanto, não deve ser utilizado na presença de outliers, 
+pois o máximo ou mínimo de alguma variável pode estar muito distante dos demais 
+valores, gerando uma distorção na escala de valores padronizados. Na presença de ou-
+tliers, o máximo e mínimo podem ser substituídos pelos valores do 95o percentil e do 
+5o percentil, respectivamente, ou por outros valores mais adequados para representar 
+os limites superior e inferior da escala. 
+Há outros tipos de padronização que são robustas a outliers. A padronização pela esti-
+mativa do z-score é muito utilizada e calculada como: 
+𝑥̂𝑖(𝑡) = 𝑥𝑖(𝑡) −𝑥̅𝑖
+𝜎̂𝑖 
+ 
+(2.16) 
+Nesse caso, a variável padronizada tem média nula e desvio padrão unitário. Em alguns 
+casos, partindo-se da hipótese de que a distribuição da variável pode ser modelada pela 
+distribuição normal (2.3), aplica-se 3𝜎̂𝑖 no denominador. Com isso, caso a distribuição 
+seja realmente normal, 99,7% dos valores da variável padronizada estarão dentro do 
+intervalo [−1, +1]. Essa padronização é robusta a outliers, mas em distribuições alta-
+mente assimétricas pode gerar uma distorção de escala, pois utiliza as estatísticas de 
+média e desvio padrão, que são mais apropriadas para distribuições simétricas. 
+Em distribuições assimétricas, como a da Figura 2.5a, é comum a aplicação da transfor-
+mação pelo logaritmo para obtenção de uma distribuição simétrica, que é mais ade-
+quada para o desenvolvimento de modelos. A transformação pelo logaritmo não pode 
+ser aplicada se a variável contém valores negativos ou nulos. Nesse caso, basta adicio-
+nar uma constante maior que o valor mínimo da variável a todos os valores.  
+
+As equações (2.15) e (2.16) são lineares e podem ser invertidas se necessário. Há fór-
+mulas não lineares de padronização que não podem ser invertidas. 
+2.3.2 Detecção de outliers  
+A detecção e remoção de valores espúrios (outliers) é um procedimento importante 
+uma vez que esses valores podem prejudicar o desempenho dos modelos. Entretanto, 
+em problemas de detecção de anomalias, como fraudes [54], por exemplo, a descoberta 
+de outliers é a solução do problema. Dessa forma, o analista deve avaliar a aplicação e 
+verificar quando os outliers são realmente indesejados. 
+Há diversos métodos para a detecção de outliers e a literatura no assunto é extensa 
+[54][270]. Nesta seção, são exploradas duas abordagens principais: a abordagem base-
+ada em distribuições e a baseada em distâncias. A abordagem baseada em distribuições 
+é a abordagem clássica da estatística, que requer uma hipótese sobre a função de dis-
+tribuição de probabilidades para a amostra para a determinação dos outliers. Na abor-
+dagem baseada em distâncias, utiliza-se uma função de distância ou similaridade para 
+determinar os registros mais afastados do conjunto de dados, sem considerações sobre 
+a distribuição que gerou a amostra. A abordagem baseada em distribuição é geralmente 
+empregada sobre cada variável independentemente. A abordagem baseada em distân-
+cias considera todas variáveis, mas envolve o custo computacional do cálculo da matriz 
+de distâncias. 
+A abordagem mais simples para detecção de outliers é estimar uma distribuição normal 
+para cada variável. A validade da hipótese de distribuição normal pode ser verificada a 
+partir de gráficos de distribuição normal (cf. Figura 2.7). Caso a hipótese seja confir-
+mada, sabe-se que, numa distribuição normal, 99,7% dos registros encontram-se den-
+tro do intervalo [𝜇−3𝜎, 𝜇+ 3𝜎]. Os outliers são identificados como os registros con-
+tendo valores fora desse intervalo. 
+No caso de a distribuição das variáveis ser diferente da distribuição normal, pode-se 
+utilizar a ferramenta gráfica conhecida como box-plot para a detecção de possíveis ou-
+tliers a partir dos valores de percentil. O gráfico box-plot é formado por caixas, como 
+mostra a Figura 2.12, que são calculadas para cada variável. A caixa representa a cha-
+mada distância interquartil (IRQ), que é a diferença entre o valor do 75º percentil ou 
+terceiro quartil (𝑄3) e o valor do 25º percentil ou primeiro quartil (𝑄1). A distância 
+
+interquartil representa o intervalo de valores da variável em que se encontram 50% 
+dos registros. A linha vermelha no interior da caixa representa a mediana (50º percen-
+til) e permite identificar distribuições assimétricas caso não esteja localizada no centro 
+da caixa. A linha à direita da caixa representa o intervalo [𝑄3, 𝑄3 + 1,5𝐼𝑅𝑄] e a linha à 
+esquerda, o intervalo [𝑄1 −1,5𝐼𝑅𝑄, 𝑄1]. Pode acontecer que o maior (ou menor) valor 
+observado seja inferior (ou superior) ao limite dos intervalos e as linhas à esquerda e 
+à direita fiquem desiguais. Valores fora desses intervalos são assinalados em vermelho 
+e podem ser considerados outliers para a variável correspondente. Dependendo do sof-
+tware, as caixas podem aparecer na vertical ou na horizontal e ainda com todas as va-
+riáveis no mesmo gráfico ou um gráfico para cada variável. 
+ 
+Figura 2.12: Valores para a construção do box-plot. 
+O box-plot depende da escala das variáveis e se o problema contém variáveis em escalas 
+diferentes, é preferível sua avaliação após a padronização. A Figura 2.13 apresenta o 
+box-plot do problema Íris antes e após a padronização das variáveis, em pode-se obser-
+var o efeito da padronização sobre a dispersão das variáveis. 
+(a) 
+(b) 
+Figura 2.13: Box-plot para o problema Íris: (a) sem padronização; (b) com padronização. 
+IRQ
+1,5 IRQ
+1,5 IRQ
+1
+5,1
+1
+Q
+x
+IRQ
+Q
+
+
+−
+IRQ
+Q
+x
+Q
+5,1
+3
+3
++
+
+
+1
+Q
+3
+Q
+2
+Q
+outliers
+outliers
+
+O box-plot permite identificar apenas registros suspeitos de serem outliers, uma vez 
+que a análise é feita para cada variável independentemente. Não se deve excluir os re-
+gistros assinalados pelo box-plot como outliers em uma variável sem uma avaliação 
+prévia dos valores nas outras variáveis. 
+A visualização do box-plot pode auxiliar na caracterização estatística do conjunto de 
+dados, mas não é muito adequada para a detecção de outliers. Os métodos baseados em 
+distâncias são mais efetivos, pois consideram todas as variáveis simultaneamente. 
+Um método simples e bastante eficaz identifica os outliers a partir da média ordenada 
+𝑚̂𝑖 das distâncias de um registro 𝐱(𝑖) para todos os outros, calculada a partir da matriz 
+de distâncias 𝐃. Os outliers são identificados por valores 𝑚̂𝑖> 𝛿, onde o parâmetro 𝛿 é 
+identificado por uma análise visual das distâncias médias ordenadas. A avaliação do 
+limite para o corte pode ser evitada especificando-se uma porcentagem 𝑃out de regis-
+tros mais afastados para serem retirados, que é mais fácil de escolher. O procedimento 
+é descrito no Algoritmo 2.1. 
+A detecção de outliers também pode ser realizada com a matriz de similaridades, po-
+dendo resultar diferente. Nesse caso, os valores médios 𝑚𝑖 são calculados pela simila-
+ridade média, a ordenação é feita em ordem decrescente e o critério de detecção é 𝑚̂𝑖<
+𝛿 ou os 𝑃𝑜𝑢𝑡 registros menos similares. 
+Algoritmo 2.1: Retirada de outliers 
+Entrada: 
+Matriz de distâncias 𝐃, porcentagem 𝑃𝑜𝑢𝑡 de outliers a ser reti-
+rada 
+Saída:  
+Índice de registros outliers 
+01 
+Início 
+02 
+Calcule das distâncias médias 𝑚𝑖=
+1
+𝑁∑
+𝑑𝑖𝑗
+𝑁
+𝑗=1
+ 
+03 
+Ordene as distâncias médias 𝐦̂ = sort(𝐦), em ordem crescente 
+04 
+Retorna o índice dos 𝑃𝑜𝑢𝑡 registros correspondentes aos maiores 
+valores de 𝑚̂𝑖 
+05 
+Fim 
+ 
+O procedimento de detecção de outliers pela distância é apresentado a seguir para o 
+conjunto de dados Pollution.91 Esse é um problema clássico de regressão linear com 15 
+
+variáveis de entrada, uma variável de saída e apenas 60 registros. A presença de outli-
+ers no conjunto de dados é verificada no data image da Figura 2.14a, em que um regis-
+tro (mais precisamente o registro 𝑡= 8) é bem diferente dos demais, uma vez que a 
+distância desse registro para os demais apresenta uma tonalidade vermelha forte. 
+(a) 
+(b) 
+Figura 2.14: Matriz de distâncias euclidianas para o problema Pollution: (a) antes da retirada de 
+outliers; (b) após a retirada de outliers. 
+A média ordenada das distâncias é mostrada na Figura 2.15a, na qual se verifica que 
+quatro registros são identificados como outliers. A Figura 2.15b mostra os valores re-
+lativos de similaridade média calculados com a similaridade gaussiana. Após a retirada 
+de outliers (pela distância euclidiana), a matriz de distâncias apresenta uma configura-
+ção mais homogênea, como mostrado no data image da Figura 2.14b. 
+(a) 
+(b) 
+Figura 2.15: Detecção de outliers: (a) médias de distâncias euclidianas em ordem crescente; (b) médias 
+de similaridade gaussiana em ordem decrescente. 
+
+2.3.3 Valores ausentes 
+Um valor ausente ocorre em alguma variável quando o valor não pôde ser observado 
+ou foi observado, mas não armazenado. O tratamento de valores ausentes é um assunto 
+importante em ciência de dados, uma vez que conjuntos de dados reais frequentemente 
+apresentam valores ausentes [232]. É importante ressaltar que valor ausente é dife-
+rente de valor zero, em que o valor observado é conhecido e igual a zero. A codificação 
+dos valores ausentes na base de dados deve ser feita de forma que o código utilizado 
+para valor ausente não seja confundido com um valor possível da variável. Em muitos 
+conjuntos de dados, os valores ausentes são codificados pelo caractere ‘?’. 
+Há duas estratégias para o tratamento de valores ausentes: a eliminação do registro 
+contendo valor(es) ausente(s) ou o preenchimento (ou imputação) dos dados ausen-
+tes. Na primeira estratégia, deve-se considerar o impacto da eliminação dos registros 
+contendo valores ausentes. Para isso, é importante que seja feito um levantamento do 
+número de valores ausentes em cada variável. Pode ocorrer que a maioria dos valores 
+ausentes esteja em apenas uma variável e, nesse caso, a eliminação da variável pode 
+ser uma alternativa.  
+A visualização de valores ausentes num conjunto de dados pode revelar alguma falha 
+na aquisição de dados quando os valores ausentes apresentam algum padrão caracte-
+rístico. O gráfico da Figura 2.16 apresenta a posição dos valores ausentes das 22 variá-
+veis de entrada no conjunto de dados Water Treatment Plant.92 O eixo horizontal re-
+presenta os registros, o eixo vertical representa as variáveis e os valores ausentes são 
+representados em preto. O número de valores ausentes em cada variável é apresentado 
+no gráfico da Figura 2.17. O conjunto de dados contém 527 registros, dos quais 115 
+(aproximadamente 22%) contêm algum valor ausente. 
+ 
+Figura 2.16: Visualização de valores ausentes. 
+
+ 
+Figura 2.17: Valores ausentes por variável. 
+No conjunto de dados Water Treatment Plant, a redução de 22% dos registros não in-
+viabiliza completamente a análise e pode-se optar por retirar os registros com valores 
+ausentes ou realizar a imputação de dados. Entretanto, há problemas em que não há 
+opção à imputação de dados. 
+A dificuldade da imputação de dados é a introdução de uma informação nova que não 
+representa necessariamente a realidade. Introduz-se um erro que pode ter um impacto 
+significativo no desempenho do modelo. O assunto é complexo e há diversas técnicas 
+de imputação de dados ausentes [525][498]. 
+A técnica mais ingênua para a imputação de dados é a substituição do valor ausente 
+pela média. Apesar de simples, essa solução não apresenta bons resultados, principal-
+mente se o número de valores ausentes for grande. O mais recomendado é utilizar al-
+gum método preditivo a partir dos valores das demais variáveis. Entretanto, o desen-
+volvimento de modelos muito elaborados para a imputação de dados não é muito inte-
+ressante sendo mais indicado utilizar uma solução simples. 
+Uma solução simples e robusta para a imputação de dados é utilizar o método dos k-
+vizinhos mais próximos, apresentado no Algoritmo 2.2. O algoritmo utiliza como base 
+para a imputação de dados o conjunto de registros sem valores ausentes definido no 
+passo 02. A estimativa dos valores ausentes é calculada pela média dos k-vizinhos mais 
+próximos do conjunto de dados completos. A média dos vizinhos, calculada no passo 
+08 do algoritmo, pode ser uma média simples ou ponderada por valores proporcionais 
+ao inverso da distância aos vizinhos. O algoritmo depende da escolha do número 𝑘 de 
+vizinhos. Recomenda-se a utilização de 𝑘≥3 vizinhos. 
+
+Algoritmo 2.2: Imputação de dados pelo método dos k-vizinhos mais próximos 
+Entrada: 
+Variáveis de entrada {𝐱(𝑡), 𝑡= 1 … 𝑁} contendo valores 
+ausentes, número de vizinhos 𝑘 
+Saída:  
+Variáveis de entrada sem valores ausentes 
+01 
+Início 
+02 
+Defina {𝐳(𝑡), 𝑡= 1 …  𝑁′} o conjunto de dados completos 
+03 
+Para cada registro 𝑖 contendo algum valor ausente 
+04 
+Defina 𝐱∗(𝑖) ⊂𝐱(𝑖)  o vetor cujas componentes não con-
+têm valor ausente no registro 𝑖 
+05 
+Defina 𝐳∗(𝑗) ⊂𝐳(𝑗)  o vetor de registros completos com 
+as mesmas componentes de 𝐱∗(𝑖) 
+06 
+Calcule as distâncias 𝑑𝑖𝑗= 𝑑𝑖𝑠𝑡(𝐱∗(𝑖), 𝐳∗(𝑗)), 𝑗= 1 …  𝑁′ 
+07 
+Ordene as distâncias 𝑑̂𝑖𝑗= sort(𝑑𝑖𝑗) 
+08 
+Calcule os valores ausentes 𝐱(𝑖) pela média das compo-
+nentes dos 𝑘-vizinhos mais próximos  
+09 
+Fim Para 
+10 
+Retorna {𝐱(𝑡), 𝑡= 1 …  𝑁} sem valores ausentes; 
+11 
+Fim 
+ 
+A aplicação do Algoritmo 2.2 permite obter um conjunto de dados completo. Entre-
+tanto, a imputação de dados altera ligeiramente as características dos dados. No exem-
+plo do conjunto de dados Water Treatment Plant, a Figura 2.18 apresenta a comparação 
+dos histogramas da variável 𝑥11, que contém o maior número de valores ausentes (cf. 
+Figura 2.17), com imputação de dados e com a retirada de valores ausentes. A diferença 
+entre os dois histogramas é pequena. 
+O método dos k-vizinhos mais próximos pode ser empregado em problemas preditivos, 
+como classificação e regressão e tem sido muito utilizado em sistemas de recomenda-
+ção chamados de filtragem colaborativa. 
+
+(a) 
+(b) 
+Figura 2.18: Histogramas da variável 𝑥11 do problema Waste Treatment Plant: (a) com imputação de 
+dados; (b) com retirada de valores ausentes. 
+2.4 Transformações Lineares 
+Uma transformação linear [206] 𝐓: ℛ𝑛→ℛ𝑚 é definida por uma matriz de dimensão 
+𝑛× 𝑚. A transformação 𝐓, aplicada ao vetor 𝐱∈ℛ𝑛, obtém como resultado (imagem) 
+o vetor 𝒛∈ℛ𝑚, onde 𝐳= 𝐱𝐓. 
+A utilização de matrizes para o cálculo de transformações lineares permite que uma 
+transformação seja modificada por operações sobre a matriz. Por exemplo, se a matriz 
+𝐓 admitir inversa, a matriz 𝐓−1 realiza a transformação inversa 𝐱= 𝐳𝐓−1. A Figura 2.19 
+apresenta um exemplo de transformação linear e sua inversa. 
+ 
+Figura 2.19: Exemplo de transformação linear. 
+Uma transformação linear ortogonal 𝐔: ℛ𝑛→ℛ𝑛 é um tipo particular de transfor-
+mação linear que realiza uma rotação do espaço de entrada. A transformação ortogonal 
+é realizada por uma matriz ortogonal, cuja inversa é sua transposta: 𝐔−1 = 𝐔T. Adici-
+
+onalmente, os vetores formados pelas colunas de uma de matriz ortogonal são ortogo-
+nais entre si, ou seja, o produto escalar é igual a zero. A Figura 2.20 apresenta um exem-
+plo de transformação ortogonal e sua inversa. 
+ 
+Figura 2.20: Exemplo de transformação linear ortogonal. 
+As transformações lineares têm inúmeras aplicações em engenharia. Em ciência de da-
+dos, uma transformação linear é utilizada para realizar uma mudança de coordenadas 
+das variáveis de entrada, em geral de menor dimensionalidade, e com características 
+mais apropriadas ao problema. As variáveis transformadas são combinações lineares 
+das variáveis de entrada e, em geral, não podem ser interpretadas. Nesta seção, são 
+apresentadas as principais técnicas de transformações lineares. 
+2.4.1 Análise de componentes principais 
+O objetivo da análise de componentes principais (ACP), também conhecida como trans-
+formação de Karhunen-Loève [521], é encontrar uma transformação linear que elimina 
+a correlação ente as variáveis de entrada [366][449]. A ACP permite a redução da di-
+mensionalidade do conjunto de dados pela eliminação da redundância provocada pela 
+correlação entre as variáveis. A ACP é realizada por uma matriz de transformação li-
+near ortogonal que, aplicada ao conjunto de dados, gera um novo conjunto de dados de 
+variáveis transformadas não correlacionadas.  
+A formulação da ACP considera que todas as variáveis de entrada são numéricas, com 
+distribuição normal. O cálculo da matriz de transformação deve ser realizado sobre da-
+dos centrados na origem do sistema de coordenadas, o que pode ser obtido pela padro-
+nização pelos z-scores (2.16). Nesse caso, a matriz de covariâncias estimada é igual à 
+matriz de correlação e é calculada como 𝚺̂ =
+1
+𝑁−1𝐗T𝐗, onde 𝐗 é a matriz de dados de 
+dimensão 𝑁× 𝑝, contendo os registros das variáveis de entrada. 
+
+No conjunto de dados das variáveis transformados 𝒵= {𝐳(𝑡), 𝑡= 1 …  𝑁}, cada regis-
+tro é calculado como uma combinação linear dos registros correspondentes das variá-
+veis originais, como 𝐳(𝑡) = 𝐱(𝑡)𝐏. A matriz de dados transformados é escrita como: 
+𝐙= 𝐗𝐏 
+(2.17) 
+A matriz de transformação 𝐏∈ℛ𝑝×𝑝 é uma matriz ortogonal calculada pela diagonali-
+zação da matriz de covariâncias das variáveis originais. Como resultado, a matriz de 
+covariâncias das variáveis transformadas, 𝚲=
+1
+𝑁−1𝐙T𝐙, é diagonal. Escrevendo 𝚲 com a 
+matriz 𝐙 definida em (2.17), temos:* 
+𝚲=
+1
+𝑁−1 𝐙T𝐙=
+1
+𝑁−1 (𝐗𝐏)T(𝐗𝐏) =
+1
+𝑁−1 𝐏T𝐗T𝐗𝐏= 𝐏T𝚺̂𝐏 
+(2.18) 
+A matriz 𝐏 é ortogonal, de forma que 𝐏T𝐏= 𝐈, onde 𝐈 é a matriz identidade. Multipli-
+cando ambos os lados da equação 𝚲= 𝐏T𝚺̂𝐏 por 𝐏, temos: 
+𝚺̂𝐏= 𝐏𝚲 
+(2.19) 
+A matriz 𝚲 é diagonal, de forma que a equação (2.19) representa 𝑝 equações 𝚺̂𝐩𝑖= 𝜆𝑖𝐩𝑖, 
+onde os vetores 𝐩𝑖 são chamados de autovetores, e 𝜆𝑖 os autovalores. Na ACP, os au-
+tovetores da matriz de covariâncias das variáveis originais são chamados de compo-
+nentes principais. 
+O problema de autovalores e autovetores como (2.19), também chamado de decompo-
+sição espectral, é um problema clássico que tem sido estudado desde o século XIX e tem 
+aplicações em inúmeras áreas. Os algoritmos de solução do problema, em suas diversas 
+variantes, estão disponíveis em bibliotecas como EISPACK93 e ARPACK.94  
+A decomposição espectral da matriz de covariâncias pela equação (2.19) fornece infor-
+mações importantes sobre as características dos dados. Como a matriz de covariâncias 
+é simétrica e definida positiva, os seus autovalores são todos positivos [206]. O maior 
+autovalor 𝜆𝑚𝑎𝑥 é o valor máximo do cociente de Rayleigh: 
+𝜆𝑚𝑎𝑥= 𝐩𝑚𝑎𝑥
+T
+𝚺̂𝐩𝑚𝑎𝑥
+𝐩𝑚𝑎𝑥
+T
+𝐩𝑚𝑎𝑥
+≥𝛖T𝚺̂𝛖
+𝛖T𝛖 
+(2.20) 
+ 
+* Utilizando a propriedade de matrizes: (𝐀𝐁)T = 𝐁T𝐀T. 
+
+onde 𝛖∈ℛ𝑝 é um vetor qualquer e 𝐩𝑚𝑎𝑥 é o autovetor correspondente ao maior auto-
+valor 𝜆𝑚𝑎𝑥. 
+O cociente de Rayleigh mostra que o autovetor 𝐩𝑚𝑎𝑥 representa a direção de maior 
+variância da amostra (cf. Figura 2.21) e o autovalor 𝜆𝑚𝑎𝑥 mede a variância na direção 
+de 𝐩𝑚𝑎𝑥. Os demais autovetores são ortogonais e representam as outras direções de 
+maior variância.  
+A matriz 𝐏 realiza uma mudança de coordenadas no espaço de variáveis, transfor-
+mando o conjunto de dados do problema em um novo conjunto de dados de variáveis 
+transformadas pela equação (2.17). Não há correlação entre as variáveis transforma-
+das, de forma que a matriz de covariâncias 𝚲 é diagonal. 
+A Figura 2.21 apresenta um exemplo da transformação realizada pela matriz de trans-
+formação calculada como solução do problema (2.19). Nesse exemplo, o resultado ob-
+tido para a matriz 𝐏 é a matriz de transformação mostrada na Figura 2.20. 
+ 
+Figura 2.21: Exemplo de transformação linear realizada pela ACP. 
+Uma propriedade da álgebra linear garante que o traço, isto é, a soma dos elementos 
+da diagonal principal de uma matriz, não se altera pela aplicação de uma transformação 
+linear ortogonal, de forma que: 
+∑𝜎̂𝑖
+2
+𝑝
+𝑖=1
+= ∑𝜆𝑖
+𝑝
+𝑖=1
+ 
+(2.21) 
+onde 𝜎̂𝑖
+2 é um elemento da diagonal de 𝚺̂, representa a variância da variável 𝑥𝑖, e 𝜆𝑖 é 
+um elemento da diagonal de 𝚲 que representa a variância da variável transformada 𝑧𝑖. 
+A equação (2.21) garante que a variância total do conjunto de dados não se altera com 
+a transformação qualquer que seja o arranjo das colunas de 𝐏. Na maioria das rotinas, 
+
+os autovetores são organizados de tal forma que 𝜆1 ≥𝜆2 ≥⋯ ≥𝜆𝑝≥0. Com isso, o 
+primeiro autovetor 𝐩1 corresponde ao maior autovalor 𝜆1, sendo, portanto, a direção 
+de máxima variância dos dados e assim sucessivamente. Podemos, então, utilizar as 
+𝑛< 𝑝 primeiras colunas de 𝐏 como a matriz de transformação 𝐏̂ ∈ℛ𝑝×𝑛 que vai pro-
+duzir as variáveis transformadas 𝐳̂(𝑡) = 𝐱(𝑡)𝐏̂, 𝐳̂(𝑡) ∈ℛ𝑛, que explicam a maior parte 
+da variância dos dados. O número 𝑛 de componentes principais é escolhido de forma 
+que sua variância total das variáveis transformadas, calculada como ∑
+𝜆𝑖
+𝑛
+𝑖=1
+, represente 
+uma parcela importante (maior que 85%) da variância total das variáveis originais. 
+A ACP ajuda a entender o relacionamento entre as variáveis. A Figura 2.22 apresenta 
+os resultados da ACP aplicados ao conjunto de dados Parkinson.95 A Figura 2.22a apre-
+senta a matriz de correlação e a Figura 2.22b, os dois componentes principais. Observe 
+que o único elemento negativo do primeiro componente corresponde à variável 𝑥11, 
+que tem correlação negativa com todas as variáveis, sendo que as demais têm correla-
+ção positiva entre si. O segundo componente separa as variáveis {𝑥1, … , 𝑥3}, com ele-
+mentos positivos, das variáveis {𝑥4, … , 𝑥9}, com elementos negativos, sendo que as va-
+riáveis dos dois grupos são bem correlacionadas entre si. 
+A Figura 2.22c apresenta os resultados dos autovalores no gráfico de Pareto, no qual 
+os rótulos das barras são os valores dos autovalores. As variáveis foram padronizadas 
+pelos z-scores de forma que 𝜎̂𝑖
+2 = 1 e, portanto, ∑
+𝜎̂𝑖
+2
+𝑝
+𝑖=1
+= 𝑝, ou seja, a variância total é 
+igual ao número de variáveis. Na Figura 2.22c, observa-se que as 𝑛= 7 componentes 
+principais representam mais que 95% da variância total dos dados. A Figura 2.22d 
+apresenta o conjunto de dados transformados nas coordenadas transformadas pelos 
+dois componentes principais. 
+As variáveis transformadas são combinações lineares das variáveis originais. Em al-
+guns casos, é possível interpretar as componentes principais ou as variáveis transfor-
+madas, mas esse não é o objetivo principal da ACP e nem sempre há uma interpretação 
+razoável no domínio do problema. A obtenção de transformações interpretáveis no do-
+mínio do problema é o objeto da análise de fatores [449].  
+ 
+
+ 
+(a) 
+ 
+(b) 
+ 
+(c) 
+ 
+(d) 
+Figura 2.22: Resultados da ACP no conjunto de dados Parkinson: (a) matriz de correlação;  
+(b) autovetores associados aos dois maiores autovalores; (c) gráfico de Pareto dos autovalores;  
+(d) dados projetados nas duas componentes principais. 
+A transformação realizada pela ACP não leva em consideração a informação das variá-
+veis de saída. Há transformações lineares que utilizam as variáveis de saída em proble-
+mas de classificação e regressão. Em problemas de classificação, a análise discrimi-
+nante linear (ADL), descrita na seção 2.4.3, resulta em variáveis transformadas em que 
+a separação das classes é máxima. Em problemas de regressão, a análise de correlação 
+canônica, descrita na seção 2.4.4, resulta em transformações lineares que maximizam 
+a correlação entre as variáveis de entrada e saída. 
+Na próxima seção, apresentamos a decomposição em valores singulares como um mé-
+todo de cálculo alternativo da ACP, que também pode ser aplicada em outros tipos de 
+problemas. 
+
+2.4.2 Decomposição em valores singulares 
+A decomposição em valores singulares (SVD, na sigla em inglês) de uma matriz 𝐀∈
+ℛ𝑛×𝑚 é definida como: 
+𝐀= 𝐔𝐒𝐕T 
+(2.22) 
+onde 𝐔∈ℛ𝑛×𝑛 e 𝐕∈ℛ𝑚×𝑚 são matrizes ortogonais cujas colunas 𝐮𝑖, 𝑖= 1 … 𝑛, e 
+𝐯𝑗, 𝑗= 1 … 𝑚, são chamadas respectivamente de vetores singulares à esquerda e à di-
+reita; a matriz 𝐒∈ℛ𝑛×𝑚 é diagonal e seus elementos são chamados de valores singu-
+lares de 𝐀.  
+A matriz 𝐒 tem 𝑛−𝑚 (ou 𝑚−𝑛) elementos nulos quando 𝑛> 𝑚 (ou 𝑚> 𝑛). As colu-
+nas de 𝐔 (ou as linhas de 𝐕T) correspondentes aos elementos nulos de 𝐒 formam a base 
+do espaço nulo* da matriz 𝐀 [206]. Alguns softwares apresentam o resultado do cálculo 
+da SVD eliminando as linhas e colunas correspondentes aos valores singulares nulos, o 
+que é chamado SVD reduzida. A Figura 2.23 apresenta uma ilustração da SVD nos casos 
+de 𝑛> 𝑚 e 𝑚< 𝑛, onde as linhas tracejadas mostram as dimensões das matrizes re-
+sultantes da SVD reduzida. 
+Em geral, a SVD é calculada com os valores singulares em ordem não decrescente como 
+𝑠1 ≥𝑠2 ≥⋯ ≥𝑠𝑟≥0, onde 𝑟≤min (𝑛, 𝑚) é o posto† da matriz 𝐀. Uma aproximação 
+de posto 𝑟 da matriz 𝐀 pode ser calculada utilizando apenas as 𝑟 primeiras colunas de 
+𝐔, 𝐒 e 𝐕.  
+ 
+(a) 
+ 
+(b) 
+Figura 2.23: Ilustração da SVD: (a) com 𝑛> 𝑚; (b) com 𝑚> 𝑛. 
+O cálculo da SVD é equivalente ao cálculo de decomposição espectral de matrizes simé-
+tricas. Utilizando a SVD da matriz de dados do problema 𝐗= 𝐔𝐒𝐕T para o cálculo da 
+matriz de covariâncias, temos: 
+ 
+* O espaço nulo da matriz 𝐀, denotado null(𝐀), é o conjunto de vetores {𝐱: 𝐀𝐱= 0} [206]. 
+† O posto de uma matriz é o maior número de linhas ou colunas linearmente independentes [206]. 
+
+𝐗T𝐗= (𝐔𝐒𝐕T)T𝐔𝐒𝐕T = 𝐕𝐒𝐔T𝐔𝐒𝐕T = 𝐕𝐒2𝐕T 
+(2.23) 
+Comparando a equação (2.23) com a equação (2.19) escrita na forma 𝚺̂ = 𝐏𝚲𝐏T, pode-
+se concluir que os valores singulares 𝑠𝑖= √𝜆𝑖, 𝑖= 1 … 𝑝. Os vetores singulares à direita 
+são iguais aos autovetores, isto é, 𝐕= 𝐏. A ACP pode ser calculada diretamente pela 
+SVD da matriz 𝐗, evitando o produto 𝐗T𝐗.  
+A SVD calcula uma decomposição ortogonal de uma matriz não quadrada de elementos 
+reais. A SVD é utilizada para redução de dimensionalidade em recuperação de informa-
+ção na técnica conhecida como índice de semântica latente [364]. 
+2.4.3 Análise discriminante linear 
+ACP e SVD não utilizam a informação das variáveis de saída para o cálculo da transfor-
+mação. Em problemas de classificação, é possível que a projeção realizada pela ACP não 
+seja ótima no sentido de separação das classes. A Figura 2.24 apresenta um exemplo 
+simples em que a projeção dos dados na direção do primeiro componente principal 
+acaba misturando os dados. 
+A análise discriminante linear (ADL) calcula uma transformação linear que maximiza a 
+separação entre as classes nas coordenadas das variáveis transformadas. A ADL tam-
+bém é chamada de discriminante linear de Fisher [146] devido aos trabalhos de Fisher 
+em 1936 [183]. 
+(a) 
+(b) 
+Figura 2.24: Exemplo de ACP num problema de classificação: (a) dados originais;  
+(b) primeiro componente principal (CP1). 
+O cálculo da transformação é realizado a partir da decomposição da matriz de variân-
+cias total em 𝚺𝐓= 𝚺𝐁+ 𝚺𝐖, calculadas respectivamente como [146]: 
+
+𝚺𝐓= ∑(𝐱(𝑡) −𝐱̅)T
+𝑁
+𝑡=1
+(𝐱(𝑡) −𝐱̅) 
+(2.24) 
+𝚺𝐁= ∑𝑁𝑖(𝐱̅𝑖−𝐱̅)T
+𝑚
+𝑖=1
+(𝐱̅𝑖−𝐱̅) 
+(2.25) 
+𝚺𝐖= ∑∑(𝐱(𝑡) −𝐱̅𝑖)T
+𝐱(𝑡)∈𝒞𝑖
+(𝐱(𝑡) −𝐱̅𝑖)
+𝑚
+𝑖=1
+ 
+(2.26) 
+onde 𝐱̅ ∈ℛ𝑝 é o vetor de médias das variáveis, calculado para todos os registros; 𝐱̅𝑖∈
+ℛ𝑝 é o vetor de médias dos 𝑁𝑖 registros da classe 𝐶𝑖; 𝒞𝑖 é o conjunto de registros da 
+classe 𝐶𝑖, isto é, 𝒞𝑖= {𝐱(𝑡) ∈𝒯: 𝑦(𝑡) = 𝐶𝑖}, 𝑖= 1 … 𝑚, que contém 𝑁𝑖 elementos; e 𝑚 é 
+o número de classes. 
+A matriz de variâncias total 𝚺𝐓= (𝑁−1)𝚺̂, onde 𝚺̂ é a estimativa da matriz de covari-
+âncias definida pela equação (2.5). A matriz 𝚺𝐁 mede a variância entre classes, ou seja, 
+a separação entre as classes, e a matriz 𝚺𝐖 mede a variância intraclasses, ou seja, entre 
+os registros da mesma classe. 
+A transformação da ADL é calculada de forma que o novo sistema de coordenadas pro-
+duza dados com máxima variância entre classes e mínima variância intraclasses. Em 
+problemas de duas classes (𝑚= 2), a direção 𝐯 que maximiza a relação 𝚺𝐁𝚺𝐖
+⁄
+ é obtida 
+pela maximização do seguinte coeficiente de Rayleigh: 
+𝐽(𝐯) = 𝐯T𝚺𝐁𝐯
+𝐯T𝚺𝐖𝐯 
+(2.27) 
+onde 𝐯 é calculado como solução do problema de autovalor generalizado 𝚺𝐁𝐯= 𝜆𝚺𝐖𝐯.  
+Esse resultado pode ser estendido a problemas de múltiplas classes (𝑚> 2), resol-
+vendo-se o seguinte problema de autovalor generalizado [146]: 
+𝚺𝐁𝐕= 𝚺𝐖𝐕𝚲 
+(2.28) 
+onde 𝚲 é a matriz diagonal dos autovalores generalizados, que contém apenas 𝑚−1 
+elementos e 𝐕 é a matriz dos 𝑚−1 autovetores generalizados. 
+O conjunto de dados da variável transformada 𝐙, de dimensão 𝑁× 𝑚−1, é calculado 
+pela transformação linear 𝐙= 𝐗𝐕.  
+
+A Figura 2.25 apresenta os resultados da ADL para o exemplo da Figura 2.24. Nesse 
+caso, a direção calculada pela ADL é a mesma do segundo componente principal. 
+ 
+Figura 2.25: Resultado da ADL para os dados da Figura 2.24. 
+Em problemas linearmente separáveis, a ADL é uma solução ótima que permite uma 
+boa aproximação com um número reduzido de componentes. O conjunto de dados 
+Wine,96 por exemplo, é um problema de classificação com 13 variáveis de entrada con-
+tendo os resultados de análises químicas em três categorias de vinhos de uma região 
+da Itália. A Figura 2.26 mostra os resultados da ADL. A Figura 2.26a apresenta os dados 
+transformados e os histogramas das 𝑛= 2 novas variáveis e a Figura 2.26b mostra os 
+elementos de cada componente da matriz de transformação 𝐕. 
+ 
+(a) 
+ 
+(b) 
+Figura 2.26: Resultado da ADL no conjunto de dados Wine: (a) dados transformados;  
+(b) componentes da matriz de transformação. 
+
+2.4.4 Análise de correlação canônica 
+Em problemas de classificação, a ADL calcula uma transformação linear que leva em 
+consideração a informação das classes para definir um espaço de coordenadas onde a 
+separação das classes é ótima. Em problemas de regressão, é possível obter um resul-
+tado semelhante com a análise de correlação canônica (ACC). 
+A ACC considera o problema em que há dois conjuntos de variáveis, que representam 
+duas formas diferentes de observar o mesmo fenômeno. O objetivo é calcular duas 
+transformações lineares, uma para cada variável, a partir da correlação cruzada entre 
+as variáveis. Quando aplicadas aos conjuntos de dados iniciais, as transformações pro-
+duzem novas variáveis que representam a melhor a correlação do conjunto de dados. 
+A formulação da ACC será apresentada nesta seção utilizando as matrizes de dados de 
+entrada 𝐗∈ℛ𝑁×𝑝 e saída 𝐘∈ℛ𝑁×𝑞 do conjunto de dados de treinamento, mas a ordem 
+dos conjuntos de dados não interfere no processamento. A ACC realiza uma aproxima-
+ção de menor dimensão da entrada e da saída de um problema de regressão. 
+A ACC produz novas variáveis 𝐙𝐱= 𝐗𝐔𝐱 e 𝐙𝐲= 𝐘𝐔𝐲, chamadas de variáveis canôni-
+cas, ambas de dimensão* 𝑛≤min (𝑝, 𝑞). As transformações lineares 𝐔𝐱 e 𝐔𝐲 são calcu-
+ladas de forma a maximizar a correlação entre as variáveis canônicas e cada transfor-
+mação é calculada com os dados das duas variáveis. 
+Assim como na ACP, as variáveis devem ser padronizadas pelos z-scores, resultando em 
+variáveis de média nula e desvio padrão unitário. As transformações lineares ortogo-
+nais não alteram as médias e os desvios padrão das variáveis transformadas, de forma 
+que a matriz de correlação cruzada entre as variáveis canônicas é escrita como: 
+𝐙𝐱
+T𝐙𝐲= 𝐔𝐱
+T𝐗T𝐘𝐔𝐲 
+(2.29) 
+onde 𝐙𝐱, 𝐙𝐲∈ℛ𝑁×𝑛 são as matrizes de dados das variáveis canônicas. 
+O cálculo das matrizes de transformação na ACC foi proposto inicialmente por Hotel-
+ling em 1936 [261]. Nesta seção, utilizamos a formulação proposta por Golub e Zha 
+[207], que é baseada na decomposição ortogonal QR das matrizes de dados:  
+𝐗= 𝐐𝐱𝐑𝐱 
+(2.30) 
+ 
+* Formalmente, 𝑛= min (rank(𝐗), rank(𝐘)), onde rank é o posto da matriz. 
+
+𝐘= 𝐐𝐲𝐑𝐲 
+(2.31) 
+onde as matrizes 𝐐𝐱 e 𝐐𝐲 são ortogonais e as matrizes 𝐑𝐱 e 𝐑𝐲 são triangulares superi-
+ores. Nesse caso, utilizamos a decomposição QR reduzida, em que a matriz 𝐐𝐱 (𝐐𝐲) tem 
+dimensão 𝑁× 𝑝 (𝑁× 𝑞) e a matriz 𝐑𝐱 (𝐑𝐲) tem dimensão 𝑝× 𝑝 (𝑞× 𝑞). 
+Aplicando as decomposições QR definidas nas equações (2.30) e (2.31) na equação 
+(2.29), a correlação cruzada entre os dois conjuntos de variáveis é escrita como: 
+𝚲= 𝐔𝐱
+T𝐗T𝐘𝐔𝐲= 𝐔𝐱
+T𝐑𝐱
+T𝐐𝐱
+T𝐐𝐲𝐑𝐲𝐔𝐲 
+(2.32) 
+A matriz de correlação 𝚲 é diagonal e seus elementos são os valores singulares de 𝐐𝐱
+T𝐐𝐲 
+[206], chamados de correlações canônicas. As transformações lineares 𝐔𝐱 e 𝐔𝐲 são es-
+critas a partir da SVD 𝐐𝐱
+T𝐐𝐲= 𝐕𝐱𝐒𝐕𝐲
+T. Aplicando o resultado da SVD na equação (2.33): 
+𝐔𝐱
+T𝐑𝐱
+T𝐐𝐱
+T𝐐𝐲𝐑𝐲𝐔𝐲= 𝐔𝐱
+T𝐑𝐱
+T𝐕𝐱𝐒𝐕𝐲
+T𝐑𝐲𝐔𝐲 
+(2.33) 
+A ACC calcula a correlação cruzada 𝚲= 𝐒 de tal forma que 𝐔𝐱
+T𝐑𝐱
+T𝐕𝐱= 𝐈 e 𝐕𝐲
+T𝐑𝐲𝐔𝐲= 𝐈, 
+onde 𝐈 representa a matriz identidade de dimensão do número de componentes canô-
+nicos 𝑛. As transformações lineares da ACC são calculadas como: 
+𝐔𝐱= 𝐑𝐱
+−1𝐕𝐱
+T 
+(2.34) 
+𝐔𝐲= 𝐑𝐲
+−1𝐕𝐲 
+(2.35) 
+A formulação anterior é equivalente à maximização do traço da matriz 𝚲 [207], im-
+pondo a restrição que as matrizes de transformação devem ser ortogonais. 
+A aplicação da ACC é mostrada no exemplo de elevação de temperatura adiabática do 
+concreto, que será discutido na seção 3.4.2. O conjunto de dados apresenta 14 variáveis 
+de entrada divididas em dois tipos: cinco variáveis que representam a composição do 
+cimento utilizado e outras nove com os demais aditivos [18]. A elevação de tempera-
+tura é parametrizada por 3 variáveis de saída.  
+Os resultados da ACC são exibidos na Figura 2.27. O número de componentes canônicos 
+neste caso é 𝑛≤min(𝑝, 𝑞) = 3. A Figura 2.27a mostra os elementos da correlação cru-
+zada 𝚲. As variáveis canônicas de maior correlação são calculadas como 𝐳𝐱1 =  𝐗𝐮𝐱1 e 
+𝐳𝐲1 =  𝐱𝐮𝐲1, onde 𝐮𝐱1 e 𝐮𝐲1 são os primeiros componentes de 𝐔𝐱 e 𝐔𝐲. A Figura 2.27c 
+mostra o gráfico de projeção entre as variáveis 𝐳𝐱1 e 𝐳𝐲1. A Figura 2.27c e a Figura 2.27c 
+mostram respectivamente os elementos dos vetores 𝐮𝐱1 e 𝐮𝐲𝟏. 
+
+ 
+(a) 
+ 
+(b) 
+ 
+(c) 
+ 
+(d) 
+Figura 2.27: Resultados da ACC nos dados de elevação de temperatura do concreto: 
+ (a) correlações canônicas; (b) gráfico de projeção das variáveis canônicas;  
+(c) primeiro componente de 𝐔𝐱; (d) primeiro componente de 𝐔𝐲. 
+Esta seção apresentou os principais métodos para o cálculo de transformações lineares 
+sobre o conjunto de dados. Esses métodos utilizam técnicas de cálculo matricial e mos-
+tram como pode ser útil a representação de um registro no conjunto de dados como 
+um ponto do espaço vetorial.  
+As transformações lineares apresentadas nesta seção consideram que a amostra dos 
+dados tem distribuição normal, o que nem sempre é verificado, e o resultado pode não 
+ser representativo. Além disso, muitos problemas reais que contêm variáveis nominais 
+e binárias, que também pode interferir nos resultados. 
+Aplicações de sumarização e visualização de dados são apresentadas a seguir, assim 
+como a utilização de transformações lineares para validação de medidas. 
+
+2.5 Aplicações 
+2.5.1 Padrões de mobilidade 
+A universalização da telefonia celular e a difusão de dispositivos móveis conectados à 
+internet transformaram o ser humano num sensor ambulante. O registro da atividade 
+dos usuários fornece uma quantidade sem precedentes de dados, o que tem atraído o 
+interesse de diversos pesquisadores de diferentes áreas [30][70]. 
+Um projeto de pesquisa realizou o estudo de uma base de registros de chamadas por 
+celular na região de código de área 21, que compreende toda a Região Metropolitana 
+do Rio de Janeiro (RMRJ) (cf. detalhe da Figura 2.28). A base de dados utilizada do pro-
+jeto continha apenas o registro de chamadas de voz realizadas, em que a identificação 
+dos usuários foi criptografada. Há estudos que utilizam registros mais detalhados [53] 
+como chamadas recebidas, mensagens de texto (SMS), registros de conexão com inter-
+net, dados processados diretamente pelas antenas ou registros de posicionamento via 
+satélite (GPS) ou registros de redes sociais. 
+Os registros de chamadas de celulares (CDR)* permitem que o movimento das pessoas 
+seja inferido pela posição da antena (célula) que processou a chamada. Em geral, pelo 
+menos três antenas são posicionadas a 120o em cada torre, de forma que a cobertura 
+por torre pode ser aproximada por um polígono de Voronoi.  
+A Figura 2.28 mostra a cobertura no Rio de Janeiro, com os polígonos de Voronoi das 
+torres. O posicionamento das torres segue objetivos mercadológicos e técnicos, de 
+forma que a distribuição resultante não é uniforme. Há maior concentração de antenas 
+nas áreas de maior densidade populacional e nível socioeconômico, como o Centro, Ti-
+juca e a Zona Sul. Outras áreas populosas, como Jacarepaguá, Campo Grande, Duque de 
+Caxias e São Gonçalo, têm uma concentração menor de antenas. A geografia da cidade 
+afeta a distribuição de antenas devido à presença de maciços montanhosos dentro da 
+área urbana, como o maciço da Tijuca e o da Pedra Branca, visíveis na Figura 2.28. 
+ 
+* Call Detail Records. 
+
+ 
+Figura 2.28: Polígonos de Voronoi no Rio de Janeiro. No detalhe a cobertura da área 21. 
+Os dados foram coletados ao longo do ano de 2014, entre 31 de dezembro de 2013 e a 
+1° de janeiro de 2015, somando 2.1 bilhões de registros referentes a 2.9 milhões de 
+assinantes. Apenas os dados de chamadas de voz realizadas foram disponibilizados 
+para o estudo, o que limita consideravelmente a amostra. 
+Foi realizada uma modelagem da região de estudo pelo agrupamento de polígonos de 
+Voronoi em áreas que aproximam unidades demográficas do IBGE. A identificação de 
+residência presumida dos usuários permitiu a junção dos resultados de mobilidade 
+com dados demográficos e socioeconômicos. Os dados de CDR foram utilizados para 
+estimativa de matrizes origem-destino (OD) para cada dia para análise dos padrões de 
+mobilidade na RMRJ [87][88]. Os resultados do processamento para cada dia estão dis-
+poníveis no Dataverse.97 
+Os dois padrões de mobilidade mais comuns são mostrados na Figura 2.30 e na Figura 
+2.30 [88]. A Figura 2.30 apresenta o número de viagens estimadas entre o Centro (AP1) 
+e Zona Sul (AP2) e representa o padrão casa-trabalho, com grande regularidade, maior 
+número de viagens durante a semana e estimativas semelhantes na ida e na volta. 
+A Figura 2.30 mostra o número de viagens estimadas entre a Zona Sul (AP2) e Teresó-
+polis, uma cidade turística na Região Serrana do Estado. Neste caso, o padrão é total-
+mente diferente, o maior número de viagens ocorre nos finais de semana, com picos 
+nos feriados, e há uma defasagem entre a ida e a volta. 
+
+ 
+Figura 2.29: Número de viagens Centro (AP1) – Zona Sul (AP2). Fonte: reproduzido de [88]. 
+Figura 2.30: Número de viagens Zona Sul (AP2) – Teresópolis. Fonte: reproduzido de [88]. 
+Há diversos estudos de mobilidade a indicadores sociais a partir de dados de telefonia 
+celular [117][526]. Os resultados obtidos mostram que os dados de registros de cha-
+madas de celular podem ser uma alternativa de baixo custo para a modelagem de pro-
+blemas complexos das cidades modernas. 
+Atualmente, há uma grande oferta de dados públicos e muitas cidades no mundo man-
+têm portais de dados abertos. No Rio de Janeiro, o portal data.rio98 mantém uma base 
+de dados pública para consulta. Nesse portal, é possível acessar em tempo real os dados 
+de localização (GPS) dos ônibus municipais urbanos. 
+Um estudo sobre a velocidade dos ônibus na cidade foi feito pela Coppe/UFRJ em par-
+ceria com o Centro de Pesquisas da Dell-EMC. O resultado da velocidade média diária 
+nas vias da cidade é mostrado na Figura 2.32, na qual os valores de velocidade são re-
+presentados por uma escala de cores e a largura do traço representa o número de li-
+nhas de ônibus que passam na via. Pode-se verificar que as vias expressas apresentam 
+as maiores velocidades médias (verde), enquanto as vias em áreas com maior densi-
+dade urbana têm velocidade reduzida (vermelho). As principais áreas de concentração 
+
+da cidade podem ser identificadas no mapa: zona Sul, Centro, Tijuca, Meier, Madureira, 
+Jacarepaguá, Bangu, Campo Grande e Santa Cruz. 
+A visualização e caracterização estatística dos dados é uma etapa fundamental para o 
+entendimento do problema. Os exemplos apresentados nesta seção ilustram exemplos 
+de visualização de dados georreferenciados utilizando sistemas de informação geográ-
+fica99 em conjunto com servidores de mapas na internet. 
+ 
+Figura 2.31: Velocidade média dos ônibus na cidade do Rio de Janeiro às 19:00. 
+A próxima seção mostra uma aplicação de transformações lineares para a validação de 
+medidas em sistemas de diagnóstico. 
+2.5.2 Equações de paridade 
+O monitoramento de processos complexos é realizado com dados coletados por senso-
+res cujo funcionamento deve ser continuamente verificado para evitar que alguma per-
+turbação nas medidas seja confundida com uma falha no processo. O método de vali-
+dação de medidas por equações de paridade utiliza a redundância de informações con-
+tida nas medidas para gerar indicadores de falha através de transformações lineares. 
+A redundância pode ser direta, na qual existe mais de um sensor para uma mesma me-
+dida, ou indireta, quando as medidas produzidas por um conjunto de sensores devem 
+
+preservar alguma coerência entre seus valores. A análise de componentes principais 
+(ACP) pode ser aplicada para a síntese de um sistema de validação de medidas por 
+equações de paridade em sistemas lineares estáticos. 
+Considere um conjunto de 𝑝 sensores, cujas medidas são representadas pelas compo-
+nentes do vetor 𝐱(𝑡) ∈ℛ𝑝. As medidas se relacionam com um conjunto de estados 
+𝐳(𝑡) ∈ℛ𝑛 pela equação de medidas: 
+𝐱(𝑡) = 𝐳(𝑡)𝐂T + ∆𝐱(𝑡) + 𝐞(𝑡) 
+(2.36) 
+onde 𝐂, de dimensão 𝑝× 𝑛, é a matriz de medidas, ∆𝐱(𝑡) ∈ℛ𝑛 representa falhas aditi-
+vas nos sensores e 𝐞(𝑡) ∈ℛ𝑛 é um ruído de média nula e variância constante. 
+As medidas são padronizadas através dos z-scores (cf. equação (2.16)) e têm média nula 
+e desvio padrão unitário. Há redundância de informações quando a dimensão do vetor 
+de medidas 𝑝> 𝑛. Nesse caso, pode-se utilizar a informação redundante para detecção 
+de falhas nos sensores. 
+Um método robusto e bastante conhecido para validação de sensores é baseado nas 
+equações de paridade [201]. Essa técnica tem sido utilizada em diversas aplicações e 
+consiste em projetar o vetor de medidas num espaço de dimensão 𝑚= 𝑝−𝑛, chamado 
+espaço de paridades. O vetor de paridades é calculado como: 
+𝐮(𝑡) = 𝐱(𝑡)𝐖 
+(2.37) 
+onde 𝐖, de dimensão 𝑝× 𝑚, é a matriz de projeção e 𝐮(𝑡) ∈ℛ𝑚, o vetor de paridade. 
+O vetor de paridades é um indicador de falhas que é nulo na ausência delas. Dessa 
+forma, a matriz de projeção deve ser ortogonal à matriz de medidas: 
+𝐂T𝐖= 𝟎 
+(2.38) 
+Reescrevendo a equação (2.37) considerando a equação de medidas (2.36) e a restrição 
+imposta pela equação (2.38), o vetor de paridade é calculado como: 
+𝐮(𝑡) = (𝐳(𝑡)𝐂T + ∆𝐱(𝑡) + 𝐞(𝑡))𝐖= (∆𝐱(𝑡) + 𝐞(𝑡))𝐖 
+(2.39) 
+Pela equação (2.39), pode-se perceber que o vetor de paridades representa apenas as 
+falhas e incertezas (ruído) no processo, independentemente do valor dos estados. As-
+sim, um evento externo que altera de forma consistente todas as medidas não altera 
+significativamente o valor do vetor de paridade. 
+
+Cada linha da matriz 𝐖 representa uma direção de falha no espaço de paridades. Uma 
+perturbação aditiva numa medida provoca um acréscimo do vetor de paridade na di-
+reção correspondente. A identificação da falha é realizada comparando-se a direção do 
+vetor de paridade com as direções definidas pela matriz de projeção.  
+Considere o exemplo de um sistema com redundância material em que 𝑝= 4 sensores 
+são utilizados para observar os valores de 𝑛= 2 estados, com as seguintes matrizes de 
+medidas e de projeção: 
+𝐂T = [1.0
+1.0
+0.0
+0.0
+0.0
+0.0
+1.0
+1.0] ,
+𝐖T = [0.5
+−0.5
+0.5
+−0.5
++0.5
+−0.5
+−0.5
++0.5] 
+(2.40) 
+O espaço de paridades e as direções de falha associadas a cada medida neste exemplo 
+são mostrados na Figura 2.32. O parâmetro 𝜉 representa uma tolerância para o módulo 
+do vetor de paridade a fim de acomodar o ruído do processo (cf. equação (2.37)), de tal 
+forma que a detecção é feita somente se ‖𝐮(𝑡)‖ > 𝜉.  
+ 
+Figura 2.32: Direções de falha no espaço de paridades. 
+O método de equações de paridades garante a capacidade do sistema de detectar falhas 
+simples, ou seja, falha aditiva em apenas uma medida. Em caso de falhas múltiplas, uma 
+combinação de falhas pode anular o vetor de paridades e o vetor de perturbações deve 
+representar assinaturas de falha. Dependendo da dimensão do vetor de paridades, 
+pode não ser possível isolar todas as falhas. O método não se aplica em caso de falhas 
+que afetam o comportamento do processo. 
+
+As matrizes de medida e de projeção do método de equações de paridade podem ser 
+geradas a partir da ACP apresentada na seção 2.4.1. Considere um conjunto de registros 
+do vetor de medidas 𝒯= {𝐱(𝑡), 𝑡= 1 …  𝑁}. A matriz de covariâncias estimada é cal-
+culada como 𝚺̂ =
+1
+𝑁−1𝐗T𝐗, onde 𝐗, de dimensão 𝑁× 𝑝, contém os registros das variáveis 
+de entrada. A ACP é calculada pela diagonalização da matriz 𝚺̂ pela solução do problema 
+de autovalor definido na equação (2.19): 
+𝚺̂𝐏= 𝐏𝚲 
+(2.41) 
+onde as colunas da matriz 𝐏 são os autovetores (componentes principais) e os autova-
+lores da matriz diagonal 𝚲 representam a variância da variável transformada. 
+As variáveis transformadas pela ACP podem ser utilizadas para o cálculo de equações 
+de paridades, considerando a matriz de componentes principais composta pelas matri-
+zes de medida e de projeção como 𝐏= [𝐂 | 𝐖]. As colunas da matriz de componentes 
+principais, de dimensão 𝑝× 𝑝, são ortogonais, de forma que a condição (2.38) é satis-
+feita. A síntese do sistema de validação de medidas pela ACP consiste em escolher as 
+dimensões 𝑛 e 𝑚 dos espaços de estados e de paridade. Tendo em vista que 𝑝= 𝑛+ 𝑚, 
+quanto maior a redundância das medidas, menor a dimensão dos estados 𝑛 e maior a 
+dimensão do vetor de paridades 𝑚. 
+O valor do parâmetro 𝜉 para a detecção de falhas pode ser estimado pela variância total 
+não representada pelo vetor de estados e calculado pela soma dos autovalores corres-
+pondentes às componentes do vetor de paridade: 
+𝜉= √∑𝜆𝑖
+𝑝
+𝑖=𝑛+1
+ 
+(2.42) 
+onde 𝜆𝑖 é o autovalor da matriz 𝚲 correspondente às colunas 𝑖= 𝑛+ 1, … , 𝑝. 
+O método de equações de paridade foi utilizado para validação de medidas de defor-
+mações da Usina Hidrelétrica (UHE) de Funil100 por extensômetros de concreto. O con-
+junto de dados cobria o período entre 20/07/1967 e 30/11/2005, num total de 2.161 
+registros. Os registros com valores ausentes foram eliminados para o cálculo das ma-
+trizes de medida e projeção, que foi realizado com os 𝑁= 380 registros completos de 
+21 variáveis. 
+
+O método de equações de paridade é imune à presença de valores ausentes, uma vez 
+que apenas as perturbações medidas são consideradas no cálculo do vetor de paridade 
+(cf. equação (2.39)). O resultado do método de equações de paridade é mostrado na 
+Figura 2.33, na qual os registros em cinza representam os valores ausentes e, em preto, 
+os registros identificados com falha. Observe que, em alguns casos, a ocorrência de fa-
+lha está associada à retirada do sensor de operação. 
+ 
+Figura 2.33: Resultado da validação de sensores. 
+2.6 Comentários Finais 
+Este capítulo apresentou técnicas básicas utilizadas na etapa de pré-processamento do 
+conjunto de dados. Um aprofundamento sobre a teoria das probabilidades e álgebra 
+linear é uma base importante de inteligência computacional [146][298]. Há diversos 
+livros que abordam o assunto, como Montgomery [400] e Heath [244] que apresenta 
+uma visão dos conceitos de cálculo matricial. O livro de Heath tem também uma página 
+na internet101 que fornece vários recursos associados ao tema. 
+As medidas de caracterização estatística apresentadas são as mais usuais e que estão 
+presentes na maioria dos softwares e linguagens de programação. O assunto continua 
+sendo explorado na literatura [490] e diferentes soluções disponíveis.102  
+Alguns métodos de redução de dimensionalidade não foram abordados na seção 2.4, 
+cujo foco é apenas em transformações lineares. Outras transformações conhecidas, 
+como o Local Linear Embedding (LLE), a análise de componentes independentes (ICA), 
+
+entre outras, não foram apresentadas pois envolvem algoritmos não lineares. Uma dis-
+cussão de diversos métodos lineares e não lineares, incluindo uma extensa revisão bi-
+bliográfica no assunto, pode ser encontrada em [357], disponível para download,103 
+onde é possível obter uma biblioteca Matlab contendo a implementação dos métodos. 
+As técnicas de cálculo matricial têm sido cada vez mais empregadas em ciência de da-
+dos, especialmente para análise de grandes bases de dados, como a internet, e bases de 
+dados multidimensionais [493][106]. Os métodos lineares são estendidos para o caso 
+não linear utilizando métodos baseados em função de núcleo [478]. As funções de nú-
+cleo serão apresentadas no Capítulo 7 no contexto de aproximação de funções com mo-
+delos SVM. Livros recentes apresentam as funções de núcleo e a matriz de núcleo nos 
+capítulos iniciais como forma de representação dos dados [593], uma vez que funções 
+de núcleo podem ser utilizadas em registros que não têm uma representação vetorial.  
+Neste livro, os capítulos iniciais abordam os fundamentos e, por isso, apenas os méto-
+dos mais simples são apresentados. O próximo capítulo discute o modelo de regressão 
+linear e o método dos mínimos quadrados. Os algoritmos preditivos não lineares para 
+regressão e classificação são apresentados nos Capítulos 7, 8 e 9.

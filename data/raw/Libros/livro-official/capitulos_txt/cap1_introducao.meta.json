@@ -1,0 +1,12 @@
+{
+  "numero": 1,
+  "titulo": "Introdução",
+  "slug": "introducao",
+  "pdf_inicio": 10,
+  "pdf_fin": 30,
+  "n_paginas": 21,
+  "n_caracteres_texto": 45806,
+  "n_palabras_aprox": 7025,
+  "pdf_salida": "cap1_introducao.pdf",
+  "txt_salida": "cap1_introducao.txt"
+}

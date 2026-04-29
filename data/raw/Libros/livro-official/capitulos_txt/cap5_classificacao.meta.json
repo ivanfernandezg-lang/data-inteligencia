@@ -1,0 +1,12 @@
+{
+  "numero": 5,
+  "titulo": "Classificação",
+  "slug": "classificacao",
+  "pdf_inicio": 149,
+  "pdf_fin": 189,
+  "n_paginas": 41,
+  "n_caracteres_texto": 69493,
+  "n_palabras_aprox": 11071,
+  "pdf_salida": "cap5_classificacao.pdf",
+  "txt_salida": "cap5_classificacao.txt"
+}
