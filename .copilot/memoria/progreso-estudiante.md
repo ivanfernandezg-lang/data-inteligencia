@@ -29,8 +29,9 @@ Fórmulas:
 
 ## Temas Revisados
 
-| Fecha | Unidad | Tema | Sesión | Observaciones |
-| ----- | ------ | ---- | ------ | ------------- |
+| Fecha      | Unidad | Tema                                                                                                                                       | Sesión   | Observaciones                                                                                            |
+| ---------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------ | -------- | -------------------------------------------------------------------------------------------------------- |
+| 2026-04-29 | 1–2    | Pre-procesamiento (cap. 2 Evsukoff): EDA, distancias, estandarización, outliers, imputación kNN, PCA, SVD, LDA, CCA, ecuaciones de paridad | notebook | Notebook completo con teoría + 12 ejercicios numéricos en `notebooks/exploratory/cap2-preprocesamiento/` |
 
 ## Temas Dominados
 
@@ -56,6 +57,12 @@ Fórmulas:
 | L3  | Clustering       | (mismo dataset)                 | pendiente | —      | —     |
 | L4  | Bayes / Árboles  | (mismo dataset)                 | pendiente | —      | —     |
 | L5  | Redes neuronales | (mismo dataset)                 | pendiente | —      | —     |
+
+## Notebooks Generados
+
+| Fecha      | Notebook                                                                  | Tema                                             |
+| ---------- | ------------------------------------------------------------------------- | ------------------------------------------------ |
+| 2026-04-29 | `notebooks/exploratory/cap2-preprocesamiento/cap2_preprocesamiento.ipynb` | Capítulo 2 Evsukoff — pre-procesamiento integral |
 
 ## Tareas / Ejercicios Completados
 
