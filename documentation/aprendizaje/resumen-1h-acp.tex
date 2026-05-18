@@ -1,0 +1,677 @@
+% =============================================================================
+% Resumen 1 hora — Análisis de Componentes Principales (ACP / PCA)
+% Inteligencia Computacional · USACH · Prof. Max Chacón
+% Ayudantía: Sebastián Chávez Orellana — Primer semestre 2026
+% Basado en: data/raw/ayudantias/IC_Ejercicios_ACP.pdf
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+
+% ---------- Paquetes ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=teal!70!black,
+    urlcolor=blue!70!black,
+    citecolor=red!70!black
+}
+
+% ---------- Colores institucionales ----------
+\definecolor{usachteal}{HTML}{009999}
+\definecolor{usachdark}{HTML}{003333}
+
+% ---------- Cajas temáticas ----------
+\newtcolorbox{formulabox}[1][]{
+    enhanced,breakable,
+    colback=usachteal!5,colframe=usachteal!70!black,
+    fonttitle=\bfseries\color{white},
+    coltitle=white,colbacktitle=usachteal!80!black,
+    title={#1},sharp corners=south,
+    boxrule=0.6pt,arc=2mm
+}
+
+\newtcolorbox{pasobox}[1][]{
+    enhanced,breakable,
+    colback=orange!5,colframe=orange!70!black,
+    fonttitle=\bfseries\color{white},
+    coltitle=white,colbacktitle=orange!80!black,
+    title={#1},sharp corners=south,boxrule=0.6pt
+}
+
+\newtcolorbox{tipbox}[1][Tip de examen]{
+    enhanced,breakable,
+    colback=yellow!10,colframe=yellow!50!black,
+    fonttitle=\bfseries,title={#1},
+    sharp corners=south,boxrule=0.5pt
+}
+
+\newtcolorbox{ejerciciobox}[1]{
+    enhanced,breakable,
+    colback=blue!3,colframe=blue!50!black,
+    fonttitle=\bfseries\color{white},
+    coltitle=white,colbacktitle=blue!60!black,
+    title={#1},sharp corners=south,boxrule=0.7pt
+}
+
+% ---------- Encabezado ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textsc{Inteligencia Computacional · USACH}}
+\fancyhead[R]{\small\textsc{Resumen 1h — ACP}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ---------- Comandos ----------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\inner}[2]{\langle#1,#2\rangle}
+
+\titleformat{\section}{\Large\bfseries\color{usachdark}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{usachteal!80!black}}{\thesubsection.}{0.5em}{}
+
+% =============================================================================
+\begin{document}
+
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+{\Huge\bfseries\color{usachdark} Análisis de Componentes Principales\\[0.4cm]}
+{\LARGE\color{usachteal} (ACP / PCA)}\\[1.5cm]
+{\Large\textit{Resumen intensivo de 1 hora}}\\[0.5cm]
+{\large Fórmulas matemáticas + Resolución paso a paso}\\[2.5cm]
+\begin{tcolorbox}[width=0.7\textwidth,colback=usachteal!10,colframe=usachteal!70!black]
+\centering
+\textbf{Inteligencia Computacional}\\
+Magíster en Ingeniería Informática\\
+\textbf{Universidad de Santiago de Chile}\\[0.3cm]
+Prof. Max Chacón Pacheco\\
+Ayudante: Sebastián Chávez Orellana\\
+Primer semestre 2026
+\end{tcolorbox}
+\vfill
+{\small Material basado en: \texttt{data/raw/ayudantias/IC\_Ejercicios\_ACP.pdf}}\\
+{\small Fecha: \today}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% =============================================================================
+\section{Plan de estudio (60 minutos)}
+% =============================================================================
+
+\begin{center}
+\begin{tabular}{@{}cll@{}}
+\toprule
+\textbf{Tiempo} & \textbf{Tema} & \textbf{Objetivo} \\
+\midrule
+0--10 min  & Intuición + fórmulas base & Entender qué hace PCA y por qué \\
+10--25 min & Derivación matemática     & Covarianza $\to$ autovalores $\to$ componentes \\
+25--35 min & Interpretación geométrica & Loadings, scores, biplot, ángulos \\
+35--55 min & Resolución de ejercicios  & Plantilla universal P1--P7 \\
+55--60 min & Tips de examen            & Errores comunes y atajos \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% =============================================================================
+\section{Idea central de PCA (5 min)}
+% =============================================================================
+
+\begin{formulabox}[¿Qué hace PCA?]
+PCA encuentra un nuevo sistema de coordenadas (rotación de los ejes originales) tal que:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{El primer eje (PC1)} captura la máxima varianza de los datos.
+    \item \textbf{El segundo eje (PC2)} captura la máxima varianza \emph{restante}, siendo ortogonal a PC1.
+    \item Así sucesivamente para PC3, PC4, \ldots
+\end{itemize}
+\textbf{Objetivo:} reducir dimensionalidad conservando la mayor cantidad posible de información (varianza).
+\end{formulabox}
+
+\textbf{Insumos:} matriz de datos $X \in \R^{n \times p}$ con $n$ observaciones y $p$ variables.\\
+\textbf{Salidas:} autovalores $\lambda_k$, autovectores $\mathbf{v}_k$, scores $T$, loadings $W$.
+
+% =============================================================================
+\section{Fórmulas matemáticas fundamentales (15 min)}
+% =============================================================================
+
+\subsection{Paso 1 — Centrado (y opcionalmente estandarización)}
+
+\begin{formulabox}[Centrado y estandarización]
+Sea $X \in \R^{n \times p}$. La media por columna es:
+\[
+\bm{\mu} = \frac{1}{n}\sum_{i=1}^{n} \mathbf{x}_i \in \R^{p}
+\]
+La matriz centrada:
+\[
+X_c = X - \mathbf{1}_n\bm{\mu}^{T}
+\]
+Si las variables tienen \emph{escalas distintas} (lo más común en problemas reales), se estandariza:
+\[
+X_{\text{std}}[i,j] = \frac{X[i,j] - \mu_j}{\sigma_j}, \qquad
+\sigma_j = \sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(X[i,j]-\mu_j)^2}
+\]
+\end{formulabox}
+
+\subsection{Paso 2 — Matriz de covarianza (o correlación)}
+
+\begin{formulabox}[Matriz de covarianza/correlación]
+\[
+\boxed{\;\Sigma = \frac{1}{n-1} X_c^{T} X_c \in \R^{p\times p}\;}
+\]
+Es simétrica y positiva semidefinida. Si los datos están \textbf{estandarizados}, entonces $\Sigma$ es la \textbf{matriz de correlación} $R$.\\
+
+Elementos:
+\[
+\Sigma_{jk} = \mathrm{Cov}(X_j, X_k), \qquad R_{jk} = \frac{\mathrm{Cov}(X_j, X_k)}{\sigma_j \sigma_k}
+\]
+\end{formulabox}
+
+\subsection{Paso 3 — Descomposición espectral}
+
+\begin{formulabox}[Problema de autovalores]
+Se resuelve:
+\[
+\boxed{\;\Sigma\,\mathbf{v}_k = \lambda_k\,\mathbf{v}_k, \quad k=1,\ldots,p\;}
+\]
+con la restricción $\norm{\mathbf{v}_k} = 1$ y $\mathbf{v}_j^{T}\mathbf{v}_k = 0$ si $j\neq k$.\\
+Los autovalores se ordenan de mayor a menor:
+\[
+\lambda_1 \geq \lambda_2 \geq \cdots \geq \lambda_p \geq 0
+\]
+Forma matricial (diagonalización):
+\[
+\Sigma = V\Lambda V^{T}, \quad V = [\mathbf{v}_1 | \mathbf{v}_2 | \cdots | \mathbf{v}_p], \quad \Lambda = \mathrm{diag}(\lambda_1,\ldots,\lambda_p)
+\]
+\end{formulabox}
+
+\subsection{Paso 4 — Loadings y Scores}
+
+\begin{formulabox}[Loadings (cargas) y Scores (proyecciones)]
+\textbf{Matriz de loadings} (autovectores ordenados):
+\[
+W = [\mathbf{v}_1 | \mathbf{v}_2 | \cdots | \mathbf{v}_q] \in \R^{p\times q}
+\]
+\textbf{Scores} (proyección de los datos en el nuevo sistema):
+\[
+\boxed{\;T = X_c \cdot W \in \R^{n\times q}\;}
+\]
+Cada fila $t_i$ es la representación de la observación $i$-ésima en $q$ componentes.\\
+
+\textbf{Propiedad clave:} la varianza del score $k$-ésimo es exactamente $\lambda_k$:
+\[
+\mathrm{Var}(T_{\cdot,k}) = \lambda_k
+\]
+\end{formulabox}
+
+\subsection{Paso 5 — Varianza explicada}
+
+\begin{formulabox}[Métricas de calidad del análisis]
+\textbf{Proporción de varianza explicada} por la componente $k$:
+\[
+\boxed{\;\mathrm{var\_ratio}_k = \frac{\lambda_k}{\sum_{j=1}^{p}\lambda_j}\;}
+\]
+\textbf{Varianza acumulada} (con las primeras $q$ componentes):
+\[
+\mathrm{var\_acum}(q) = \frac{\sum_{k=1}^{q}\lambda_k}{\sum_{j=1}^{p}\lambda_j}
+\]
+\textbf{Porcentaje de pérdida de información}:
+\[
+\boxed{\;\mathrm{p\acute{e}rdida}(q) = 1 - \mathrm{var\_acum}(q) = \frac{\sum_{k=q+1}^{p}\lambda_k}{\sum_{j=1}^{p}\lambda_j}\;}
+\]
+
+\textbf{Caso especial con matriz de correlación:} si se estandarizó, $\sum_j \lambda_j = p$ (número de variables), entonces:
+\[
+\mathrm{var\_ratio}_k = \frac{\lambda_k}{p}
+\]
+\end{formulabox}
+
+\subsection{Criterios para elegir el número de componentes}
+
+\begin{formulabox}[Tres criterios clásicos]
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Criterio de Kaiser:} retener componentes con $\lambda_k > 1$ (sólo si se trabajó con matriz de \emph{correlación}).
+    \item \textbf{Umbral de varianza:} retener componentes hasta cubrir 70--90\% de la varianza total.
+    \item \textbf{Scree plot:} graficar $\lambda_k$ vs $k$ y buscar el "codo" (cambio abrupto de pendiente).
+\end{enumerate}
+\end{formulabox}
+
+\subsection{Reconstrucción}
+
+\begin{formulabox}[Reconstrucción de los datos originales]
+Con $q$ componentes:
+\[
+\widehat{X}_c = T \cdot W^{T} = X_c W W^{T}
+\]
+Error de reconstrucción (MSE):
+\[
+\mathrm{MSE}(q) = \frac{1}{np}\sum_{i,j}(X_c - \widehat{X}_c)^2 = \frac{1}{p}\sum_{k=q+1}^{p}\lambda_k
+\]
+\end{formulabox}
+
+% =============================================================================
+\section{Interpretación geométrica (10 min)}
+% =============================================================================
+
+\subsection{Biplot: scores + loadings en un mismo gráfico}
+
+\begin{formulabox}[Construcción del biplot]
+\textbf{Scores} (puntos): se grafican $T = X_c W$ directamente sobre los ejes PC1, PC2.\\
+
+\textbf{Loadings escalados} (flechas): se escalan por $\sqrt{\lambda_k}$ para hacerlos visibles:
+\[
+\boxed{\;L_{\text{scaled}} = W \cdot \mathrm{diag}(\sqrt{\lambda_1},\sqrt{\lambda_2})\;}
+\]
+Cada fila $L_i \in \R^2$ es una flecha desde el origen que representa a la variable $i$-ésima.
+\end{formulabox}
+
+\subsection{Reglas de interpretación del biplot}
+
+\begin{center}
+\begin{tabular}{@{}p{0.45\textwidth}p{0.45\textwidth}@{}}
+\toprule
+\textbf{Observación visual} & \textbf{Interpretación} \\
+\midrule
+Flecha larga & La variable contribuye mucho a esa componente \\
+Flecha corta cerca del origen & Variable poco representada por PC1--PC2 \\
+Dos flechas paralelas (ángulo $\approx 0°$) & Variables \textbf{correlacionadas positivamente} \\
+Dos flechas opuestas (ángulo $\approx 180°$) & Variables \textbf{anticorrelacionadas} \\
+Flechas perpendiculares ($\approx 90°$) & Variables \textbf{no correlacionadas} \\
+Punto cercano a una flecha & La observación tiene valor alto en esa variable \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Coseno del ángulo entre loadings}
+
+\begin{formulabox}[Correlación aproximada en el biplot]
+Para dos variables $i$ y $j$ con loadings $\mathbf{w}_i, \mathbf{w}_j \in \R^2$:
+\[
+\cos(\theta_{ij}) = \frac{\mathbf{w}_i \cdot \mathbf{w}_j}{\norm{\mathbf{w}_i}\,\norm{\mathbf{w}_j}} \approx \mathrm{corr}(X_i, X_j)
+\]
+\end{formulabox}
+
+% =============================================================================
+\section{Plantilla universal para resolver ejercicios (5 min)}
+% =============================================================================
+
+\begin{pasobox}[Receta de 7 pasos — sirve para TODOS los ejercicios P1--P7]
+\begin{enumerate}[leftmargin=*,label=\textbf{Paso \arabic*:}]
+    \item \textbf{Calcular varianza explicada / pérdida}
+        \[
+        \mathrm{var\_acum}(2) = \frac{\lambda_1+\lambda_2}{\sum_k \lambda_k}, \quad
+        \mathrm{p\acute{e}rdida} = 1 - \mathrm{var\_acum}(2)
+        \]
+    \item \textbf{Graficar variables originales en el plano PC1--PC2}\\
+    Cada variable $i$ va al punto $(w_{i,1}, w_{i,2})$. Dibujar flechas desde el origen.
+
+    \item \textbf{Interpretar cada componente}\\
+    Mirar qué variables tienen \emph{coeficientes grandes en valor absoluto} en esa componente.
+    \begin{itemize}
+        \item Si todas tienen el mismo signo $\to$ es una componente de "tamaño" o "magnitud global".
+        \item Si hay signos opuestos $\to$ es una componente de "contraste" entre dos grupos de variables.
+    \end{itemize}
+
+    \item \textbf{Clasificar las observaciones}\\
+    Ver en qué cuadrante cae cada punto y qué variables apuntan a ese cuadrante.
+
+    \item \textbf{Asociar variables a observaciones}\\
+    Una observación cercana a una flecha tiene valores altos de esa variable.
+
+    \item \textbf{Identificar correlaciones} entre variables (ángulos entre flechas).
+
+    \item \textbf{Concluir / responder la pregunta concreta} del enunciado.
+\end{enumerate}
+\end{pasobox}
+
+% =============================================================================
+\section{Resolución paso a paso de los ejercicios (25 min)}
+% =============================================================================
+
+\subsection{P1 — Consumo alimenticio de familias francesas}
+
+\begin{ejerciciobox}{P1 · Datos del problema}
+\textbf{Variables (7):} Pan, Verduras, Frutas, Carnes, Aves, Lácteos, Vinos.\\
+\textbf{Sujetos:} familias clasificadas por trabajo (MA, EM, PF) y número de hijos (2--5).\\
+\textbf{Autovalores:} $\lambda = (4.339, 1.829, 0.625, 0.502, 0.393, 0.099, 0.083)$.\\
+$\sum \lambda_k = 7.870 \approx 7$ (confirma análisis sobre matriz de correlación).
+\end{ejerciciobox}
+
+\textbf{(a) Pérdida de información con 2 componentes:}
+\[
+\mathrm{var\_acum}(2) = \frac{4.339 + 1.829}{7.87} = \frac{6.168}{7.87} = 0.7837
+\]
+\[
+\boxed{\;\mathrm{p\acute{e}rdida} = 1 - 0.7837 = 0.2163 = 21.6\%\;}
+\]
+
+\textbf{(b) Caracterización por inspección:}\\
+Mirando el plano:
+\begin{itemize}[leftmargin=*]
+    \item Cuadrante III (CP1$<$0, CP2$<$0): solo Profesionales (PF) $\to$ mayor poder adquisitivo.
+    \item Cuadrante I (CP1$>$0, CP2$>$0): trabajadores manuales (MA) $\to$ menor poder adquisitivo.
+    \item \textbf{CP1} discrimina por \textbf{nivel socioeconómico}.
+\end{itemize}
+
+\textbf{(c)+(d) Loadings en el plano:}\\
+Cada variable $i$ se ubica en $(\mathrm{Componente1}_i,\ \mathrm{Componente2}_i)$:
+\begin{center}\small
+\begin{tabular}{lcc|l}
+\toprule
+Variable & CP1 & CP2 & Posición \\
+\midrule
+Pan      & -0.497 & 0.841  & Cuad. II (arriba-izq) \\
+Verduras & -0.972 & 0.131  & Eje CP1 negativo \\
+Frutas   & -0.931 & -0.277 & Cuad. III \\
+Carnes   & -0.963 & -0.190 & Cuad. III \\
+Aves     & -0.912 & -0.265 & Cuad. III \\
+Lácteos  & -0.584 & 0.707  & Cuad. II \\
+Vinos    & 0.425  & 0.649  & Cuad. I \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Asociación componente $\leftrightarrow$ productos:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{CP1 (negativo):} alimentos "costosos" (carnes, aves, frutas, verduras).
+    \item \textbf{CP2 (positivo):} alimentos "básicos / hogareños" (pan, lácteos) y vinos.
+\end{itemize}
+
+\textbf{(e) Relación productos $\leftrightarrow$ familias:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Profesionales (PF)} (Cuad. III): consumen carnes, aves, frutas, verduras.
+    \item \textbf{Empleados (EM)}: consumen más pan y lácteos (familias con hijos pequeños).
+    \item \textbf{Manuales (MA)}: mayor consumo de vinos.
+\end{itemize}
+
+\hrulefill
+
+\subsection{P2 — Billetes falsos suizos}
+
+\begin{ejerciciobox}{P2 · Datos}
+\textbf{Variables (6):} LON, LD, AI, AD, AMI, AMS.\\
+\textbf{Autovalores:} $2.58, 1.34, 0.76, 0.56, 0.50, 0.26$. Suma = $6.00$.
+\end{ejerciciobox}
+
+\textbf{(a) Porcentaje de validez (varianza explicada con 2 CP):}
+\[
+\mathrm{var\_acum}(2) = \frac{2.58+1.34}{6.00} = \frac{3.92}{6.00} = \boxed{65.33\%}
+\]
+
+\textbf{(b) Interpretación de componentes:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{CP1:} todas las cargas positivas, las mayores son AMS (0.560), AI (0.445), AD (0.411) $\to$ \textbf{anchos / márgenes internos}.
+    \item \textbf{CP2:} dominada por LON (0.799) y LD (0.345) $\to$ \textbf{tamaño / longitud del billete}.
+\end{itemize}
+
+\textbf{(c) Billetes originales:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Círculos} (papel) en cuadrante I (CP1$>$0, CP2$>$0): grandes y con buenos márgenes.
+    \item \textbf{Cuadrados} (plástico) en cuadrante IV (CP1$>$0, CP2$<$0): buenos márgenes pero más pequeños.
+\end{itemize}
+
+\textbf{(d) Diferencias entre falsificaciones:}\\
+Los triángulos (falsos) se dividen en dos sub-grupos sobre el eje CP1 negativo:
+\begin{itemize}[leftmargin=*]
+    \item Falsos arriba (CP2$>$0): intentan imitar a los \textbf{de papel} (grandes).
+    \item Falsos abajo (CP2$<$0): intentan imitar a los \textbf{de plástico} (pequeños).
+\end{itemize}
+Característica común: ambos tienen \textbf{márgenes pobres} (CP1 negativo).
+
+\textbf{(e) Análisis de monedas vs billetes:}
+\[
+\mathrm{var\_acum}_\text{monedas}(2) = \frac{1.96+1.54}{1.96+1.54+1.09+0.73+0.40+0.28} = \frac{3.50}{6.00} = \boxed{58.33\%}
+\]
+Menor precisión que con billetes (65.33\%). Diferencia $\approx$ 7 puntos, aceptable pero menos informativo.
+
+\hrulefill
+
+\subsection{P3 — Servicios hospitalarios de Andalucía}
+
+\begin{ejerciciobox}{P3 · Datos}
+\textbf{Variables (7):} NI, MO, RE, NE, ICM, ES, IF.\\
+\textbf{Autovalores conocidos:} $\lambda_1=2.558$, $\lambda_2=1.829$.
+\end{ejerciciobox}
+
+\textbf{(a) Validez:}\\
+\emph{Como no se conoce $\sum_k \lambda_k$ completo}, asumiendo que el resto suma aprox $p - (\lambda_1+\lambda_2) = 7 - 4.387 = 2.613$ (correlación):
+\[
+\mathrm{var\_acum}(2) = \frac{4.387}{7} \approx \boxed{62.7\%}
+\]
+
+\textbf{(b)+(c) Variables en el plano e interpretación:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{CP1:} cargas positivas altas en \textbf{NI} (0.860), \textbf{ES} (0.820), \textbf{IF} (0.663); negativas en ICM, ES, RE. $\to$ \textbf{Demanda / volumen de atención}.
+    \item \textbf{CP2:} positivas en \textbf{MO} (0.747), \textbf{RE} (0.670), \textbf{ICM} (0.635) $\to$ \textbf{Gravedad / complejidad clínica}.
+\end{itemize}
+
+\textbf{(d) Clasificación de servicios:}
+\begin{center}\small
+\begin{tabular}{llp{6cm}}
+\toprule
+Servicio & Cuadrante & Interpretación \\
+\midrule
+Medicina Interna & I (alto CP1, alto CP2) & Alta demanda + alta complejidad \\
+Psiquiatría, Hematología, Neurología & II & Baja demanda, alta complejidad/reingresos \\
+Otorrino, Cardio, Oftalmo & III & Bajo volumen, baja gravedad \\
+Cirugía, Trauma, Urología, Pediatría, Gineco & IV & Alto volumen, baja complejidad (ambulatorios) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{(e) Servicios con mayor carga:}
+\begin{itemize}[leftmargin=*]
+    \item \emph{Cuantitativa} (más pacientes, CP1 alto): Medicina Interna, Ginecología, Pediatría.
+    \item \emph{Cualitativa} (mayor complejidad, CP2 alto): Medicina Interna, Psiquiatría, Hematología.
+\end{itemize}
+
+\textbf{(f) Servicios más eficientes:} Cirugía y Traumatología (alto IF, demanda moderada, baja mortalidad).
+
+\hrulefill
+
+\subsection{P4 — Sector lechero venezolano}
+
+\begin{ejerciciobox}{P4 · Datos}
+\textbf{Variables (6):} SUP, VACA, SANI, INST, MAQ, PROM.\\
+\textbf{Autovalores:} $\lambda_1=1.794$, $\lambda_2=1.341$.\\
+\textbf{Vectores ya escalados por} $\sqrt{\lambda_k}$ (¡importante!).
+\end{ejerciciobox}
+
+\textbf{Validez:}
+\[
+\mathrm{var\_acum}(2) = \frac{1.794+1.341}{6} = \frac{3.135}{6} = \boxed{52.25\%}
+\]
+
+\textbf{Caracterización de componentes:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{CP1:} cargas positivas en SUP (0.79), VACA (0.76), MAQ (0.53) $\to$ \textbf{tamaño de la hacienda} (escala productiva).
+    \item \textbf{CP2:} cargas negativas en SANI ($-0.48$), INST ($-0.48$), PROM ($-0.80$) $\to$ \textbf{nivel de tecnificación / industrialización} (a más negativo, más industrializada).
+\end{itemize}
+
+\textbf{Identificación de los 8 tipos de haciendas (A--H):}\\
+\begin{center}\small
+\begin{tabular}{ll}
+\toprule
+Posición en el plano & Tipo \\
+\midrule
+A, C (CP1 alto, CP2 medio) & Haciendas grandes tipo matadero \\
+B (CP1 alto, CP2 muy negativo) & Hacienda lechera tecnificada \\
+D, E (cerca del origen) & Multipropósito \\
+F (cuadrante I positivo) & Crianza, pastoreo y engorde \\
+G, H (CP1 negativo, CP2 positivo) & Haciendas pequeñas/poco productivas \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\hrulefill
+
+\subsection{P5 — Neoplasias (tumores)}
+
+\begin{ejerciciobox}{P5 · Datos}
+\textbf{Variables (4):} Largo, Regular, Ancho, Irregulares.\\
+\textbf{Autovalores:} $\lambda_1=1.7034$, $\lambda_2=1.2560$.
+\end{ejerciciobox}
+
+\textbf{(a) Pérdida de información:}
+\[
+\mathrm{var\_acum}(2) = \frac{1.7034+1.2560}{4} = \frac{2.9594}{4} = 73.99\%
+\]
+\[
+\boxed{\;\mathrm{p\acute{e}rdida} = 26.01\%\;}
+\]
+
+\textbf{(b) Loadings:}
+\begin{itemize}[leftmargin=*]
+    \item Largo $(0.52, -0.38)$
+    \item Regular $(-0.27, -0.92)$
+    \item Ancho $(0.58, -0.02)$
+    \item Irregulares $(0.56, -0.07)$
+\end{itemize}
+
+\textbf{(c) Interpretación:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{CP1}: Largo + Ancho + Irregulares con signos positivos $\to$ \textbf{tamaño + irregularidad} del tumor.
+    \item \textbf{CP2}: dominada por Regular ($-0.92$) $\to$ \textbf{regularidad de núcleos celulares}.
+\end{itemize}
+
+\textbf{(d) Grupos visibles:} 2 grupos claros separados por CP1=0 (izquierda vs derecha).
+
+\textbf{(e) Tumores benignos:} los del \textbf{lado izquierdo} (CP1$<$0), tumores pequeños y con núcleos regulares.
+
+\hrulefill
+
+\subsection{P6 — Barómetro Merco (50 empresas)}
+
+\begin{ejerciciobox}{P6 · Datos}
+\textbf{Variables (6):} REF, CPS, CCCL, ERSC, DGPI, IDI.\\
+\textbf{Autovalores:} $\lambda = (2.15, 1.32, 1.18, 0.77)$ (parciales).
+\end{ejerciciobox}
+
+\textbf{(a) Varianza explicada (suponiendo total $\approx 6$):}
+\[
+\mathrm{var}(2) = \frac{2.15+1.32}{6} = 57.8\%, \quad
+\mathrm{var}(3) = \frac{4.65}{6} = 77.5\%, \quad
+\mathrm{var}(4) = \frac{5.42}{6} = 90.3\%
+\]
+
+\textbf{(b) Caracterización:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{CP1:} cargas altas en CCCL (0.582), ERSC (0.626), DGPI (0.626) $\to$ \textbf{responsabilidad social + dimensión internacional}.
+    \item \textbf{CP2:} dominada por REF (0.743) e IDI (0.629) $\to$ \textbf{rentabilidad e innovación}.
+    \item \textbf{CP3:} dominada por CPS (0.855) $\to$ \textbf{calidad del producto/servicio}.
+    \item \textbf{CP4:} CCCL (0.439) $\to$ \textbf{calidad laboral interna}.
+\end{itemize}
+
+\textbf{(c) Identificación de grupos A--H:} ubicar cada uno por su posición en los dos planos (CP1--CP2 y CP3--CP4) y combinar las interpretaciones de cada componente.
+
+\hrulefill
+
+\subsection{P7 — Clasificación de neuronas (6 tipos)}
+
+\begin{ejerciciobox}{P7 · Datos}
+\textbf{Variables (4):} Cantidad D, Arborización D, Largo Axón, Tamaño Soma.\\
+\textbf{Autovalores:} $\lambda_1=1.8$, $\lambda_2=0.9$, $\lambda_3=0.3$. Total = 3.
+\end{ejerciciobox}
+
+\textbf{Validez con 2 componentes:}
+\[
+\mathrm{var\_acum}(2) = \frac{1.8+0.9}{3} = \frac{2.7}{3} = \boxed{90\%}
+\]
+
+\textbf{Caracterización:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{CP1:} cargas altas y positivas en Cantidad D (0.948), Arborización D (0.925), Largo Axón (0.769) $\to$ \textbf{complejidad dendrítica + extensión axonal}.
+    \item \textbf{CP2:} Largo Axón (0.629) positivo, Cantidad D ($-0.215$) negativo $\to$ contraste \textbf{axón largo vs muchas dendritas}.
+    \item \textbf{CP3:} dominado por Tamaño Soma (0.789) $\to$ \textbf{tamaño del cuerpo celular}.
+\end{itemize}
+
+\textbf{Caracterización de los 6 tipos de neuronas (A--F):}
+\begin{center}\small
+\begin{tabular}{cccp{6cm}}
+\toprule
+Tipo & CP1 & CP2 & Caracterización \\
+\midrule
+A & -0.60 & +1.60 & Pocas dendritas, axón largo \\
+B & -1.10 & +0.01 & Simples, sin dendritas significativas \\
+C & -0.51 & +0.81 & Axón moderado, pocas dendritas \\
+D & +0.40 & +0.95 & Mixtas: dendritas y axón largo \\
+E & +1.20 & -0.55 & Muchas dendritas, axón corto (interneuronas) \\
+F & +1.30 & +0.63 & Las más complejas: muchas dendritas y axón largo \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% =============================================================================
+\section{Tips de examen (5 min)}
+% =============================================================================
+
+\begin{tipbox}[Errores comunes que cuestan puntos]
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Confundir $\sum \lambda_k$:} si los datos están \emph{estandarizados}, $\sum \lambda_k = p$ (número de variables). Si no, hay que sumar todos los $\lambda$ entregados.
+    \item \textbf{Olvidar que las cargas pueden venir ya escaladas} (P4 dice "ponderados por $\sqrt{\lambda}$"): en ese caso \emph{no} se debe re-escalar para el biplot.
+    \item \textbf{Interpretación incorrecta del signo:} el signo de una componente es arbitrario, lo que importa es el \emph{patrón} de signos relativos entre variables.
+    \item \textbf{Decir "PCA reduce variables"}: \textbf{NO}; PCA crea \emph{nuevas} variables (combinaciones lineales). Se eligen menos de las $p$ originales.
+    \item \textbf{No comentar la pérdida de información:} siempre dar el porcentaje con 2 componentes.
+\end{enumerate}
+\end{tipbox}
+
+\begin{tipbox}[Atajos de cálculo]
+\begin{itemize}[leftmargin=*]
+    \item Cuando todas las cargas de CP1 tienen el \emph{mismo signo} $\to$ es componente de "tamaño/magnitud global".
+    \item Cuando hay \emph{signos opuestos} $\to$ es componente de "contraste" entre dos grupos.
+    \item Calcular varianza acumulada \textbf{antes} que interpretar componentes (te dice si vale la pena el análisis).
+    \item Usar el criterio de Kaiser ($\lambda > 1$) sólo cuando se trabaja con matriz de \textbf{correlación}.
+\end{itemize}
+\end{tipbox}
+
+% =============================================================================
+\section{Tabla resumen de fórmulas (1 carilla)}
+% =============================================================================
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}p{0.42\textwidth}p{0.5\textwidth}@{}}
+\toprule
+\textbf{Concepto} & \textbf{Fórmula} \\
+\midrule
+Centrado & $X_c = X - \mathbf{1}_n\bm{\mu}^{T}$ \\
+Estandarización & $X_{\text{std}}[i,j] = (X[i,j]-\mu_j)/\sigma_j$ \\
+Covarianza & $\Sigma = \frac{1}{n-1}X_c^{T}X_c$ \\
+Autovalores/vectores & $\Sigma\mathbf{v}_k = \lambda_k \mathbf{v}_k$ \\
+Loadings & $W = [\mathbf{v}_1|\cdots|\mathbf{v}_q]$ \\
+Scores & $T = X_c W$ \\
+Varianza explicada CP$k$ & $\lambda_k / \sum_j \lambda_j$ \\
+Varianza acumulada & $\sum_{k=1}^{q}\lambda_k / \sum_j \lambda_j$ \\
+Pérdida de información & $1 - \mathrm{var\_acum}(q)$ \\
+Loadings escalados (biplot) & $L = W\,\mathrm{diag}(\sqrt{\lambda_1},\sqrt{\lambda_2})$ \\
+Correlación entre variables & $\cos\theta_{ij} = \mathbf{w}_i\cdot\mathbf{w}_j / (\norm{\mathbf{w}_i}\norm{\mathbf{w}_j})$ \\
+Reconstrucción & $\widehat{X}_c = TW^{T}$ \\
+Error reconstrucción & $\mathrm{MSE}(q) = \frac{1}{p}\sum_{k>q}\lambda_k$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vfill
+\begin{center}
+\textit{Material de estudio para PEP1 — Inteligencia Computacional · USACH}\\
+\textit{Profesor: Max Chacón Pacheco}
+\end{center}
+
+\end{document}
