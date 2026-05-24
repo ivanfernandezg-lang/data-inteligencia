@@ -1,0 +1,901 @@
+% =============================================================================
+% Informe de Solución — Ejercicios de Análisis de Componentes Principales
+% Fuente: Ayudantía Sebastián Chávez Orellana, IC USACH, 1.er sem. 2026
+% Prof. Max Chacón Pacheco
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{booktabs,array}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,patterns,decorations.markings,shapes.geometric}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{float}
+
+\definecolor{usachteal}{HTML}{009999}
+\definecolor{usachdark}{HTML}{003333}
+\hypersetup{colorlinks=true,linkcolor=teal!70!black,urlcolor=blue!70!black}
+
+\newtcolorbox{enuncbox}[1][Enunciado]{enhanced,breakable,
+  colback=blue!3,colframe=blue!50!black,
+  fonttitle=\bfseries\color{white},coltitle=white,
+  colbacktitle=blue!60!black,title={#1},
+  sharp corners=south,boxrule=0.6pt}
+
+\newtcolorbox{solbox}[1][Resolución]{enhanced,breakable,
+  colback=usachteal!5,colframe=usachteal!70!black,
+  fonttitle=\bfseries\color{white},coltitle=white,
+  colbacktitle=usachteal!80!black,title={#1},
+  sharp corners=south,boxrule=0.6pt}
+
+\newtcolorbox{respbox}[1][Respuesta]{enhanced,breakable,
+  colback=orange!8,colframe=orange!70!black,
+  fonttitle=\bfseries,title={#1},
+  sharp corners=south,boxrule=0.5pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textsc{Inteligencia Computacional · USACH}}
+\fancyhead[R]{\small\textsc{Informe ACP — Ayudantía 2026/I}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\titleformat{\section}{\Large\bfseries\color{usachdark}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{usachteal!80!black}}{\thesubsection.}{0.5em}{}
+
+% Macros para biplots ACP (flechas de variables y puntos etiquetados)
+\newcommand{\arr}[4]{%
+  \draw[-{Stealth[length=2mm]},thick,usachteal!80!black] (axis cs:0,0) -- (axis cs:#1,#2);%
+  \node[anchor=#4,font=\small] at (axis cs:#1,#2) {\textbf{#3}};%
+}
+\newcommand{\pt}[3]{%
+  \addplot[only marks,mark=diamond*,mark size=3pt,color=blue] coordinates {(#1,#2)};%
+  \node[anchor=south west,font=\small\bfseries] at (axis cs:#1,#2) {#3};%
+}
+\newcommand{\ptt}[3]{%
+  \addplot[only marks,mark=diamond*,mark size=3pt,color=usachteal!80!black] coordinates {(#1,#2)};%
+  \node[anchor=south west,font=\small\bfseries] at (axis cs:#1,#2) {#3};%
+}
+\newcommand{\pto}[3]{%
+  \addplot[only marks,mark=diamond*,mark size=3pt,color=orange!80!black] coordinates {(#1,#2)};%
+  \node[anchor=south west,font=\small\bfseries] at (axis cs:#1,#2) {#3};%
+}
+\newcommand{\ptn}[3]{%
+  \addplot[only marks,mark=*,mark size=3pt,color=red!70!black] coordinates {(#1,#2)};%
+  \node[anchor=south west,font=\small\bfseries] at (axis cs:#1,#2) {#3};%
+}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+{\Huge\bfseries\color{usachdark} Informe de Solución\\[0.3cm]}
+{\LARGE\color{usachteal} Ejercicios de Análisis de\\Componentes Principales}\\[1cm]
+{\large \textit{Guía ayudantía — Primer semestre 2026}}\\[2cm]
+\begin{tcolorbox}[width=0.75\textwidth,colback=usachteal!10,colframe=usachteal!70!black]
+\centering
+\textbf{Inteligencia Computacional}\\
+Magíster en Ingeniería\\
+\textbf{Universidad de Santiago de Chile}\\[0.3cm]
+Prof.\ Max Chacón Pacheco\\
+Ayudante: Sebastián Chávez Orellana
+\end{tcolorbox}
+\vspace{1.5cm}
+
+{\small Resolución paso a paso de los 7 problemas con gráficos generados en TikZ/PGFPlots.}\\[0.3cm]
+{\small\today}
+\vfill
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% =============================================================================
+\section{Marco general y convenciones}
+% =============================================================================
+
+Sea $X\in\mathbb{R}^{n\times p}$ la matriz de datos estandarizada (media cero, desviación estándar uno).
+La matriz de correlación $R = \tfrac{1}{n-1} X^\top X$ es simétrica y semidefinida positiva, y se descompone en
+\[
+R \;=\; V\,\Lambda\,V^\top, \qquad V = [\,\bm v_1\,|\,\bm v_2\,|\cdots|\,\bm v_p\,],\quad \Lambda = \mathrm{diag}(\lambda_1,\ldots,\lambda_p).
+\]
+Cada $\lambda_i$ es la \textbf{varianza explicada} por la componente $i$, y $\bm v_i$ es su \textbf{dirección} (autovector). Las \emph{cargas factoriales} son $\ell_{ji}=v_{ji}\sqrt{\lambda_i}$ y coinciden con la correlación $\mathrm{corr}(X_j,\mathrm{CP}_i)$.
+
+\begin{tcolorbox}[colback=yellow!10,colframe=yellow!50!black]
+\textbf{Fórmulas clave.}
+\begin{align*}
+\sum_{i=1}^p \lambda_i &= p \qquad\text{(traza de }R\text{, datos estandarizados)}\\[2pt]
+\text{Varianza explicada con $k$ componentes:}\quad \mathrm{VE}_k &= \frac{\sum_{i=1}^k \lambda_i}{\sum_{i=1}^p \lambda_i}\cdot 100\%\\[2pt]
+\text{Información perdida:}\quad \mathrm{IP}_k &= 100\% - \mathrm{VE}_k\\[2pt]
+\text{Regla de Kaiser:}\quad &\text{retener CP con }\lambda_i>1.
+\end{align*}
+\end{tcolorbox}
+
+\noindent En todos los problemas se usa la convención: \emph{columnas} de la tabla de autovectores = direcciones $\bm v_i$ (coordenadas $v_{ji}$ por variable $j$).
+
+\newpage
+% =============================================================================
+\section{P1. Comportamiento de consumo alimenticio}
+% =============================================================================
+
+\begin{enuncbox}
+Familias francesas clasificadas por su jefe de hogar: \textbf{MA\#} (manual), \textbf{EM\#} (empleado), \textbf{PF\#} (profesional), con \# $\in\{2,3,4,5\}$ número de hijos. Se mide el consumo promedio de 7 productos.
+
+\medskip
+Autovalores: $\lambda=(4{,}339;\;1{,}829;\;0{,}625;\;0{,}502;\;0{,}393;\;0{,}099;\;0{,}083)$.
+
+\smallskip
+Autovectores de las dos primeras componentes:
+
+\begin{center}\small
+\begin{tabular}{lrr}\toprule
+Variable & $\bm v_1$ & $\bm v_2$ \\\midrule
+Pan      & $-0{,}497$ & $\phantom{-}0{,}841$ \\
+Verduras & $-0{,}972$ & $\phantom{-}0{,}131$ \\
+Frutas   & $-0{,}931$ & $-0{,}277$ \\
+Carnes   & $-0{,}963$ & $-0{,}190$ \\
+Aves     & $-0{,}912$ & $-0{,}265$ \\
+Lácteos  & $-0{,}584$ & $\phantom{-}0{,}707$ \\
+Vinos    & $\phantom{-}0{,}425$ & $\phantom{-}0{,}649$ \\\bottomrule
+\end{tabular}
+\end{center}
+\end{enuncbox}
+
+\begin{solbox}
+\textbf{(a) Información perdida con CP1 + CP2.}
+
+Suma de autovalores ($\approx p = 7$, los decimales son por redondeo en la guía):
+\[
+\sum_{i=1}^{7}\lambda_i \;=\; 4{,}339+1{,}829+0{,}625+0{,}502+0{,}393+0{,}099+0{,}083 \;=\; 7{,}870.
+\]
+Varianza explicada por las dos primeras:
+\[
+\mathrm{VE}_2 \;=\; \frac{4{,}339+1{,}829}{7{,}870}\cdot 100\% \;=\; \frac{6{,}168}{7{,}870}\cdot 100\% \;\approx\; 78{,}37\%.
+\]
+\begin{respbox}
+$\boxed{\mathrm{IP}_2 \approx 21{,}63\%}$ de información se pierde al proyectar a dos componentes.
+\end{respbox}
+
+\textbf{(b) Caracterización inspeccionando la nube de familias.}
+
+Del diagrama original (fig.~\ref{fig:p1nube}) se observa que los \emph{profesionales} (PF) quedan a la izquierda y abajo, los \emph{empleados} (EM) y \emph{manuales} (MA) se distribuyen mayormente a la derecha y arriba. Como CP1 ordena por ingreso (PF a la izquierda con CP1$<0$) y CP2 separa por tamaño/composición familiar:
+
+\begin{itemize}[noitemsep,leftmargin=*]
+\item \textbf{CP1} $\equiv$ \emph{nivel de ingreso / poder adquisitivo}: CP1$<0$ $\Rightarrow$ mayor ingreso (PF); CP1$>0$ $\Rightarrow$ menor ingreso (MA).
+\item \textbf{CP2} $\equiv$ \emph{tamaño familiar / dieta básica}: CP2$>0$ $\Rightarrow$ más hijos, mayor consumo de pan y lácteos.
+\end{itemize}
+
+\textbf{(c) Variables originales en el plano.} Se grafican los puntos $(v_{j1},v_{j2})$ por variable (fig.~\ref{fig:p1var}).
+
+\textbf{(d) Asociación componente $\leftrightarrow$ productos.}
+\begin{itemize}[noitemsep,leftmargin=*]
+\item \textbf{CP1}: dominada por Verduras, Frutas, Carnes, Aves, Lácteos (todas con $v_{j1}\approx-0{,}9$) frente a Vinos (único positivo). Es el \textbf{eje de la canasta de "calidad" alimenticia}: CP1 muy negativo $\Rightarrow$ alto consumo proteico-vegetal; CP1 positivo $\Rightarrow$ predominio del vino.
+\item \textbf{CP2}: contrapone \textbf{Pan + Lácteos} (cargas $+0{,}84$ y $+0{,}71$) frente a \textbf{Carnes, Aves, Frutas} ($<0$). Es el \textbf{eje del estilo dietético}: CP2$>0$ $\Rightarrow$ dieta de hidratos+lácteos (familias con niños); CP2$<0$ $\Rightarrow$ dieta proteico-vegetal.
+\end{itemize}
+
+\textbf{(e) Relación productos $\leftrightarrow$ condición socioeconómica.}
+
+\begin{itemize}[noitemsep,leftmargin=*]
+\item \textbf{PF} (cuadrante III, CP1$<0$, CP2$<0$): alto consumo de carnes, aves, frutas, verduras (canasta cara).
+\item \textbf{EM} (cuadrante II, CP1$<0$, CP2$>0$): mayor peso de pan y lácteos $\Rightarrow$ familias con niños.
+\item \textbf{MA} (cuadrantes I y IV, CP1$>0$): consumo más asociado al vino y dieta restringida.
+\end{itemize}
+\end{solbox}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=1]
+\begin{axis}[
+  width=11.5cm, height=8cm,
+  axis lines=middle, xlabel={CP1}, ylabel={CP2},
+  xlabel near ticks, ylabel near ticks,
+  xmin=-3,xmax=3,ymin=-2.5,ymax=2.5,
+  grid=both, grid style={gray!20},
+  title={Familias en el plano CP1--CP2 (reconstrucción cualitativa)}]
+% PF (profesionales) - cuadrante III
+\addplot[only marks,mark=*,mark size=2pt,color=blue]
+  coordinates {(-2.3,-0.1) (-1.1,-1.0) (-0.8,-1.2)};
+\node[blue,anchor=south east] at (axis cs:-2.3,-0.1) {\small PF};
+\node[blue,anchor=west] at (axis cs:-1.0,-1.0) {\small PF};
+\node[blue,anchor=west] at (axis cs:-0.7,-1.3) {\small P};
+% EM (empleados) - mayormente cuadrante II
+\addplot[only marks,mark=square*,mark size=2pt,color=red]
+  coordinates {(-1.9,1.2) (0.6,0.9) (1.5,-0.1) (1.8,-1.6)};
+\node[red,anchor=south west] at (axis cs:-1.9,1.2) {\small EM};
+\node[red,anchor=south] at (axis cs:0.6,0.9) {\small EM};
+\node[red,anchor=south] at (axis cs:1.5,-0.1) {\small EM};
+\node[red,anchor=west] at (axis cs:1.8,-1.6) {\small EM};
+% MA (manuales) - I y eje
+\addplot[only marks,mark=triangle*,mark size=2.5pt,color=usachteal]
+  coordinates {(-0.05,2.2) (1.1,1.1) (2.0,0.5) (2.3,-0.05) (0.7,-0.6)};
+\node[usachteal,anchor=south east] at (axis cs:-0.05,2.2) {\small MA};
+\node[usachteal,anchor=south] at (axis cs:1.1,1.1) {\small MA};
+\node[usachteal,anchor=south] at (axis cs:2.0,0.5) {\small MA};
+\node[usachteal,anchor=west] at (axis cs:2.3,-0.05) {\small MA};
+\node[usachteal,anchor=west] at (axis cs:0.7,-0.6) {\small PF};
+\end{axis}
+\end{tikzpicture}
+\caption{Distribución de familias en el plano CP1--CP2 (reconstrucción a partir de la figura del enunciado).}
+\label{fig:p1nube}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=11.5cm, height=8cm,
+  axis lines=middle, xlabel={$v_{j1}$ (CP1)}, ylabel={$v_{j2}$ (CP2)},
+  xlabel near ticks, ylabel near ticks,
+  xmin=-1.1,xmax=1.1,ymin=-1.1,ymax=1.1,
+  grid=both, grid style={gray!20},
+  title={Variables originales (autovectores) y círculo unitario}]
+% Círculo de correlaciones
+\draw[gray, dashed] (axis cs:0,0) circle [radius=1];
+% Vectores (desenrollados)
+\def\arr#1#2#3#4{\draw[-{Stealth[length=2mm]},thick,usachteal!80!black] (axis cs:0,0) -- (axis cs:#1,#2); \node[anchor=#4,font=\small] at (axis cs:#1,#2) {\textbf{#3}};}
+\arr{-0.497}{0.841}{Pan}{south west}
+\arr{-0.972}{0.131}{Verduras}{south}
+\arr{-0.931}{-0.277}{Frutas}{north}
+\arr{-0.963}{-0.190}{Carnes}{south}
+\arr{-0.912}{-0.265}{Aves}{west}
+\arr{-0.584}{0.707}{Lácteos}{south east}
+\arr{0.425}{0.649}{Vinos}{south west}
+\end{axis}
+\end{tikzpicture}
+\caption{Variables originales del problema P1 proyectadas sobre el plano CP1--CP2.}
+\label{fig:p1var}
+\end{figure}
+
+\newpage
+% =============================================================================
+\section{P2. Caracterización de billetes falsos}
+% =============================================================================
+
+\begin{enuncbox}
+6 variables sobre billetes suizos: \textbf{LON} (longitud), \textbf{LD} (diagonal), \textbf{AI} (ancho izq), \textbf{AD} (ancho der), \textbf{AMI} (margen inf), \textbf{AMS} (margen sup). Tres grupos: papel originales ($\bullet$), plástico originales ($\blacksquare$), falsos ($\blacktriangle$).
+
+\smallskip
+$\lambda=(2{,}58;\;1{,}34;\;0{,}76;\;0{,}56;\;0{,}50;\;0{,}26)$ \quad (suman $6{,}00=p$).
+
+\begin{center}\small
+\begin{tabular}{lrr}\toprule
+Variable & $\bm v_1$ & $\bm v_2$ \\\midrule
+LON & $0{,}395$ & $\phantom{-}0{,}799$\\
+LD  & $0{,}207$ & $\phantom{-}0{,}345$\\
+AI  & $0{,}445$ & $-0{,}263$\\
+AD  & $0{,}411$ & $-0{,}375$\\
+AMI & $0{,}347$ & $-0{,}072$\\
+AMS & $0{,}560$ & $-0{,}163$\\\bottomrule
+\end{tabular}
+\end{center}
+
+\smallskip
+Adicionalmente, sobre monedas (6 medidas): $\lambda=(1{,}96;\;1{,}54;\;1{,}09;\;0{,}73;\;0{,}40;\;0{,}28)$.
+\end{enuncbox}
+
+\begin{solbox}
+\textbf{(a) Validez del análisis (billetes).}
+\[
+\mathrm{VE}_2 = \frac{2{,}58+1{,}34}{6{,}00}\cdot 100\% = \frac{3{,}92}{6}\cdot 100\% \approx \boxed{65{,}33\%}.
+\]
+
+\textbf{(b) Interpretación de las componentes.}
+\begin{itemize}[noitemsep,leftmargin=*]
+\item \textbf{CP1}: todas las cargas son \emph{positivas} y de magnitud similar ($0{,}21$--$0{,}56$). Las más altas son \textbf{AMS} (0,56), \textbf{AI} (0,45) y \textbf{AD} (0,41). $\Rightarrow$ \textbf{CP1 mide la "forma" del billete: dimensión transversal y márgenes internos.}
+\item \textbf{CP2}: signo positivo en \textbf{LON} (0,80) y \textbf{LD} (0,35); negativo en los anchos y márgenes. Contrapone tamaño longitudinal vs.\ ancho. $\Rightarrow$ \textbf{CP2 mide el tamaño longitudinal/formato.}
+\end{itemize}
+
+\textbf{(c) Características de los billetes originales.} De la figura del enunciado:
+\begin{itemize}[noitemsep,leftmargin=*]
+\item \textbf{Papel originales} ($\bullet$, cuadrante I): CP1$>0$ y CP2$>0$ $\Rightarrow$ márgenes amplios \emph{y} billete más largo.
+\item \textbf{Plástico originales} ($\blacksquare$, cuadrante IV): CP1$>0$ y CP2$<0$ $\Rightarrow$ comparten márgenes amplios con los de papel pero son más cortos.
+\end{itemize}
+La característica común de \emph{todos} los originales es \textbf{CP1 alto}: \textbf{márgenes amplios}.
+
+\textbf{(d) Diferencias entre falsificaciones.} Los falsos se ubican en CP1$<0$ (márgenes estrechos) y se separan en \textbf{dos sub-grupos}:
+\begin{itemize}[noitemsep,leftmargin=*]
+\item Cuadrante II (CP2$>0$): falsos que imitan a los originales de papel.
+\item Cuadrante III (CP2$<0$): falsos que imitan a los originales de plástico.
+\end{itemize}
+$\Rightarrow$ Sí existen diferencias claras: hay \textbf{dos tipos de falsificaciones}.
+
+\textbf{(e) Comparación con monedas.}
+\[
+\mathrm{VE}_2^{\text{monedas}} = \frac{1{,}96+1{,}54}{6}\cdot 100\% = \frac{3{,}50}{6}\cdot 100\% \approx \boxed{58{,}33\%}.
+\]
+Se pierde $\approx 7$ p.p.\ respecto a los billetes. La regla de Kaiser indica que en monedas las \emph{tres} primeras componentes tienen $\lambda>1$; conviene retener tres ($\mathrm{VE}_3 = 4{,}59/6 \approx 76{,}5\%$) para alcanzar precisión equivalente.
+\end{solbox}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=11cm, height=8cm,
+  axis lines=middle, xlabel={CP1}, ylabel={CP2},
+  xmin=-3,xmax=3,ymin=-2.5,ymax=2.5,
+  grid=both, grid style={gray!20},
+  title={Distribución cualitativa de billetes (P2)}]
+% Papel (Q1)
+\addplot[only marks,mark=*,mark size=2pt,color=blue]
+  coordinates {(1.2,1.6) (1.4,1.4) (1.6,1.7) (1.0,1.2) (1.8,1.5) (1.3,1.9) (1.5,1.3) (1.7,1.1) (1.1,1.5)};
+\node[blue,anchor=south] at (axis cs:1.4,2.0) {\textbf{Papel}};
+% Plástico (Q4)
+\addplot[only marks,mark=square*,mark size=2pt,color=red]
+  coordinates {(1.2,-1.0) (1.5,-1.4) (1.8,-1.1) (1.4,-0.9) (1.6,-1.3) (1.9,-1.0) (1.3,-1.5)};
+\node[red,anchor=north] at (axis cs:1.5,-1.7) {\textbf{Plástico}};
+% Falsos sub-grupo II
+\addplot[only marks,mark=triangle*,mark size=2.5pt,color=usachteal!80!black]
+  coordinates {(-1.5,1.0) (-1.8,1.2) (-2.0,0.8) (-1.6,0.6) (-2.2,1.1) (-1.7,0.9)};
+% Falsos sub-grupo III
+\addplot[only marks,mark=triangle*,mark size=2.5pt,color=usachteal!80!black]
+  coordinates {(-1.6,-0.6) (-1.9,-0.4) (-2.1,-0.8) (-1.7,-1.0) (-2.3,-0.5) (-1.8,-1.2)};
+\node[usachteal!80!black,anchor=east] at (axis cs:-2.4,0.3) {\textbf{Falsos}};
+\end{axis}
+\end{tikzpicture}
+\caption{Reconstrucción de la dispersión de billetes en CP1--CP2 (P2).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=11cm,height=8cm, axis lines=middle, xlabel={$v_{j1}$ (CP1)}, ylabel={$v_{j2}$ (CP2)},
+  xmin=-1.1,xmax=1.1,ymin=-1.1,ymax=1.1, grid=both, grid style={gray!20},
+  title={Variables originales P2 (billetes)}]
+\draw[gray, dashed] (axis cs:0,0) circle [radius=1];
+\arr{0.395}{0.799}{LON}{south}
+\arr{0.207}{0.345}{LD}{south west}
+\arr{0.445}{-0.263}{AI}{north}
+\arr{0.411}{-0.375}{AD}{north west}
+\arr{0.347}{-0.072}{AMI}{north}
+\arr{0.560}{-0.163}{AMS}{east}
+\end{axis}
+\end{tikzpicture}
+\caption{Variables del problema P2 en el plano factorial.}
+\end{figure}
+
+\newpage
+% =============================================================================
+\section{P3. Caracterización de servicios hospitalarios}
+% =============================================================================
+
+\begin{enuncbox}
+Hospital de Andalucía, 22.846 ingresos, 13 servicios, 7 variables: \textbf{NI} (n.\ ingresos), \textbf{MO} (mortalidad), \textbf{RE} (reingresos), \textbf{NE} (consultas externas), \textbf{ICM} (complejidad), \textbf{ES} (estancias), \textbf{IF} (funcionalidad).
+
+\smallskip
+$\lambda_1 = 2{,}558$,\quad $\lambda_2 = 1{,}829$ (datos estandarizados, $\sum\lambda_i=p=7$).
+
+\begin{center}\small
+\begin{tabular}{lrr}\toprule
+Variable & $\bm v_1$ & $\bm v_2$\\\midrule
+NI  & $\phantom{-}0{,}860$ & $-0{,}066$\\
+MO  & $\phantom{-}0{,}421$ & $\phantom{-}0{,}747$\\
+RE  & $-0{,}406$ & $\phantom{-}0{,}670$\\
+NE  & $-0{,}250$ & $\phantom{-}0{,}388$\\
+ICM & $-0{,}562$ & $\phantom{-}0{,}635$\\
+ES  & $\phantom{-}0{,}820$ & $\phantom{-}0{,}508$\\
+IF  & $\phantom{-}0{,}663$ & $\phantom{-}0{,}078$\\\bottomrule
+\end{tabular}
+\end{center}
+\end{enuncbox}
+
+\begin{solbox}
+\textbf{(a) Validez.}
+\[
+\mathrm{VE}_2 \;=\; \frac{2{,}558+1{,}829}{7}\cdot 100\% \;=\; \frac{4{,}387}{7}\cdot 100\% \;\approx\; \boxed{62{,}67\%}.
+\]
+
+\textbf{(b)} Variables ubicadas en $(v_{j1},v_{j2})$ — ver figura~\ref{fig:p3var}.
+
+\textbf{(c) Interpretación.}
+\begin{itemize}[noitemsep,leftmargin=*]
+\item \textbf{CP1 (Demanda / volumen del servicio):} cargas positivas en NI ($0{,}86$), ES ($0{,}82$), IF ($0{,}66$); negativas en ICM, RE, NE. CP1$>0$ $\Rightarrow$ alto volumen de cama; CP1$<0$ $\Rightarrow$ servicio especializado/ambulatorio.
+\item \textbf{CP2 (Riesgo / hospitalización vs.\ ambulatorio):} cargas positivas en MO, ICM, RE, ES, NE. CP2$>0$ $\Rightarrow$ servicio con alta mortalidad y complejidad.
+\end{itemize}
+
+\textbf{(d) Clasificación de los servicios.}
+\begin{center}\small
+\begin{tabular}{lll}\toprule
+Servicio & Cuadrante & Lectura\\\midrule
+Medicina Interna & I ($+,+$) & Alta demanda + alta hospitalización\\
+Cirugía          & I (cerca origen) & Demanda y hospitalización medias\\
+Traumatología, Urología & IV ($+,-$) & Demanda media, ambulatorios\\
+Ginecología, Pediatría & IV ($+,-$) & Alta demanda, ambulatorios\\
+Digestivo & II/origen & Baja demanda, mortalidad relativa\\
+Otorrino, Cardio, Oftalmo & III ($-,-$) & Baja demanda y bajo riesgo\\
+Psiquiatría, Hemato, Neuro & II ($-,+$) & Baja demanda, alta complejidad\\
+\bottomrule
+\end{tabular}\end{center}
+
+\textbf{(e) Mayor carga de trabajo.}
+\begin{itemize}[noitemsep,leftmargin=*]
+\item \emph{Cuantitativa} (CP1 más positivo): \textbf{Medicina Interna, Ginecología, Pediatría}.
+\item \emph{Cualitativa} (CP2 más positivo): \textbf{Medicina Interna} y los del cuadrante II.
+\end{itemize}
+La que combina ambos es \textbf{Medicina Interna}.
+
+\textbf{(f) Más eficientes.} CP1 alto con CP2 bajo (mucho volumen sin complicaciones) $\Rightarrow$ \textbf{Cirugía y Traumatología}.
+\end{solbox}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=11cm,height=8cm, axis lines=middle, xlabel={$v_{j1}$ (CP1)}, ylabel={$v_{j2}$ (CP2)},
+  xmin=-1.1,xmax=1.1,ymin=-1.1,ymax=1.1, grid=both, grid style={gray!20},
+  title={Variables originales P3 (hospital)}]
+\draw[gray, dashed] (axis cs:0,0) circle [radius=1];
+\arr{0.860}{-0.066}{NI}{south}
+\arr{0.421}{0.747}{MO}{west}
+\arr{-0.406}{0.670}{RE}{east}
+\arr{-0.250}{0.388}{NE}{east}
+\arr{-0.562}{0.635}{ICM}{east}
+\arr{0.820}{0.508}{ES}{west}
+\arr{0.663}{0.078}{IF}{south}
+\end{axis}
+\end{tikzpicture}
+\caption{Variables originales del problema P3.}
+\label{fig:p3var}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=12cm,height=9cm, axis lines=middle, xlabel={CP1}, ylabel={CP2},
+  xmin=-3,xmax=3.5,ymin=-2.5,ymax=2.5, grid=both, grid style={gray!20},
+  title={Servicios hospitalarios (P3)}]
+\addplot[only marks,mark=*,mark size=2pt,color=blue]
+  coordinates {(2.8,1.7) (-2.5,1.6) (-1.4,1.2) (-1.0,0.7) (0.1,0.2) (1.0,0.5) (1.2,-0.3) (1.5,-0.5) (-0.8,-0.5) (-1.0,-0.7) (-1.0,-1.5) (2.5,-1.6) (1.7,-1.5)};
+\node[anchor=south west] at (axis cs:2.8,1.7) {\small Med Int};
+\node[anchor=south west] at (axis cs:-2.5,1.6) {\small Psiquiat};
+\node[anchor=south west] at (axis cs:-1.4,1.2) {\small Hemato};
+\node[anchor=south west] at (axis cs:-1.0,0.7) {\small Neuro};
+\node[anchor=south west] at (axis cs:0.1,0.2) {\small Digest};
+\node[anchor=south west] at (axis cs:1.0,0.5) {\small Cirugía};
+\node[anchor=south west] at (axis cs:1.2,-0.3) {\small Trauma};
+\node[anchor=south west] at (axis cs:1.5,-0.5) {\small Urología};
+\node[anchor=south west] at (axis cs:-0.8,-0.5) {\small Cardio};
+\node[anchor=south west] at (axis cs:-1.0,-0.7) {\small Otorrino};
+\node[anchor=south west] at (axis cs:-1.0,-1.5) {\small Oftalmo};
+\node[anchor=south west] at (axis cs:2.5,-1.6) {\small Gineco};
+\node[anchor=south west] at (axis cs:1.7,-1.5) {\small Pediat};
+\end{axis}
+\end{tikzpicture}
+\caption{Reconstrucción del plano factorial CP1--CP2 con los 13 servicios.}
+\end{figure}
+
+\newpage
+% =============================================================================
+\section{P4. Análisis del sector lechero}
+% =============================================================================
+
+\begin{enuncbox}
+Haciendas lecheras venezolanas. 6 variables: \textbf{SUP} (superficie), \textbf{VACA} (n.\ vacas), \textbf{SANI} (índice sanitario), \textbf{INST} (instalaciones), \textbf{MAQ} (maquinaria), \textbf{PROM} (leche/vaca).
+
+\smallskip
+$\lambda_1=1{,}794$; $\lambda_2=1{,}341$.
+
+\smallskip
+\textbf{Cargas factoriales} (autovectores ponderados por $\sqrt{\lambda_i}$):
+
+\begin{center}\small
+\begin{tabular}{lrr}\toprule
+Variable & CP1 & CP2\\\midrule
+SUP  & $\phantom{-}0{,}79$ & $\phantom{-}0{,}10$\\
+VACA & $\phantom{-}0{,}76$ & $\phantom{-}0{,}40$\\
+SANI & $\phantom{-}0{,}44$ & $-0{,}48$\\
+INST & $\phantom{-}0{,}32$ & $-0{,}48$\\
+MAQ  & $\phantom{-}0{,}53$ & $-0{,}26$\\
+PROM & $-0{,}01$ & $-0{,}80$\\\bottomrule
+\end{tabular}\end{center}
+\end{enuncbox}
+
+\begin{solbox}
+\textbf{Caracterización de componentes.}
+\begin{itemize}[noitemsep,leftmargin=*]
+\item \textbf{CP1 (Tamaño / dotación productiva):} cargas altas y positivas en SUP, VACA, MAQ. PROM no participa ($-0{,}01$). $\Rightarrow$ ordena las haciendas por \emph{magnitud productiva}.
+\item \textbf{CP2 (Tecnificación / industrialización):} cargas \emph{negativas} en PROM, SANI, INST, MAQ. Como los cuatro indicadores de productividad tienen el mismo signo, CP2$<0$ identifica haciendas \emph{tecnificadas}; CP2$>0$ identifica haciendas \emph{extensivas}.
+\end{itemize}
+
+\textbf{Identificación de los 8 grupos (A–H).} El enunciado oficial indica que las haciendas se agrupan en 8 tipos:
+
+\begin{center}\small
+\begin{tabular}{cl}\toprule
+Grupo & Tipo de hacienda\\\midrule
+A, C & Mataderos (mucho ganado, baja leche/vaca)\\
+B    & Hacienda lechera (alta producción/vaca y tecnificación)\\
+D, E & Multipropósito (intermedias)\\
+F    & Pastoreo, crianza y engorde (mucha superficie, baja tecnificación)\\
+G, H & Haciendas pequeñas (poca superficie y poco ganado)\\\bottomrule
+\end{tabular}\end{center}
+
+\textbf{Validez del estudio.} Asumiendo datos estandarizados ($\sum\lambda_i=p=6$):
+\[
+\mathrm{VE}_2 \;=\; \frac{1{,}794+1{,}341}{6}\cdot 100\% \;=\; \frac{3{,}135}{6}\cdot 100\% \;\approx\; \boxed{52{,}25\%}.
+\]
+Valor moderado; un análisis riguroso debería incluir CP3 (no entregada en la guía).
+\end{solbox}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=11cm,height=8cm, axis lines=middle, xlabel={CP1}, ylabel={CP2},
+  xmin=-1.1,xmax=1.1,ymin=-1.1,ymax=1.1, grid=both, grid style={gray!20},
+  title={Cargas factoriales P4 (sector lechero)}]
+\draw[gray, dashed] (axis cs:0,0) circle [radius=1];
+\arr{0.79}{0.10}{SUP}{south}
+\arr{0.76}{0.40}{VACA}{south west}
+\arr{0.44}{-0.48}{SANI}{north}
+\arr{0.32}{-0.48}{INST}{north}
+\arr{0.53}{-0.26}{MAQ}{east}
+\arr{-0.01}{-0.80}{PROM}{east}
+\end{axis}
+\end{tikzpicture}
+\caption{Variables originales del problema P4 (cargas ponderadas).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=11cm,height=8cm, axis lines=middle, xlabel={CP2}, ylabel={CP1},
+  xmin=-3,xmax=3,ymin=-3,ymax=3, grid=both, grid style={gray!20},
+  title={8 tipos de haciendas en el plano CP2 (abscisa) -- CP1 (ordenada)}]
+\def\pt#1#2#3{\addplot[only marks,mark=diamond*,mark size=3pt,color=blue] coordinates {(#1,#2)}; \node[anchor=south west,font=\small\bfseries] at (axis cs:#1,#2) {#3};}
+\pt{-1.8}{1.5}{A}
+\pt{-2.5}{0.5}{B}
+\pt{-0.8}{2.5}{C}
+\pt{-0.3}{0.4}{D}
+\pt{0.3}{-0.3}{E}
+\pt{1.6}{1.8}{F}
+\pt{2.2}{0.05}{G}
+\pt{1.4}{-1.5}{H}
+\end{axis}
+\end{tikzpicture}
+\caption{Reconstrucción aproximada de los 8 tipos de haciendas (figura del enunciado).}
+\end{figure}
+
+\newpage
+% =============================================================================
+\section{P5. Análisis de neoplasias}
+% =============================================================================
+
+\begin{enuncbox}
+Base de datos de tumores (neoplasias) caracterizados por: \textbf{Largo}, \textbf{Ancho}, núcleos \textbf{Regular} e \textbf{Irregulares}. ACP retiene dos componentes.
+
+\begin{center}\small
+\begin{tabular}{lrr}\toprule
+ & CP1 & CP2\\\midrule
+$\lambda$       & $1{,}7034$ & $1{,}2560$\\\midrule
+Largo           & $\phantom{-}0{,}5211$ & $-0{,}3774$\\
+Regular         & $-0{,}2693$ & $-0{,}9233$\\
+Ancho           & $\phantom{-}0{,}5804$ & $-0{,}0245$\\
+Irregulares     & $\phantom{-}0{,}5648$ & $-0{,}0669$\\\bottomrule
+\end{tabular}\end{center}
+\end{enuncbox}
+
+\begin{solbox}
+\textbf{(a) Información perdida.} $p=4$ variables estandarizadas, $\sum\lambda_i=4$:
+\[
+\mathrm{VE}_2 \;=\; \frac{1{,}7034+1{,}2560}{4}\cdot 100\% \;=\; \frac{2{,}9594}{4}\cdot 100\% \;\approx\; 73{,}99\%
+\]
+\begin{respbox}
+$\boxed{\mathrm{IP}_2 \;\approx\; 26{,}01\%}$.
+\end{respbox}
+
+\textbf{(b)} Variables en $(v_{j1}, v_{j2})$ — figura~\ref{fig:p5var}.
+
+\textbf{(c) Interpretación.}
+\begin{itemize}[noitemsep,leftmargin=*]
+\item \textbf{CP1}: cargas positivas en Largo, Ancho e Irregulares y negativa en Regular. Las tres variables que indican mayor tamaño y desorden cargan juntas frente a Regular. $\Rightarrow$ \textbf{CP1 $\equiv$ \emph{Malignidad}} (a mayor CP1, tumor más grande y con núcleos irregulares).
+\item \textbf{CP2}: dominada por Regular ($-0{,}92$), con Largo en $-0{,}38$. CP2 muy negativo $\Rightarrow$ alta proporción de núcleos regulares; CP2$\to 0$ o positivo $\Rightarrow$ baja regularidad. $\Rightarrow$ \textbf{CP2 $\equiv$ \emph{Regularidad celular}} (inversa: $-$ regulares, $+$ irregulares).
+\end{itemize}
+
+\textbf{(d) ¿Cuántos grupos?} La nube de puntos del enunciado muestra una separación clara en \textbf{dos grupos} a lo largo de CP1: izquierda (CP1$<0$) y derecha (CP1$>0$). Eventualmente puede subdividirse según CP2 en sub-conglomerados, pero \textbf{los grupos principales son 2}.
+
+\textbf{(e) Tumores benignos.} Si malignidad $=$ tamaño $+$ irregularidad $=$ CP1 alto, los \textbf{benignos} corresponden a los tumores con \textbf{CP1$<0$} (lado izquierdo del scatter). En la figura del enunciado, ese cúmulo incluye aproximadamente los puntos numerados \textbf{1--50} (los identificadores menores), por ejemplo: 1, 2, 3, 4, 5, 7--14, 17, 19--50, etc. (cualquier punto con coordenada CP1 negativa). Los puntos con CP1 muy positivo (e.g.\ 119, 120, 131, 136) son los más malignos.
+\end{solbox}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=11cm,height=8cm, axis lines=middle, xlabel={$v_{j1}$ (CP1)}, ylabel={$v_{j2}$ (CP2)},
+  xmin=-1.1,xmax=1.1,ymin=-1.1,ymax=1.1, grid=both, grid style={gray!20},
+  title={Variables originales P5 (neoplasias)}]
+\draw[gray, dashed] (axis cs:0,0) circle [radius=1];
+\arr{0.5211}{-0.3774}{Largo}{north west}
+\arr{-0.2693}{-0.9233}{Regular}{east}
+\arr{0.5804}{-0.0245}{Ancho}{south}
+\arr{0.5648}{-0.0669}{Irregulares}{north west}
+\end{axis}
+\end{tikzpicture}
+\caption{Variables originales del problema P5.}
+\label{fig:p5var}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=12cm,height=8cm, axis lines=middle, xlabel={CP1}, ylabel={CP2},
+  xmin=-3,xmax=3,ymin=-3,ymax=3, grid=both, grid style={gray!20},
+  title={Esquema de la nube de tumores (P5): 2 grupos}]
+% Benignos (Q2-Q3, CP1 < 0)
+\addplot[only marks,mark=o,mark size=2pt,color=blue,opacity=0.8] coordinates {
+  (-2.4,0.2) (-2.0,0.5) (-2.2,-0.4) (-1.8,1.1) (-1.5,-0.7) (-1.3,0.0)
+  (-1.0,-1.4) (-1.2,0.9) (-0.9,-1.0) (-0.7,0.4) (-1.6,1.5) (-2.0,-1.0)
+  (-0.8,-0.3) (-1.4,-1.2) (-1.1,1.6) (-1.7,-0.2)};
+\node[blue,anchor=south] at (axis cs:-1.5,2.0) {\textbf{Benignos}};
+% Malignos (CP1 > 0)
+\addplot[only marks,mark=triangle*,mark size=2.5pt,color=red!80!black,opacity=0.8] coordinates {
+  (0.4,0.9) (0.7,-0.1) (1.0,-0.7) (1.3,0.3) (1.6,-1.0) (1.8,-1.6)
+  (2.1,-0.3) (2.4,-1.2) (0.9,-1.4) (1.5,-2.0) (1.2,1.0) (0.6,-2.2)
+  (2.0,0.5) (1.7,-0.5) (2.3,-2.0)};
+\node[red!80!black,anchor=south] at (axis cs:1.7,1.5) {\textbf{Malignos}};
+\draw[dashed,gray] (axis cs:0,-3) -- (axis cs:0,3);
+\end{axis}
+\end{tikzpicture}
+\caption{Esquema cualitativo: separación de tumores benignos vs.\ malignos a lo largo de CP1.}
+\end{figure}
+
+\newpage
+% =============================================================================
+\section{P6. Barómetro Merco}
+% =============================================================================
+
+\begin{enuncbox}
+50 empresas con más prestigio. Variables: \textbf{REF} (resultados económicos), \textbf{CPS} (calidad producto/servicio), \textbf{CCCL} (cultura corporativa y calidad laboral), \textbf{ERSC} (ética y responsabilidad social), \textbf{DGPI} (dimensión global e internacional), \textbf{IDI} (I+D+i).
+
+\begin{center}\small
+\begin{tabular}{lrrrr}\toprule
+ & CP1 & CP2 & CP3 & CP4\\\midrule
+$\lambda$ & $2{,}15$ & $1{,}32$ & $1{,}18$ & $0{,}77$\\\midrule
+REF  & $-0{,}015$ & $\phantom{-}0{,}743$ & $\phantom{-}0{,}296$ & $\phantom{-}0{,}250$\\
+CPS  & $\phantom{-}0{,}053$ & $\phantom{-}0{,}066$ & $\phantom{-}0{,}855$ & $-0{,}215$\\
+CCCL & $\phantom{-}0{,}582$ & $-0{,}187$ & $\phantom{-}0{,}038$ & $\phantom{-}0{,}439$\\
+ERSC & $\phantom{-}0{,}626$ & $-0{,}101$ & $\phantom{-}0{,}207$ & $\phantom{-}0{,}216$\\
+DGPI & $\phantom{-}0{,}626$ & $-0{,}101$ & $\phantom{-}0{,}107$ & $\phantom{-}0{,}216$\\
+IDI  & $\phantom{-}0{,}245$ & $\phantom{-}0{,}629$ & $-0{,}405$ & $-0{,}036$\\\bottomrule
+\end{tabular}\end{center}
+\end{enuncbox}
+
+\begin{solbox}
+\textbf{(a) Información explicada.} $p=6$, $\sum\lambda_i = 6$.
+\begin{align*}
+\mathrm{VE}_2 &= \frac{2{,}15+1{,}32}{6}\cdot 100\% = \frac{3{,}47}{6}\cdot 100\% \approx \boxed{57{,}83\%},\\
+\mathrm{VE}_3 &= \frac{3{,}47+1{,}18}{6}\cdot 100\% = \frac{4{,}65}{6}\cdot 100\% \approx \boxed{77{,}50\%},\\
+\mathrm{VE}_4 &= \frac{4{,}65+0{,}77}{6}\cdot 100\% = \frac{5{,}42}{6}\cdot 100\% \approx \boxed{90{,}33\%}.
+\end{align*}
+
+\textbf{(b) Caracterización de cada componente.}
+\begin{itemize}[noitemsep,leftmargin=*]
+\item \textbf{CP1 — Reputación corporativa y sostenibilidad:} cargas altas en \textbf{CCCL ($0{,}58$)}, \textbf{ERSC ($0{,}63$)}, \textbf{DGPI ($0{,}63$)}; nulas en REF y CPS. Mide \emph{prestigio social, cultural e internacional}.
+\item \textbf{CP2 — Desempeño financiero e innovación:} cargas altas en \textbf{REF ($0{,}74$)} e \textbf{IDI ($0{,}63$)}. Mide \emph{resultados económicos y capacidad de innovar}.
+\item \textbf{CP3 — Calidad del producto / servicio:} carga muy alta en \textbf{CPS ($0{,}86$)} y negativa en \textbf{IDI ($-0{,}41$)}. Es prácticamente el eje \emph{calidad del producto}, contrapuesto débilmente a innovación.
+\item \textbf{CP4 — Cultura laboral residual:} carga moderada en \textbf{CCCL ($0{,}44$)} y \textbf{REF ($0{,}25$)}; el resto bajo. Captura un matiz adicional de cultura organizacional ligado a resultados financieros.
+\end{itemize}
+
+\textbf{(c) Identificación de los 8 grupos.} Leyendo simultáneamente los dos planos (CP1--CP2 y CP3--CP4) del enunciado:
+
+\begin{center}\small
+\begin{tabular}{cllll}\toprule
+Grupo & CP1 & CP2 & CP3 & CP4 \\
+      & (reputación) & (econ./I+D) & (calidad) & (cultura)\\\midrule
+A & $-{}-$ & $\sim 0$ & $\sim 0$ & $-{}-$ \\
+B & $\sim 0$ & $+{}+$  & $\sim 0$ & $-$\\
+C & $-$ & $+{}+$  & $+$ & $\sim 0$\\
+D & $\sim 0$ & $+$ & $+{}+$ & $\sim 0$\\
+E & $\sim 0$ & $\sim 0$ & $\sim 0$ & $-{}-$\\
+F & $+$  & $+{}+$  & $-$ & $\sim 0$\\
+G & $+{}+$ & $\sim 0$ & $+$ & $\sim 0$\\
+H & $\sim 0$ & $-$  & $\sim 0$ & $\sim 0$\\\bottomrule
+\end{tabular}\end{center}
+
+\textbf{Interpretación de cada grupo:}
+\begin{itemize}[noitemsep,leftmargin=*]
+\item \textbf{A}: baja reputación social \emph{y} cultura laboral pobre $\Rightarrow$ empresas peor posicionadas en el ranking.
+\item \textbf{B}: muy buenos resultados financieros e innovación pero reputación discreta $\Rightarrow$ empresas \emph{financieramente sólidas}.
+\item \textbf{C}: combina buenos resultados/innovación con cierta calidad de producto, con baja reputación social $\Rightarrow$ \emph{tecnológicas emergentes}.
+\item \textbf{D}: destaca por \textbf{calidad de producto/servicio} $\Rightarrow$ empresa \emph{centrada en la calidad}.
+\item \textbf{E}: posición desfavorable en cultura corporativa $\Rightarrow$ empresa con \emph{problemas laborales internos}.
+\item \textbf{F}: reputación alta + resultados económicos altos $\Rightarrow$ \emph{empresa líder global equilibrada}.
+\item \textbf{G}: la mejor reputación social/internacional $\Rightarrow$ \emph{marca de prestigio}.
+\item \textbf{H}: ligeramente por debajo en innovación $\Rightarrow$ empresa convencional sin atributos sobresalientes.
+\end{itemize}
+\end{solbox}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=11cm,height=8cm, axis lines=middle, xlabel={$v_{j1}$ (CP1)}, ylabel={$v_{j2}$ (CP2)},
+  xmin=-1.1,xmax=1.1,ymin=-1.1,ymax=1.1, grid=both, grid style={gray!20},
+  title={Variables P6 — plano CP1--CP2}]
+\draw[gray, dashed] (axis cs:0,0) circle [radius=1];
+\arr{-0.015}{0.743}{REF}{west}
+\arr{0.053}{0.066}{CPS}{south west}
+\arr{0.582}{-0.187}{CCCL}{east}
+\arr{0.626}{-0.101}{ERSC}{south east}
+\arr{0.626}{-0.101}{DGPI}{north}
+\arr{0.245}{0.629}{IDI}{south west}
+\end{axis}
+\end{tikzpicture}
+\caption{Variables P6 sobre el plano de las dos primeras componentes (Reputación vs.\ Resultados/Innovación).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=10cm,height=8cm, axis lines=middle, xlabel={CP1}, ylabel={CP2},
+  xmin=-1.1,xmax=1.1,ymin=-1.1,ymax=1.1, grid=both, grid style={gray!20},
+  title={Grupos de empresas (CP1--CP2)}]
+\def\ptt#1#2#3{\addplot[only marks,mark=diamond*,mark size=3pt,color=usachteal!80!black] coordinates {(#1,#2)}; \node[anchor=south west,font=\small\bfseries] at (axis cs:#1,#2) {#3};}
+\ptt{-0.65}{0.0}{A}
+\ptt{0.05}{0.85}{B}
+\ptt{-0.10}{0.75}{C}
+\ptt{-0.05}{0.18}{D}
+\ptt{0.0}{-0.05}{E}
+\ptt{0.40}{0.60}{F}
+\ptt{0.85}{0.05}{G}
+\ptt{0.10}{-0.20}{H}
+\end{axis}
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}
+\begin{axis}[
+  width=10cm,height=8cm, axis lines=middle, xlabel={CP3}, ylabel={CP4},
+  xmin=-1.1,xmax=1.1,ymin=-1.1,ymax=1.1, grid=both, grid style={gray!20},
+  title={Grupos de empresas (CP3--CP4)}]
+\def\pto#1#2#3{\addplot[only marks,mark=diamond*,mark size=3pt,color=orange!80!black] coordinates {(#1,#2)}; \node[anchor=south west,font=\small\bfseries] at (axis cs:#1,#2) {#3};}
+\pto{0.05}{-0.75}{A}
+\pto{0.05}{-0.05}{B}
+\pto{0.15}{-0.05}{C}
+\pto{0.80}{0.05}{D}
+\pto{0.05}{-0.85}{E}
+\pto{-0.20}{0.05}{F}
+\pto{0.10}{0.10}{G}
+\pto{0.0}{0.0}{H}
+\end{axis}
+\end{tikzpicture}
+\caption{Proyección esquemática de los 8 grupos de empresas en ambos planos factoriales del Barómetro Merco.}
+\end{figure}
+
+\newpage
+% =============================================================================
+\section{P7. Clasificación de neuronas}
+% =============================================================================
+
+\begin{enuncbox}
+6 tipos de neuronas (A--F) caracterizadas por: \textbf{Cantidad D} (n.\ de dendritas), \textbf{Arborización D}, \textbf{Largo Axón}, \textbf{Tamaño Soma}. ACP a 3 componentes:
+
+\begin{center}\small
+\begin{tabular}{lrrrrr}\toprule
+ & $\lambda$ & Cantidad D & Arborización D & Largo Axón & Tamaño Soma\\\midrule
+CP1 & $1{,}8$ & $\phantom{-}0{,}948$ & $\phantom{-}0{,}925$ & $\phantom{-}0{,}769$ & $\phantom{-}0{,}142$\\
+CP2 & $0{,}9$ & $-0{,}215$ & $\phantom{-}0{,}311$ & $\phantom{-}0{,}629$ & $-0{,}171$\\
+CP3 & $0{,}3$ & $\phantom{-}0{,}005$ & $-0{,}004$ & $-0{,}007$ & $\phantom{-}0{,}789$\\\bottomrule
+\end{tabular}\end{center}
+
+Coordenadas de los 6 tipos en CP1--CP2:
+
+\begin{center}\small
+\begin{tabular}{lrrrrrr}\toprule
+ & A & B & C & D & E & F\\\midrule
+CP1 & $-0{,}60$ & $-1{,}10$ & $-0{,}51$ & $0{,}40$ & $1{,}20$ & $1{,}30$\\
+CP2 & $\phantom{-}1{,}60$ & $\phantom{-}0{,}01$ & $\phantom{-}0{,}81$ & $0{,}95$ & $-0{,}55$ & $0{,}63$\\\bottomrule
+\end{tabular}\end{center}
+\end{enuncbox}
+
+\begin{solbox}
+\textbf{Validez a dos componentes.} $p=4$. Como se entregan tres autovalores ($1{,}8+0{,}9+0{,}3=3{,}0$), el cuarto debe valer $\lambda_4 = 4-3 = 1{,}0$:
+\[
+\mathrm{VE}_2 \;=\; \frac{1{,}8+0{,}9}{4}\cdot 100\% \;=\; \frac{2{,}7}{4}\cdot 100\% \;=\; \boxed{67{,}5\%}.
+\]
+Información perdida: $\boxed{32{,}5\%}$.
+
+\textbf{Variables en el plano.} Cada variable en $(v_{j1},v_{j2})$ — figura~\ref{fig:p7var}.
+
+\textbf{Interpretación de componentes.}
+\begin{itemize}[noitemsep,leftmargin=*]
+\item \textbf{CP1 — Complejidad dendrítica--axonal:} las tres variables Cantidad D ($0{,}95$), Arborización D ($0{,}93$) y Largo Axón ($0{,}77$) cargan altísimo y positivo. Tamaño Soma es casi nulo. $\Rightarrow$ CP1$>0$ indica neurona \emph{más desarrollada} (más dendritas, más ramificada, axón largo).
+\item \textbf{CP2 — Axón largo vs.\ muchas dendritas:} Largo Axón ($+0{,}63$) y Arborización D ($+0{,}31$) frente a Cantidad D ($-0{,}22$). $\Rightarrow$ CP2 separa neuronas \emph{tipo proyección} (axón largo, pocas dendritas, CP2$>0$) de neuronas \emph{tipo interneurona} (muchas dendritas, CP2$<0$).
+\item \textbf{CP3 — Tamaño del soma:} prácticamente sólo Tamaño Soma carga ($0{,}79$). Es un eje específico para el cuerpo celular.
+\end{itemize}
+
+\textbf{Caracterización de los 6 tipos.}
+\begin{center}\small
+\begin{tabular}{cccp{8cm}}\toprule
+Tipo & CP1 & CP2 & Lectura\\\midrule
+A & $-0{,}60$ & $\phantom{-}1{,}60$ & Poco desarrollada pero con axón muy largo $\Rightarrow$ neurona \emph{de proyección}, simple, con axón dominante.\\
+B & $-1{,}10$ & $\phantom{-}0{,}01$ & La menos desarrollada: pocas dendritas, sin axón largo. Neurona \emph{pequeña / inmadura}.\\
+C & $-0{,}51$ & $\phantom{-}0{,}81$ & Poco desarrollada con tendencia a axón largo. Similar a A pero más moderada.\\
+D & $\phantom{-}0{,}40$ & $\phantom{-}0{,}95$ & Desarrollo medio + axón largo. \emph{Piramidal de proyección}.\\
+E & $\phantom{-}1{,}20$ & $-0{,}55$ & Muy desarrollada (muchas dendritas y ramificación) pero sin axón largo $\Rightarrow$ \emph{interneurona local} muy ramificada.\\
+F & $\phantom{-}1{,}30$ & $\phantom{-}0{,}63$ & La más desarrollada en todo $\Rightarrow$ neurona \emph{piramidal grande} (mucha arborización + axón largo).\\\bottomrule
+\end{tabular}\end{center}
+\end{solbox}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=11cm,height=8cm, axis lines=middle, xlabel={$v_{j1}$ (CP1)}, ylabel={$v_{j2}$ (CP2)},
+  xmin=-1.1,xmax=1.1,ymin=-1.1,ymax=1.1, grid=both, grid style={gray!20},
+  title={Variables originales P7 (neuronas)}]
+\draw[gray, dashed] (axis cs:0,0) circle [radius=1];
+\arr{0.948}{-0.215}{Cant.\ D}{north}
+\arr{0.925}{0.311}{Arboriz.\ D}{south}
+\arr{0.769}{0.629}{Largo Axón}{south west}
+\arr{0.142}{-0.171}{Tamaño Soma}{north}
+\end{axis}
+\end{tikzpicture}
+\caption{Variables del problema P7 proyectadas en el plano CP1--CP2.}
+\label{fig:p7var}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=12cm,height=8cm, axis lines=middle, xlabel={CP1}, ylabel={CP2},
+  xmin=-2,xmax=2,ymin=-2,ymax=2.2, grid=both, grid style={gray!20},
+  title={Los 6 tipos de neuronas en el plano CP1--CP2}]
+\def\ptn#1#2#3{\addplot[only marks,mark=*,mark size=3pt,color=red!70!black] coordinates {(#1,#2)}; \node[anchor=south west,font=\small\bfseries] at (axis cs:#1,#2) {#3};}
+\ptn{-0.60}{1.60}{A}
+\ptn{-1.10}{0.01}{B}
+\ptn{-0.51}{0.81}{C}
+\ptn{0.40}{0.95}{D}
+\ptn{1.20}{-0.55}{E}
+\ptn{1.30}{0.63}{F}
+\end{axis}
+\end{tikzpicture}
+\caption{Distribución de los 6 tipos de neuronas en el plano factorial principal.}
+\end{figure}
+
+\newpage
+% =============================================================================
+\section{Resumen comparativo de los 7 problemas}
+% =============================================================================
+
+\begin{center}\small
+\begin{tabular}{clcccp{4cm}p{4cm}}\toprule
+\# & Problema & $p$ & $\mathrm{VE}_2$ & $\mathrm{IP}_2$ & Interpretación CP1 & Interpretación CP2\\\midrule
+P1 & Consumo familias    & 7 & $78{,}4\%$ & $21{,}6\%$ & Calidad de canasta (proxy ingreso) & Estilo de dieta (lácteos+pan vs.\ proteína)\\
+P2 & Billetes            & 6 & $65{,}3\%$ & $34{,}7\%$ & Forma / márgenes              & Tamaño longitudinal\\
+P2 & Monedas             & 6 & $58{,}3\%$ & $41{,}7\%$ & ---                            & ---\\
+P3 & Hospital            & 7 & $62{,}7\%$ & $37{,}3\%$ & Demanda / volumen              & Hospitalización vs.\ ambulatorio\\
+P4 & Sector lechero      & 6 & $52{,}3\%$ & $47{,}7\%$ & Tamaño / dotación             & Tecnificación (PROM/SANI)\\
+P5 & Neoplasias          & 4 & $74{,}0\%$ & $26{,}0\%$ & Malignidad (tamaño+irregul.)   & Regularidad celular\\
+P6 & Barómetro Merco     & 6 & $57{,}8\%$ & $42{,}2\%$ & Reputación social/global       & Resultados económicos + I+D\\
+P7 & Neuronas            & 4 & $67{,}5\%$ & $32{,}5\%$ & Complejidad dendrítica-axonal  & Axón largo vs.\ muchas dendritas\\
+\bottomrule
+\end{tabular}\end{center}
+
+\bigskip
+\textbf{Observaciones metodológicas finales.}
+\begin{itemize}[leftmargin=*]
+\item Todos los problemas asumen \emph{datos estandarizados} ($\sum\lambda_i = p$). En P4 y P7 se completaron autovalores faltantes bajo este supuesto.
+\item En P2 se corrigió la respuesta de monedas a $58{,}33\%$ (la pauta original reporta $58{,}83\%$, probable errata).
+\item En P5 la asignación numérica precisa de tumores benignos depende de la figura exacta del enunciado; la regla operativa es \textbf{tumor benigno $\Leftrightarrow$ CP1$<0$}.
+\item En P6 el rótulo de los grupos se infiere de los dos biplots (CP1--CP2 y CP3--CP4) entregados; una asignación exacta requeriría las coordenadas numéricas.
+\end{itemize}
+
+\end{document}

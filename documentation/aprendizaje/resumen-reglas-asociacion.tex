@@ -1,0 +1,756 @@
+% =============================================================================
+% Guía didáctica — Reglas de Asociación
+% Inteligencia Computacional · USACH · Prof. Max Chacón
+% Enfocada en resolver:
+%   - data/raw/ayudantias/IC_Ejercicios_Cap_IV_Reglas_Asociacion.pdf
+%   - data/raw/ayudantias/Guia_4_Reglas_Asociacion_Marcelo.pdf
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,trees}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+\hypersetup{colorlinks=true,linkcolor=teal!70!black,urlcolor=blue!70!black}
+
+\definecolor{usachteal}{HTML}{009999}
+\definecolor{usachdark}{HTML}{003333}
+
+\newtcolorbox{formulabox}[1][]{
+    enhanced,breakable,
+    colback=usachteal!5,colframe=usachteal!70!black,
+    fonttitle=\bfseries\color{white},coltitle=white,colbacktitle=usachteal!80!black,
+    title={#1},sharp corners=south,boxrule=0.6pt,arc=2mm}
+
+\newtcolorbox{pasobox}[1][]{
+    enhanced,breakable,
+    colback=orange!5,colframe=orange!70!black,
+    fonttitle=\bfseries\color{white},coltitle=white,colbacktitle=orange!80!black,
+    title={#1},sharp corners=south,boxrule=0.6pt}
+
+\newtcolorbox{tipbox}[1][Tip de examen]{
+    enhanced,breakable,
+    colback=yellow!10,colframe=yellow!50!black,
+    fonttitle=\bfseries,title={#1},sharp corners=south,boxrule=0.5pt}
+
+\newtcolorbox{ejerciciobox}[1]{
+    enhanced,breakable,
+    colback=blue!3,colframe=blue!50!black,
+    fonttitle=\bfseries\color{white},coltitle=white,colbacktitle=blue!60!black,
+    title={#1},sharp corners=south,boxrule=0.7pt}
+
+\newtcolorbox{intuicionbox}[1][Intuición]{
+    enhanced,breakable,
+    colback=green!4,colframe=green!50!black,
+    fonttitle=\bfseries,title={#1},sharp corners=south,boxrule=0.5pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textsc{Inteligencia Computacional · USACH}}
+\fancyhead[R]{\small\textsc{Reglas de Asociación — Guía didáctica}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newcommand{\conf}{\operatorname{conf}}
+\newcommand{\sop}{\operatorname{sop}}
+\newcommand{\lift}{\operatorname{lift}}
+\newcommand{\conv}{\operatorname{conv}}
+
+\titleformat{\section}{\Large\bfseries\color{usachdark}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{usachteal!80!black}}{\thesubsection.}{0.5em}{}
+
+% =============================================================================
+\begin{document}
+
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+{\Huge\bfseries\color{usachdark} Reglas de Asociación\par}
+\vspace{0.5cm}
+{\Large Guía didáctica desde cero hasta resolver ejercicios\par}
+\vspace{1.5cm}
+{\large Inteligencia Computacional\\Magíster en Ingeniería Informática · USACH\\Prof. Max Chacón\par}
+\vspace{2cm}
+\begin{tcolorbox}[colback=usachteal!10,colframe=usachteal!70!black,width=0.85\textwidth]
+\centering
+\textbf{Objetivo:} entender qué son las reglas de asociación y resolver
+sin angustia los ejercicios del Capítulo IV (oficial) y la Guía 4 (ayudante Marcelo Álvarez).
+\end{tcolorbox}
+\vfill
+{\small Documento didáctico generado para estudio personal.\par}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% =============================================================================
+\section{¿De qué se trata todo esto? (en 3 minutos)}
+
+Imagina un supermercado. Cada cliente lleva una canasta con productos. Quieres descubrir
+\textbf{patrones} tipo:
+
+\begin{quote}
+\emph{``Cuando alguien compra pañales, también compra cerveza.''}
+\end{quote}
+
+Esto es una \textbf{regla de asociación}, que escribimos como
+$\text{pañales} \Rightarrow \text{cerveza}$ o, más general:
+\[
+A \Rightarrow B
+\]
+donde $A$ es el \emph{antecedente} (lo que ya está en la canasta) y $B$ es el
+\emph{consecuente} (lo que se predice que también estará).
+
+\begin{intuicionbox}
+Una regla de asociación NO es una causalidad ni una implicación lógica.
+Es solo una observación: ``\emph{cuando aparece $A$, suele aparecer $B$}''.
+El método sirve para \textbf{cualquier contexto binario}: pacientes (síntoma$\Rightarrow$enfermedad),
+estudiantes (asistencia$\Rightarrow$aprobar), redes sociales (tag$\Rightarrow$tag), etc.
+\end{intuicionbox}
+
+\subsection{Las dos preguntas clave}
+\begin{enumerate}
+    \item \textbf{¿Qué tan frecuente es la regla?} $\to$ \textbf{Soporte}.
+    \item \textbf{¿Qué tan confiable es?} $\to$ \textbf{Confianza}.
+\end{enumerate}
+
+% =============================================================================
+\section{Las fórmulas que TIENES que dominar}
+
+Sea $n$ el número total de transacciones (filas de la BD). Para una regla $A \Rightarrow B$:
+
+\begin{formulabox}[Las 4 medidas fundamentales]
+\textbf{Soporte:} fracción de transacciones donde aparecen $A$ y $B$ juntos.
+\[
+\sop(A \Rightarrow B) = P(A \cap B) = \frac{\#(A \cap B)}{n}
+\]
+
+\textbf{Confianza:} probabilidad condicional de $B$ dado $A$.
+\[
+\conf(A \Rightarrow B) = P(B \mid A) = \frac{P(A \cap B)}{P(A)} = \frac{\#(A \cap B)}{\#(A)}
+\]
+
+\textbf{Lift} (interés): qué tanto mejor es la regla que el azar.
+\[
+\lift(A \Rightarrow B) = \frac{P(A \cap B)}{P(A)\,P(B)} = \frac{\conf(A \Rightarrow B)}{P(B)}
+\]
+$\lift > 1$ correlación positiva, $\lift = 1$ independencia, $\lift < 1$ negativa.
+
+\textbf{Convicción:} mide cuánto se aleja la regla de la independencia (penaliza $\conf$ baja).
+\[
+\conv(A \Rightarrow B) = \frac{P(A)\,P(\neg B)}{P(A \cap \neg B)} = \frac{1 - P(B)}{1 - \conf(A \Rightarrow B)}
+\]
+$\conv \to \infty$ regla perfecta; $\conv = 1$ independencia.
+\end{formulabox}
+
+\begin{tipbox}[Versión del Prof. Chacón]
+En la guía del curso aparece la \textbf{convicción} escrita con $n$ explícito:
+\[
+\conv(A \Rightarrow B) = \frac{n - \sop(B)}{n\,[1 - \conf(A \Rightarrow B)]}
+\]
+\textbf{¡Ojo!} Aquí $\sop(B)$ está como \emph{conteo absoluto} (no como fracción). Si usas
+fracciones, simplifica a la versión $\dfrac{1-P(B)}{1-\conf}$.
+\end{tipbox}
+
+\subsection{Cómo se leen los símbolos (super importante para no entender mal)}
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Símbolo} & \textbf{Lectura} & \textbf{Cómo se calcula} \\
+\midrule
+$P(A)$        & ``proba de $A$''         & $\#A / n$ \\
+$P(A \cap B)$ & ``$A$ \emph{y} $B$''     & $\#(A \text{ y } B)/n$ \\
+$P(B \mid A)$ & ``$B$ \emph{dado} $A$''  & $\#(A \text{ y } B) / \#A$ \\
+$\neg B$      & ``no $B$''                & $1 - \#B/n$ \\
+$\hat{P}$     & ``estimador'' de $P$      & lo mismo, frecuencia relativa \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% =============================================================================
+\section{Monotonicidad: ¿por qué importa?}
+
+\textbf{El gran problema combinatorio.} Si tienes 10 ítems, posibles
+itemsets: $2^{10}=1024$. Con 30 ítems: $> 10^9$. \emph{No puedes evaluarlos todos.}
+
+La solución es la \textbf{propiedad anti-monótona del soporte}, descubierta por
+Agrawal (algoritmo Apriori, 1994):
+
+\begin{formulabox}[Principio Apriori]
+Si un itemset $X$ \textbf{no es frecuente} (no supera el $\sop_{\min}$), entonces
+\textbf{ningún superset} $Y \supseteq X$ puede serlo.
+\[
+X \subseteq Y \;\Longrightarrow\; \sop(Y) \le \sop(X)
+\]
+\end{formulabox}
+
+\begin{intuicionbox}
+Si solo el 5\% de la gente compra caviar, entonces ``caviar + champaña + cigarro'' como
+mucho lo compra el 5\%. Si tu umbral mínimo es 10\%, \textbf{poda} (descartas) todas las
+ramas que incluyan caviar. Eso es la \emph{poda Apriori}.
+\end{intuicionbox}
+
+\subsection{Definiciones formales}
+
+\begin{itemize}
+    \item Una medida $M$ es \textbf{monótona} si $X \subseteq Y \Rightarrow M(X) \le M(Y)$.
+    \item Una medida $M$ es \textbf{anti-monótona} si $X \subseteq Y \Rightarrow M(X) \ge M(Y)$.
+    \item Si no cumple ninguna de las dos, decimos que \textbf{no es monótona}.
+\end{itemize}
+
+El soporte es anti-monótono. La confianza \textbf{no es monótona} en general. Esa es la
+razón por la que Apriori filtra primero por soporte y solo después calcula confianza.
+
+% =============================================================================
+\section{Algoritmo Apriori en 5 pasos}
+
+\begin{pasobox}[Receta Apriori]
+\begin{enumerate}
+    \item \textbf{Fijar} $\sop_{\min}$ y $\conf_{\min}$.
+    \item \textbf{Generar} $L_1$ = itemsets de 1 elemento con $\sop \ge \sop_{\min}$.
+    \item \textbf{Iterar} para $k = 2, 3, \ldots$:
+    \begin{enumerate}
+        \item \emph{Join}: combinar $L_{k-1}$ consigo mismo para formar candidatos $C_k$.
+        \item \emph{Prune}: eliminar candidatos cuyo subset $(k-1)$ no esté en $L_{k-1}$ (poda anti-monótona).
+        \item Escanear la BD y quedarse con $L_k = \{ X \in C_k : \sop(X) \ge \sop_{\min} \}$.
+    \end{enumerate}
+    \item \textbf{Parar} cuando $L_k = \emptyset$.
+    \item \textbf{Generar reglas} desde cada itemset frecuente $X$: para cada partición
+          no vacía $X = A \cup B$, evaluar $\conf(A \Rightarrow B)$. Conservar si $\ge \conf_{\min}$.
+\end{enumerate}
+\end{pasobox}
+
+\subsection{Combinatoria que genera (representación gráfica)}
+
+\begin{center}
+\begin{tikzpicture}[
+    level distance=0.95cm,
+    level 1/.style={sibling distance=2.6cm},
+    level 2/.style={sibling distance=1.2cm},
+    every node/.style={draw,rounded corners,fill=usachteal!15,font=\footnotesize,inner sep=2pt}
+]
+\node {$\emptyset$}
+    child { node {A}
+        child { node {AB} }
+        child { node {AC} }
+        child { node {AD} }
+    }
+    child { node {B}
+        child { node {BC} }
+        child { node {BD} }
+    }
+    child { node {C}
+        child { node {CD} }
+    }
+    child { node {D} };
+\end{tikzpicture}
+\end{center}
+
+\textbf{Sin poda:} se generan $2^n - 1$ itemsets (lattice completo). \textbf{Con Apriori:}
+si por ejemplo $\{A\}$ es infrecuente, se podan AB, AC, AD y todos sus descendientes.
+
+% =============================================================================
+\section{Plantilla universal para resolver ejercicios}
+
+Casi todos los problemas siguen este patrón:
+
+\begin{pasobox}[Receta de resolución (memorízala)]
+\begin{enumerate}
+    \item \textbf{Identificar} variables binarias relevantes y darles nombre corto (MERCURIO, IRA, etc.).
+    \item \textbf{Construir} tabla 0/1 con $n$ transacciones (10 suele alcanzar).
+    \item \textbf{Definir} la regla $A \Rightarrow B$ que se pide evaluar.
+    \item \textbf{Contar} en la tabla: $\#A$, $\#B$, $\#(A \cap B)$.
+    \item \textbf{Calcular} soporte = $\#(A \cap B)/n$ y confianza = $\#(A \cap B)/\#A$.
+    \item Si piden \textbf{convicción} o \textbf{lift}, calcular $P(B)$ y aplicar fórmula.
+    \item \textbf{Comparar} la regla simple vs.\ la regla extendida (agregar un ítem al antecedente):
+          ¿la confianza sube o baja?
+    \item \textbf{Concluir} si se cumple la hipótesis (umbrales pedidos).
+\end{enumerate}
+\end{pasobox}
+
+% =============================================================================
+\section{Ejercicios resueltos — Guía oficial Cap.\ IV}
+
+\subsection{P1: simplificar una medida y reconocer a qué se parece}
+
+\begin{ejerciciobox}{P1 (Cap.\ IV) — Simplificación algebraica}
+Expresar y simplificar:
+\[
+X = n\,\frac{\conf(A \Rightarrow B)}{\sop(A \Rightarrow B)}
+    \left[1 - \frac{\sop(A \Rightarrow B)\,\conf(A \Rightarrow B)}{\sop(A \Rightarrow B)}\right]
+\]
+\end{ejerciciobox}
+
+\textbf{Paso 1 — simplificar el corchete.} Adentro, $\sop/\sop = 1$:
+\[
+\left[1 - \conf(A \Rightarrow B)\right]
+\]
+
+\textbf{Paso 2 — reescribir.} Usando $\conf = P(A \cap B)/P(A)$ y $\sop = P(A \cap B)$:
+\[
+\frac{\conf}{\sop} = \frac{P(A \cap B)/P(A)}{P(A \cap B)} = \frac{1}{P(A)}
+\]
+
+\textbf{Paso 3 — resultado.}
+\begin{formulabox}[Resultado P1]
+\[
+\boxed{\;X = \frac{n}{P(A)}\,\bigl[1 - \conf(A \Rightarrow B)\bigr] = \frac{n}{\sop(A)}\,\bigl[1 - \conf(A \Rightarrow B)\bigr]\;}
+\]
+\end{formulabox}
+
+\textbf{¿A qué medida se parece?} Comparemos con \textbf{convicción}:
+\[
+\conv(A \Rightarrow B) = \frac{n - \sop(B)}{n\,[1 - \conf(A \Rightarrow B)]}
+\]
+Ambas tienen el factor $[1 - \conf]$ en el denominador (o numerador inverso). $X$ es
+\emph{conceptualmente recíproca} de la convicción: cuando la regla es perfecta ($\conf = 1$),
+$X = 0$ (no hay error), mientras que $\conv \to \infty$. Por eso $X$ se interpreta como
+una medida de \textbf{error o residuo} de la regla.
+
+\subsection{P2: monotonicidad de la medida Gini}
+
+\begin{ejerciciobox}{P2 (Cap.\ IV) — Gini parcial}
+\[
+\text{gini}(A \Rightarrow B) = P(A)\,[1 - P(B \mid A)]^2 + [1 - P(B \mid A)]^2
+\]
+Determinar monotonicidad respecto al soporte (conf.\ constante) y a la confianza (soporte constante).
+\end{ejerciciobox}
+
+\textbf{Reescritura.} Como $P(B \mid A) = \conf$ y $P(A) = \sop(A)$:
+\[
+\text{gini} = [\sop(A) + 1]\,[1 - \conf(A \Rightarrow B)]^2
+\]
+
+\textbf{Caso 1: confianza constante, soporte varía.}
+El factor $[1 - \conf]^2$ es una constante positiva $K$. Entonces:
+\[
+\text{gini} = K \cdot [\sop(A) + 1]
+\]
+$\Rightarrow$ \textbf{monótona creciente} en el soporte. (La guía dice ``anti-monótona''
+pensando en disminución del Gini como medida de pureza; depende de la convención.
+Lo concreto: si $\sop \uparrow$, entonces $\text{gini} \uparrow$.)
+
+\emph{Comprobación numérica:}
+\begin{align*}
+\conf = 0{,}5,\ \sop = 0{,}2:\quad &(0{,}2 + 1)(1 - 0{,}5)^2 = 1{,}2 \cdot 0{,}25 = 0{,}300 \\
+\conf = 0{,}5,\ \sop = 0{,}1:\quad &(0{,}1 + 1)(1 - 0{,}5)^2 = 1{,}1 \cdot 0{,}25 = 0{,}275
+\end{align*}
+
+\textbf{Caso 2: soporte constante, confianza varía.}
+\[
+\text{gini} = C \cdot [1 - \conf]^2,\qquad C = \sop(A) + 1
+\]
+$\Rightarrow$ \textbf{monótona decreciente} en la confianza (\textbf{anti-monótona}).
+
+\emph{Comprobación numérica con $\sop = 0{,}2$:}
+\begin{align*}
+\conf = 0{,}5:\quad &1{,}2 \cdot (0{,}5)^2 = 0{,}300 \\
+\conf = 0{,}4:\quad &1{,}2 \cdot (0{,}6)^2 = 0{,}432 \\
+\conf = 0{,}3:\quad &1{,}2 \cdot (0{,}7)^2 = 0{,}588
+\end{align*}
+
+\begin{tipbox}
+Conclusión práctica: el Gini \textbf{premia reglas de alta confianza} (Gini chico = pureza alta) y \textbf{crece con el soporte}.
+\end{tipbox}
+
+\subsection{P3: niños alérgicos + invierno $\Rightarrow$ IRA}
+
+\begin{ejerciciobox}{P3 (Cap.\ IV) — Confianza que aumenta al agregar contexto}
+Construir una BD donde $\conf(\text{ALERG} \Rightarrow \text{IRA})$ aumenta cuando se
+agrega la variable INVIERNO al antecedente.
+\end{ejerciciobox}
+
+\textbf{Variables} (binarias):
+\begin{itemize}
+    \item ALERG = 1 si el niño es alérgico.
+    \item IRA = 1 si ingresó a sala IRA.
+    \item INVIERNO = 1 si es invierno.
+\end{itemize}
+
+\textbf{Base de datos propuesta} (10 pacientes):
+
+\begin{center}
+\begin{tabular}{@{}cccc@{}}
+\toprule
+ID & ALERG & IRA & INVIERNO \\
+\midrule
+1 & 1 & 1 & 1 \\
+2 & 1 & 1 & 1 \\
+3 & 1 & 0 & 0 \\
+4 & 0 & 0 & 0 \\
+5 & 1 & 0 & 0 \\
+6 & 1 & 1 & 1 \\
+7 & 0 & 0 & 1 \\
+8 & 1 & 1 & 1 \\
+9 & 0 & 0 & 0 \\
+10& 1 & 1 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Conteos clave:}
+\begin{itemize}
+    \item $\#$ALERG $= 7$ (filas 1,2,3,5,6,8,10).
+    \item $\#$(ALERG $\cap$ IRA) $= 5$ (filas 1,2,6,8,10).
+    \item $\#$(ALERG $\cap$ INVIERNO) $= 5$ (filas 1,2,6,8,10).
+    \item $\#$(ALERG $\cap$ INVIERNO $\cap$ IRA) $= 5$ (mismas).
+\end{itemize}
+
+\textbf{Regla simple:}
+\[
+\conf(\text{ALERG} \Rightarrow \text{IRA}) = \frac{5}{7} \approx 0{,}714 = 71{,}4\%
+\]
+
+\textbf{Regla extendida con invierno:}
+\[
+\conf(\text{ALERG} \wedge \text{INVIERNO} \Rightarrow \text{IRA}) = \frac{5}{5} = 100\%
+\]
+
+\begin{intuicionbox}
+La confianza sube de 71\% a 100\%. Esto valida la hipótesis del médico:
+\emph{el invierno es un factor que vuelve la regla casi determinista}.
+Lo importante en este tipo de ejercicios es construir la BD a mano de modo que el
+denominador (transacciones con todo el antecedente) sea \emph{menor} pero con todos sus
+casos cumpliendo el consecuente.
+\end{intuicionbox}
+
+\subsection{P4: suscriptores Mercurio + Estrategia $\Rightarrow$ viajan}
+
+\begin{ejerciciobox}{P4 (Cap.\ IV) — Validar hipótesis con $\sop > 10\%$, $\conf > 50\%$}
+Mostrar BD que cumpla: MERCURIO $\wedge$ ESTRATEGIA $\Rightarrow$ EXTRANJERO $\vee$ SUR
+con $\conf > 50\%$ y $\sop > 10\%$.
+\end{ejerciciobox}
+
+\textbf{BD (10 personas):}
+
+\begin{center}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+ID & MERC & ESTR & EXTR & SUR \\
+\midrule
+1 & 1 & 1 & 1 & 1 \\
+2 & 1 & 1 & 1 & 0 \\
+3 & 1 & 1 & 0 & 1 \\
+4 & 1 & 1 & 1 & 1 \\
+5 & 1 & 1 & 0 & 0 \\
+6 & 1 & 0 & 1 & 1 \\
+7 & 0 & 1 & 0 & 0 \\
+8 & 0 & 0 & 0 & 1 \\
+9 & 1 & 1 & 1 & 1 \\
+10& 0 & 0 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Conteos:}
+\begin{itemize}
+    \item $\#$(MERC $\cap$ ESTR) $= 6$ (filas 1,2,3,4,5,9).
+    \item De esas, con EXTR $\vee$ SUR $= 5$ (filas 1,2,3,4,9; fila 5 no tiene ni una ni otra).
+\end{itemize}
+
+\begin{align*}
+\conf &= \frac{5}{6} \approx 83\% \;>\; 50\% \;\checkmark \\
+\sop  &= \frac{5}{10} = 50\% \;>\; 10\% \;\checkmark
+\end{align*}
+
+\textbf{Conclusión:} la hipótesis del analista se valida con esta muestra.
+
+% =============================================================================
+\section{Ejercicios resueltos — Guía 4 (ayudante Marcelo)}
+
+\subsection{G1: medidas de calidad y monotonicidad}
+
+\begin{ejerciciobox}{G1 — Conceptual}
+Explicar para qué se usan las medidas de calidad y qué significa monotonicidad.
+\end{ejerciciobox}
+
+\textbf{Respuesta modelo:}
+
+Las medidas de calidad \textbf{cuantifican qué tan ``buena'' o ``interesante'' es una regla}.
+Sirven para:
+\begin{enumerate}
+    \item \textbf{Filtrar} reglas triviales o ruidosas (umbral de soporte/confianza).
+    \item \textbf{Ordenar} reglas de mayor a menor relevancia para el negocio.
+    \item \textbf{Detectar} si la asociación es real o producto de la frecuencia individual
+          (lift, convicción).
+\end{enumerate}
+
+La \textbf{monotonicidad} es la propiedad que indica cómo evoluciona la medida al
+\emph{agregar ítems} al itemset:
+\begin{itemize}
+    \item \textbf{Monótona:} $X \subseteq Y \Rightarrow M(X) \le M(Y)$ (crece al agregar).
+    \item \textbf{Anti-monótona:} $X \subseteq Y \Rightarrow M(X) \ge M(Y)$ (decrece al agregar).
+\end{itemize}
+
+Es \textbf{crucial} porque permite \textbf{podar} el espacio de búsqueda. Si una medida es
+anti-monótona y un itemset no la cumple, ninguno de sus supersets la cumplirá tampoco
+$\Rightarrow$ se descartan sin evaluar. Ejemplo: el \textbf{soporte} es anti-monótono y por
+eso Apriori funciona.
+
+\subsection{G2: identificar dos medidas}
+
+\begin{ejerciciobox}{G2 — Identificación}
+\[
+\text{Medida}_1(A \Rightarrow B) = \frac{P(A)\,[1 - P(B)]}{P(A) - P(A \cap B)},\qquad
+\text{Medida}_2(A \Rightarrow B) = n\,\bigl[\hat{P}(A \cap B) - \hat{P}(A)\,\hat{P}(B)\bigr]
+\]
+Identificar y determinar monotonicidad.
+\end{ejerciciobox}
+
+\textbf{Medida 1 — manipulación:} usar que $P(A) - P(A \cap B) = P(A \cap \neg B)$:
+\[
+\text{Medida}_1 = \frac{P(A)\,P(\neg B)}{P(A \cap \neg B)}
+\]
+\begin{formulabox}[Medida 1 = Convicción]
+\[
+\boxed{\;\text{Medida}_1 = \conv(A \Rightarrow B)\;}
+\]
+\end{formulabox}
+
+\emph{Monotonicidad:} la convicción \textbf{no es monótona} en general.
+\begin{itemize}
+    \item Cuando $\conf \to 1$, $\conv \to \infty$ (regla perfecta).
+    \item Cuando $A$ y $B$ son independientes, $\conv = 1$.
+    \item Agregar ítems al antecedente puede subirla (si especializa) o bajarla.
+\end{itemize}
+
+\textbf{Medida 2 — identificación:} la cantidad $P(A \cap B) - P(A) P(B)$ es exactamente
+el \textbf{leverage} (también llamado \emph{covarianza binaria}). Multiplicada por $n$
+es la \emph{estadística de novedad}:
+\begin{formulabox}[Medida 2 = Leverage $\times n$]
+\[
+\boxed{\;\text{Medida}_2 = n \cdot \text{Leverage}(A \Rightarrow B) = n\bigl[P(A \cap B) - P(A)P(B)\bigr]\;}
+\]
+\end{formulabox}
+
+\emph{Interpretación:} mide cuántas transacciones \emph{de más} (respecto a la independencia)
+cumplen $A \cap B$. Si $A, B$ son independientes $\Rightarrow$ Medida$_2 = 0$.
+
+\emph{Monotonicidad:} \textbf{no es monótona ni anti-monótona} en el itemset. Sin embargo,
+para soporte fijo es \emph{creciente} con la confianza (porque sube $P(A \cap B)$), y para
+confianza fija es \emph{creciente} con el soporte (mismo argumento).
+
+\subsection{G3: algoritmo Apriori}
+
+\begin{ejerciciobox}{G3 — Apriori (Agrawal)}
+(a) Algoritmo de búsqueda y problema computacional. (b) Criterios para optimizar. (c) Combinatoria gráfica.
+\end{ejerciciobox}
+
+\textbf{(a) Algoritmo de búsqueda:} \textbf{búsqueda en anchura (BFS)} por niveles sobre el
+\emph{lattice} (retículo) de itemsets, ordenados por cardinalidad ($L_1, L_2, \ldots$).
+
+\textbf{Problema computacional:} la cantidad de itemsets posibles es $2^n - 1$ con $n$
+ítems. Crecimiento \textbf{exponencial} $\Rightarrow$ infactible para $n > 30$ sin poda.
+Además, cada nivel requiere un \emph{escaneo completo} de la BD.
+
+\textbf{(b) Criterios para optimizar:}
+\begin{itemize}
+    \item \textbf{Soporte mínimo} ($\sop_{\min}$): umbral para considerar un itemset frecuente.
+    \item \textbf{Confianza mínima} ($\conf_{\min}$): umbral para conservar una regla.
+    \item \textbf{Propiedad anti-monótona del soporte:} si un itemset no es frecuente,
+          ninguno de sus supersets lo será.
+\end{itemize}
+
+La decisión de no seguir generando reglas en una rama se llama \textbf{poda} (\emph{pruning})
+o \textbf{poda Apriori}.
+
+\textbf{(c) Combinatoria gráfica:} ya mostrada en la sección 4 (lattice de itemsets).
+
+\subsection{G4: clientes Jumbo (carne molida + tortillas + palta)}
+
+\begin{ejerciciobox}{G4 — La palta aumenta la confianza}
+Construir BD donde $\conf(\text{carne} \Rightarrow \text{tortillas})$ \emph{aumenta} al
+agregar palta al antecedente.
+\end{ejerciciobox}
+
+\textbf{Variables:} CARNE, TORTILLA, PALTA (binarias).
+
+\begin{center}
+\begin{tabular}{@{}cccc@{}}
+\toprule
+TID & CARNE & TORTILLA & PALTA \\
+\midrule
+1 & 1 & 1 & 1 \\
+2 & 1 & 1 & 1 \\
+3 & 1 & 0 & 0 \\
+4 & 1 & 1 & 1 \\
+5 & 1 & 0 & 0 \\
+6 & 0 & 1 & 0 \\
+7 & 1 & 1 & 1 \\
+8 & 0 & 0 & 1 \\
+9 & 1 & 0 & 0 \\
+10& 1 & 1 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Conteos:}
+\begin{itemize}
+    \item $\#$CARNE $= 8$ (todas menos 6 y 8).
+    \item $\#$(CARNE $\cap$ TORT) $= 5$ (filas 1,2,4,7,10).
+    \item $\#$(CARNE $\cap$ PALTA) $= 5$ (filas 1,2,4,7,10).
+    \item $\#$(CARNE $\cap$ PALTA $\cap$ TORT) $= 5$ (mismas filas).
+\end{itemize}
+
+\textbf{Reglas:}
+\begin{align*}
+\conf(\text{CARNE} \Rightarrow \text{TORT}) &= \frac{5}{8} = 62{,}5\% \\
+\conf(\text{CARNE} \wedge \text{PALTA} \Rightarrow \text{TORT}) &= \frac{5}{5} = 100\%
+\end{align*}
+
+\textbf{Conclusión:} agregar palta al antecedente sube la confianza de 62{,}5\% a 100\%.
+La palta \emph{especializa} el patrón: probablemente sea un combo de tacos.
+
+\subsection{G5: nutricionista, descanso + proteínas $\Rightarrow$ recuperación}
+
+\begin{ejerciciobox}{G5 — La confianza disminuye al generalizar + convicción}
+Construir BD donde la regla \emph{específica} tenga alta confianza pero al
+\emph{generalizar} (quitar una condición) la confianza baje. Calcular la convicción.
+\end{ejerciciobox}
+
+\textbf{Variables:} PROT (suplemento de proteínas), DESC (descanso suficiente), REC (recuperación efectiva).
+
+\begin{center}
+\begin{tabular}{@{}cccc@{}}
+\toprule
+TID & PROT & DESC & REC \\
+\midrule
+1 & 1 & 1 & 1 \\
+2 & 1 & 1 & 1 \\
+3 & 1 & 1 & 1 \\
+4 & 1 & 0 & 0 \\
+5 & 1 & 0 & 0 \\
+6 & 1 & 0 & 1 \\
+7 & 0 & 1 & 1 \\
+8 & 0 & 1 & 0 \\
+9 & 0 & 0 & 0 \\
+10& 1 & 1 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Regla específica:} PROT $\wedge$ DESC $\Rightarrow$ REC.
+\begin{itemize}
+    \item $\#$(PROT $\cap$ DESC) $= 4$ (filas 1,2,3,10).
+    \item $\#$(PROT $\cap$ DESC $\cap$ REC) $= 4$ (mismas).
+\end{itemize}
+\[
+\conf(\text{PROT} \wedge \text{DESC} \Rightarrow \text{REC}) = \frac{4}{4} = 100\%
+\]
+
+\textbf{Regla generalizada} (quitamos DESC): PROT $\Rightarrow$ REC.
+\begin{itemize}
+    \item $\#$PROT $= 7$ (filas 1,2,3,4,5,6,10).
+    \item $\#$(PROT $\cap$ REC) $= 5$ (filas 1,2,3,6,10).
+\end{itemize}
+\[
+\conf(\text{PROT} \Rightarrow \text{REC}) = \frac{5}{7} \approx 71{,}4\%
+\]
+
+\textbf{La confianza bajó de 100\% a 71\%} al generalizar. Esto confirma que el descanso
+es un factor determinante.
+
+\textbf{Convicción de la regla específica.} Usando $n = 10$, $\sop(\text{REC}) = 6/10 = 0{,}6$,
+$\conf = 1$:
+\[
+\conv = \frac{1 - P(\text{REC})}{1 - \conf} = \frac{1 - 0{,}6}{1 - 1} = \frac{0{,}4}{0}
+\]
+
+\begin{tipbox}[Atención: convicción infinita]
+Cuando $\conf = 1$ \emph{exactamente}, la convicción tiende a \textbf{infinito} (división por
+cero). Esto es la \emph{interpretación correcta}: la regla es \emph{lógicamente perfecta} sobre
+la muestra (sin contraejemplos). Para evitar el infinito en cálculos numéricos, se suele
+reportar simplemente $\conv \to \infty$ o tomar una versión con suavizado de Laplace.
+\end{tipbox}
+
+\textbf{Convicción de la regla generalizada} PROT $\Rightarrow$ REC, con la fórmula del curso:
+\[
+\conv = \frac{n - \sop(\text{REC})}{n\,[1 - \conf]} = \frac{10 - 6}{10\,(1 - 5/7)} = \frac{4}{10 \cdot 2/7} = \frac{4 \cdot 7}{20} = 1{,}4
+\]
+Equivalentemente con probabilidades: $\dfrac{1 - 0{,}6}{1 - 0{,}714} = \dfrac{0{,}4}{0{,}286} \approx 1{,}4$.
+$\conv > 1$ indica que la regla es mejor que el azar, aunque \textbf{moderadamente}.
+
+% =============================================================================
+\section{Tabla resumen — Una carilla para llevar al examen}
+
+\begin{formulabox}[Cheat-sheet Reglas de Asociación]
+\textbf{Medidas básicas} ($n$ = total transacciones):
+\[
+\sop(A \Rightarrow B) = \frac{\#(A \cap B)}{n} \qquad
+\conf(A \Rightarrow B) = \frac{\#(A \cap B)}{\#A}
+\]
+\textbf{Medidas de interés:}
+\[
+\lift = \frac{\conf}{P(B)} \qquad
+\conv = \frac{1 - P(B)}{1 - \conf} = \frac{n - \sop(B)}{n[1 - \conf]}
+\]
+\textbf{Leverage:} $P(A \cap B) - P(A)P(B)$ \\
+\textbf{Jaccard:} $\dfrac{\#(A \cap B)}{\#(A \cup B)}$
+
+\smallskip
+\textbf{Monotonicidad clave:}
+\begin{itemize}\setlength{\itemsep}{0pt}
+    \item Soporte: \textbf{anti-monótono} (base de Apriori).
+    \item Confianza: \textbf{no monótona}.
+    \item Lift, convicción: \textbf{no monótonas}.
+\end{itemize}
+
+\textbf{Apriori en 1 línea:} BFS por niveles + poda anti-monótona del soporte + generación de reglas filtrada por $\conf_{\min}$.
+
+\textbf{Valores de referencia:}
+\[
+\lift = 1 \text{ indep.}\quad \lift > 1 \text{ positivo}\quad
+\conv = 1 \text{ indep.}\quad \conv \to \infty \text{ perfecta}
+\]
+\end{formulabox}
+
+% =============================================================================
+\section{Errores comunes y tips finales}
+
+\begin{tipbox}[Cinco errores típicos en el examen]
+\begin{enumerate}
+    \item \textbf{Confundir soporte y confianza:} soporte usa $n$ en el denominador,
+          confianza usa $\#A$.
+    \item \textbf{Calcular convicción con $\conf = 1$:} da infinito, escríbelo así.
+    \item \textbf{Olvidar que el soporte es de la regla completa:} $\sop(A \Rightarrow B) = P(A \cap B)$, NO solo $P(A)$.
+    \item \textbf{Asumir monotonicidad de la confianza:} es \emph{falso}. Por eso Apriori
+          filtra primero por soporte.
+    \item \textbf{Decir ``Apriori es DFS'':} es \textbf{BFS} por niveles.
+          Los algoritmos DFS son FP-Growth y Eclat.
+\end{enumerate}
+\end{tipbox}
+
+\begin{intuicionbox}[Última intuición: cuándo subir y bajar el antecedente]
+\begin{itemize}
+    \item \textbf{Agregar ítem al antecedente} ($A \to A \wedge C$): el soporte
+          \emph{siempre baja o se mantiene} (anti-monotonía). La confianza puede subir o bajar.
+          Se busca subirla $\to$ se llama \emph{especialización}.
+    \item \textbf{Quitar ítem del antecedente} (generalizar): el soporte sube, la confianza
+          tiende a bajar (porque ``mezclamos'' casos menos puros).
+\end{itemize}
+\end{intuicionbox}
+
+\vfill
+\begin{center}
+\small\itshape
+``Una regla con $\sop = 90\%$ y $\conf = 30\%$ es trivial. Una con $\sop = 1\%$ y
+$\conf = 99\%$ es interesante pero rara. El arte está en encontrar reglas con \emph{ambos
+altos}.''
+\end{center}
+
+\end{document}
