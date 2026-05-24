@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.26)  24 MAY 2026 00:11
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.26)  24 MAY 2026 00:31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1085,27 +1085,27 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 111
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [2] [3] [4] [5]
 [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17]
-Underfull \hbox (badness 10000) in paragraph at lines 881--882
+Underfull \hbox (badness 10000) in paragraph at lines 890--891
 []|\T1/cmr/m/n/10 Estilo de die-ta (lác-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 885--886
+Underfull \hbox (badness 10000) in paragraph at lines 894--895
 []|\T1/cmr/m/n/10 Tecnificación
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 886--886
+Underfull \hbox (badness 10000) in paragraph at lines 895--895
 []|\T1/cmr/m/n/10 Malignidad (ta-ma-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 888--888
+Underfull \hbox (badness 10000) in paragraph at lines 897--897
 []|\T1/cmr/m/n/10 Complejidad dendrítica-
  []
 
 
-Underfull \hbox (badness 2452) in paragraph at lines 888--889
+Underfull \hbox (badness 2452) in paragraph at lines 897--898
 []|\T1/cmr/m/n/10 Axón lar-go vs. mu-chas
  []
 
@@ -1128,10 +1128,10 @@ ged.
 (rerunfilecheck)             Checksum: A0A7E35B2229DB33345E102922DDC906;1981.
  ) 
 Here is how much of TeX's memory you used:
- 41007 strings out of 467349
- 950636 string characters out of 5419856
+ 41008 strings out of 467349
+ 950652 string characters out of 5419856
  1533355 words of memory out of 5000000
- 69431 multiletter control sequences out of 15000+600000
+ 69432 multiletter control sequences out of 15000+600000
  653381 words of font info for 103 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  116i,15n,121p,747b,2149s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1159,7 +1159,7 @@ c/cm-super/sfti1000.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super
 /sfti1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfti1200.
 pfb>
 Output written on C:/Developer/data-inteligencia/documentation/aprendizaje/buil
-d/informe-acp-ayudantia-2026.pdf (19 pages, 453008 bytes).
+d/informe-acp-ayudantia-2026.pdf (19 pages, 455244 bytes).
 PDF statistics:
  297 PDF objects out of 1000 (max. 8388607)
  222 compressed objects within 3 object streams
