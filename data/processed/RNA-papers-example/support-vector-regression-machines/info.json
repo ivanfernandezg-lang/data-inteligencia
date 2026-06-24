@@ -1,0 +1,16 @@
+{
+  "archivo": "Support-vector-regression-machines.pdf",
+  "paginas": 7,
+  "tamaño_mb": 2.71,
+  "metadata": {
+    "format": "PDF 1.3",
+    "title": "Support Vector Regression Machines",
+    "author": "Harris Drucker, Christopher J. C. Burges, Linda Kaufman, Alex J. Smola, Vladimir Vapnik",
+    "subject": "Neural Information Processing Systems http://nips.cc/",
+    "producer": "Python PDF Library - http://pybrary.net/pyPdf/",
+    "modDate": "D:20140421163111-07'00'"
+  },
+  "tiene_texto": true,
+  "tiene_imagenes": true,
+  "tiene_tablas": false
+}

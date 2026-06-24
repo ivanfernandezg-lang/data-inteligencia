@@ -1,0 +1,14 @@
+"ViT-
+ViT-","B/32 JFT-
+L/16 JFT-",,"300M
+300M",,,,
+ViT-,B/16 JFT-,,300M,,,,
+"ViT-
+ViT-","H/14 JFT-
+B/32 Ima",,"300M
+geNet",,,,
+ViT-,L/16 Ima,,geNet,,,,
+ViT-,H/14 Ima,,geNet,,,,
+ViT-,B/16 Ima,,geNet,,,,
+,,,,,,,
+,,,,,,,

@@ -1,0 +1,4 @@
+Dataset,Functionality,Human-generated,LLM-generated,Total
+DAIGT,Training,23833,11531,35364
+DAIGT,In-dist.a testing,5959,2883,8842
+Deepfake,Out-of-dist.a testing,800,762,1562

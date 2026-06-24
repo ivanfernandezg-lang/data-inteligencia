@@ -1,0 +1,13 @@
+,Method,Accuracy,
+,,"In-dist. testing
+DAIGT","Out-of-dist. testing
+Deepfake"
+Single Classifier,DistilBert,0.906,0.567
+,DeBERTaV3,0.974,0.616
+,FNet,0.870,0.659
+,Albert,0.923,0.699
+,XLMRoberta,0.917,0.602
+Non-adaptive Ensemble,Hard Voting,0.970,0.651
+Adaptive Ensemble,Neural Network,0.992,0.736
+,Random Forest,0.992,0.722
+,GBDT,0.992,0.718

@@ -1,0 +1,65 @@
+,Text Summarization [36],"Compared ChatGPT’s
+performance in summarizing
+texts with other fine-tuning
+models","Similar performance to
+existing models in terms of
+Rouge scores"
+,Improve essay quality [37],"Divided students into control
+and experimental groups
+(who used ChatGPT) to
+assess their essays","No evidence of ChatGPT
+improving writing quality as
+control group outperformed
+experimental group"
+Reasoning,"Evaluate ChatGPT on various
+reasoning tasks [38]","Proposed framework to
+evaluate the multitask,
+multilingual, and multimodal
+reasoning of language models","Performs well on deductive
+and commonsense reasoning
+but not on inductive reasoning"
+"Journalism and
+Misinformation Detection","Evaluate ChatGPT response
+on conspiracy statements and
+politically divided ideas [40]","Performed a descriptive study
+on ChatGPT responses to
+various COVID-19 vaccine
+topics","ChatGPT was dismissive of
+conspiracy statements but
+remained neutral on
+controversial political views
+by stating pros and cons"
+Software Development,"Evaluate ChatGPT’s response
+to software testing questions
+[41]","Asked ChatGPT to respond to
+textbook questions in a
+common software testing
+curriculum","Only 37.5% of the questions
+were correctly answered"
+Translation,"Evaluate ChatGPT’s ability in
+translation [42]","Used several benchmark test
+sets to compare ChatGPT’s
+responses in translating","Performs on par with
+commercial applications for
+high-resource European
+languages but lags behind on
+distant languages"
+Scientific Research,"Write scientific and academic
+papers [43]","Discussed several papers who
+used and listed ChatGPT as
+authors","Highlighted potential ethical
+concerns"
+,"Automation in Economic
+research [49]","Highlighted use cases of
+ChatGPT in research,
+including language editing
+and headline generation",N/A
+,"Summarize and translate
+research papers for non-
+native English speakers [50]","Used ChatGPT to summarize
+and other AI tools to translate
+Chinese written paper","Coherent writing style after
+manual screening. Potential
+benefit in speeding up
+research but has several
+ethical concerns"

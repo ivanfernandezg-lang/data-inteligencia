@@ -1,0 +1,31 @@
+,,,tanh,GRU,LSTM
+Music Datasets,Nottingham,"train
+test","3.22
+3.13","2.79
+3.23","3.08
+3.20"
+,JSB Chorales,"train
+test","8.82
+9.10","6.94
+8.54","8.15
+8.67"
+,MuseData,"train
+test","5.64
+6.23","5.06
+5.99","5.18
+6.23"
+,Piano-midi,"train
+test","5.64
+9.03","4.93
+8.82","6.49
+9.03"
+Ubisoft Datasets,Ubisoft dataset A,"train
+test","6.29
+6.44","2.31
+3.59","1.44
+2.70"
+,Ubisoft dataset B,"train
+test","7.61
+7.62","0.38
+0.88","0.80
+1.26"

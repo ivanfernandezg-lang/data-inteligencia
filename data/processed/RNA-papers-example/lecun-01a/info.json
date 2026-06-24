@@ -1,0 +1,12 @@
+{
+  "archivo": "lecun-01a.pdf",
+  "paginas": 46,
+  "tamaño_mb": 0.91,
+  "metadata": {
+    "format": "PDF 1.2",
+    "producer": "ESP Ghostscript 7.07"
+  },
+  "tiene_texto": true,
+  "tiene_imagenes": false,
+  "tiene_tablas": true
+}

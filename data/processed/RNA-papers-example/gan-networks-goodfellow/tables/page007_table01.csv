@@ -1,0 +1,28 @@
+"Inference needed
+during training.","Inference needed
+during training.
+MCMC needed to
+approximate
+partition function
+gradient.","Enforced tradeoff
+between mixing
+and power of
+reconstruction
+generation"
+"Learned
+approximate
+inference","Variational
+inference","MCMC-based
+inference"
+No difficulties,"Requires Markov
+chain","Requires Markov
+chain"
+"Intractable, may be
+approximated with
+AIS","Intractable, may be
+approximated with
+AIS","Not explicitly
+represented, may be
+approximated with
+Parzen density
+estimation"

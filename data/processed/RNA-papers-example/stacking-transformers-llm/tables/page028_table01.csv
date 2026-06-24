@@ -1,0 +1,20 @@
+"Pythia-1B TinyLlama-1.1B
+Datasets Pile-300B [51] Slimpajama-627B& Starcoder
+Tokens 100B 103B","G -1.1B Baseline-1.1B
+stack
+Slimpajama-627B Slimpajama-627B
+100B 100B"
+"lambada 53.52 -
+ARC-c 25.59 24.32
+ARC-e 47.26 44.91
+piqa 69.31 67.30
+logiqa 29.49 -
+sciq 77.3 -
+winogrande 51.22 53.28","48.20 47.87
+29.18 27.21
+54.25 48.86
+71.98 69.64
+28.87 25.96
+81.1 76.8
+56.03 54.53"
+Avg. 50.53 -,52.80 50.09
