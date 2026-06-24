@@ -1,0 +1,347 @@
+% ═══════════════════════════════════════════════════════════════════
+%  PRE-INFORME — Tarea IC RNA 2026-1
+%  Paper: Widrow & Lehr (1990)
+%  "30 Years of Adaptive Neural Networks:
+%   Perceptron, Madaline, and Backpropagation"
+% ═══════════════════════════════════════════════════════════════════
+
+\documentclass[12pt,a4paper]{article}
+
+% ── Paquetes ──────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{cite}
+
+% ── Metadatos ─────────────────────────────────────────────────────
+\title{\textbf{Pre-Informe: Algoritmos de Aprendizaje en Redes Neuronales Artificiales}\\[4pt]
+\large Basado en el artículo de Widrow \& Lehr (1990):\\
+\textit{30 Years of Adaptive Neural Networks}}
+\author{Estudiante\\Universidad de Santiago de Chile\\Magíster en Ingeniería Informática}
+\date{Junio 2026}
+
+% ── Comandos personalizados ──────────────────────────────────────
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\norm}[1]{\lVert#1\rVert}
+\newcommand{\inner}[1]{\langle#1\rangle}
+\newcommand{\alphaLMS}{$\alpha$-LMS }
+\newcommand{\muLMS}{$\mu$-LMS }
+
+\begin{document}
+\maketitle
+
+% ═══════════════════════════════════════════════════════════════════
+%  1. INTRODUCCIÓN (15%)
+% ═══════════════════════════════════════════════════════════════════
+\section{Introducción}
+
+\subsection{Problema abordado}
+
+El artículo de Widrow \& Lehr (1990) aborda el problema fundamental del \textbf{aprendizaje supervisado en redes neuronales artificiales (RNA) feedforward}: ¿cómo adaptar los pesos sinápticos de una red de elementos computacionales simples para que aproximen una función de clasificación o regresión a partir de ejemplos? En particular, el artículo revisa 30 años de desarrollo de algoritmos de entrenamiento —desde el Perceptrón de Rosenblatt (1958) hasta la retropropagación del error (backpropagation) de Rumelhart, Hinton \& Williams (1986)— y demuestra que todos ellos comparten un principio unificador: el \textbf{principio de mínima perturbación} (\textit{minimal disturbance principle}).
+
+El problema concreto que motiva la investigación es la \textbf{clasificación de patrones} (binarios $\pm1$) y la \textbf{aproximación de funciones} mediante elementos adaptativos lineales (Adalines) organizados en arquitecturas monocapa y multicapa. Las arquitecturas consideradas incluyen el Perceptrón simple, el Adaline de Widrow-Hoff, las redes Madaline (I, II, III) y las redes multicapa con retropropagación.
+
+\subsection{¿Por qué redes neuronales artificiales?}
+
+La motivación para usar RNA en este contexto se fundamenta en tres argumentos presentados en la Sección I--II del artículo:
+
+\begin{enumerate}[label=\textbf{(\roman*)},leftmargin=*]
+    \item \textbf{Paralelismo masivo y robustez biológica:} Los sistemas biológicos (el cerebro) resuelven tareas de reconocimiento de patrones, procesamiento de voz e imágenes con una facilidad que las computadoras Von Neumann no igualan. Las RNA emulan este paralelismo mediante miles de elementos simples interconectados que procesan información simultáneamente.
+    \item \textbf{Capacidad de aprendizaje por ejemplos:} A diferencia de los sistemas algorítmicos tradicionales, las RNA no requieren programación explícita de reglas. Aprenden la función de mapeo entrada-salida directamente de los datos mediante algoritmos iterativos de corrección de error.
+    \item \textbf{Generalización:} Una RNA correctamente entrenada es capaz de clasificar correctamente patrones no vistos durante el entrenamiento. La capacidad de generalización está inversamente relacionada con la capacidad de almacenamiento de patrones ($C_s \approx 2N_w$, Cover, 1964), un \textit{trade-off} fundamental que el artículo explora en profundidad.
+\end{enumerate}
+
+\subsection{Hipótesis}
+
+La hipótesis central del artículo —y que guía este informe— es:
+
+\begin{quote}
+\textit{``Todos los algoritmos de aprendizaje supervisado para RNA feedforward —el Perceptron Rule, $\alpha$-LMS, $\mu$-LMS, Madaline Rules I/II/III y backpropagation— pueden ser unificados bajo el principio de mínima perturbación: adaptar los pesos para reducir el error de salida ante el patrón actual, minimizando la perturbación sobre las respuestas ya aprendidas.''} \hfill (Widrow \& Lehr, 1990, p.~1423)
+\end{quote}
+
+% ═══════════════════════════════════════════════════════════════════
+%  2. MARCO TEÓRICO (15%)
+% ═══════════════════════════════════════════════════════════════════
+\section{Marco Teórico}
+
+\subsection{Elemento adaptativo básico: el Adaline}
+
+El bloque constructivo fundamental de las RNA feedforward es el \textbf{Adaptive Linear Element} (Adaline), compuesto por:
+
+\begin{enumerate}[leftmargin=*]
+    \item Un \textbf{combinador lineal adaptativo} que calcula $s_k = X_k^T W_k$, donde $X_k \in \{\pm1\}^n$ es el vector de entrada y $W_k \in \R^{n+1}$ el vector de pesos (incluyendo el bias $w_0$).
+    \item Un \textbf{cuantizador hard-limiting} (signum) que produce la salida binaria $y_k = \mathrm{sgn}(s_k) \in \{\pm1\}$.
+\end{enumerate}
+
+La condición crítica de umbral $s = 0$ define un \textbf{hiperplano separador} en el espacio de patrones. Con $n$ entradas binarias, un Adaline puede implementar solo las funciones lógicas \textbf{linealmente separables} (14 de 16 posibles para $n=2$).
+
+\subsection{Capacidad de patrones}
+
+Un resultado fundamental de Cover (1964) establece que la \textbf{capacidad estadística} de un Adaline con $N_w$ pesos es $C_s \approx 2N_w$ patrones aleatorios linealmente separables, y su \textbf{capacidad determinística} es $C_d = N_w$. Para redes multicapa con $N_y$ salidas, Baum extendió estos resultados acotando:
+\[
+\frac{N_w}{N_y} - K_1 \leq C_d \leq \frac{N_w}{N_y} \log_2\!\left(\frac{N_w}{N_y}\right) + K_2
+\]
+
+\subsection{Algoritmos de aprendizaje}
+
+El artículo presenta 4 familias de algoritmos, todas gobernadas por el principio de mínima perturbación:
+
+\subsubsection{$\alpha$-LMS (Widrow-Hoff Delta Rule) — Eq.~(10)}
+
+\[
+W_{k+1} = W_k + \alpha\,\frac{\epsilon_k}{\norm{X_k}^2}\,X_k
+\]
+donde $\epsilon_k = d_k - X_k^T W_k$ es el error lineal. El cambio de peso $\Delta W_k$ es \textbf{colineal} con $X_k$, garantizando la corrección del error con la mínima magnitud de cambio posible. Rango de estabilidad: $0 < \alpha < 2$. Este algoritmo minimiza el error cuadrático medio (MSE) si todos los patrones tienen igual longitud.
+
+\subsubsection{Perceptron Rule (Rosenblatt) — Eq.~(18)}
+
+\[
+W_{k+1} = W_k + \alpha\,\frac{\tilde{\epsilon}_k}{2}\,X_k
+\]
+donde $\tilde{\epsilon}_k = d_k - y_k$ es el error del cuantizador. El Perceptron \textbf{solo adapta si la salida es incorrecta}, y está \textbf{garantizado que converge} a una solución en un número finito de pasos si los datos son linealmente separables (teorema de convergencia del Perceptrón). Si los datos no son separables, el peso tiende a cero y el algoritmo no encuentra una solución de bajo error.
+
+\subsubsection{$\mu$-LMS (Steepest Descent) — Eq.~(33)}
+
+\[
+W_{k+1} = W_k + 2\mu\,\epsilon_k\,X_k
+\]
+Este algoritmo realiza \textbf{descenso por gradiente estocástico} sobre la superficie de MSE, que para un combinador lineal es un \textbf{paraboloide convexo} con un único mínimo global: la solución de Wiener $W^* = R^{-1}P$, donde $R = \E[X_k X_k^T]$ y $P = \E[d_k X_k]$. Rango de estabilidad: $0 < \mu < 1/\mathrm{tr}[R]$.
+
+\subsubsection{Backpropagation (MLP sigmoide) — Eq.~(54)}
+
+Para redes multicapa con funciones de activación diferenciables (sigmoide, típicamente $\tanh$):
+\[
+W_{k+1} = W_k + 2\mu\,\tilde{\epsilon}_k \cdot \mathrm{sgm}'(s_k)\,X_k
+\]
+donde $\mathrm{sgm}'(s_k) = 1 - \tanh^2(s_k) = 1 - y_k^2$ (Eq.~55). La retropropagación extiende el gradiente descendente a través de las capas ocultas, propagando el error hacia atrás mediante la regla de la cadena. Este algoritmo es matemáticamente equivalente a Madaline Rule III (MRIII) cuando la perturbación $\Delta s$ es infinitesimal (Sección VI-B del artículo).
+
+\subsection{Funciones de activación}
+
+El artículo distingue dos tipos:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Signum (hard-limiting):} $y = \mathrm{sgn}(s)$. Usado en Adaline, Perceptron, Madaline I/II. Ventaja: simplicidad computacional. Desventaja: superficie MSE no convexa (puede tener óptimos locales).
+    \item \textbf{Sigmoide (tanh):} $y = \tanh(s)$. Usado en backpropagation y MRIII. Ventaja: diferenciable, superficie MSE más suave. Desventaja: mayor costo computacional.
+\end{itemize}
+
+\subsection{Modo de aprendizaje}
+
+Todos los algoritmos descritos operan en modo \textbf{supervisado}: requieren un vector de entrada $X_k$ y su correspondiente respuesta deseada $d_k$. El aprendizaje es \textbf{on-line} (patrón por patrón, también llamado estocástico), por oposición al aprendizaje por lotes (\textit{batch}).
+
+% ═══════════════════════════════════════════════════════════════════
+%  3. EXPERIMENTACIÓN (15%)
+% ═══════════════════════════════════════════════════════════════════
+\section{Experimentación}
+
+\subsection{Algoritmos implementados}
+
+Se implementaron desde cero en Python (NumPy) los 4 algoritmos descritos en el artículo, sin uso de frameworks de machine learning:
+
+\begin{enumerate}[leftmargin=*]
+    \item $\alpha$\textbf{-LMS} (Widrow-Hoff): corrección de error lineal, $\alpha \in [0.1, 1.0]$.
+    \item \textbf{Perceptron Rule} (Rosenblatt): corrección de error no lineal, $\alpha = 1.0$.
+    \item $\mu$\textbf{-LMS} (Steepest Descent): gradiente descendente estocástico, $\mu$ calibrado según $\mathrm{tr}[R]$.
+    \item \textbf{Backpropagation (MLP sigmoide):} red multicapa con $\tanh$, 1--2 capas ocultas.
+\end{enumerate}
+
+\subsection{Datasets utilizados}
+
+Se emplearon fuentes reconocidas por la comunidad de Machine Learning (UCI Repository, scikit-learn):
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}llccc@{}}
+\toprule
+\textbf{Dataset} & \textbf{Fuente} & \textbf{Instancias} & \textbf{Features} & \textbf{Clases} \\
+\midrule
+Sintético $\pm1$ & numpy & 300 & 2--10 & 2 \\
+Sintético XOR & numpy & 200 & 2 & 2 \\
+Iris (Setosa vs resto) & UCI \#53, Fisher (1936) & 150 & 4 & 2 \\
+Wine Quality (tinto)\footnotemark & UCI \#186, Cortez et al. (2009) & 1,599 & 11 & 2 \\
+Moons & sklearn & 300 & 2 & 2 \\
+\bottomrule
+\end{tabular}
+\caption{Datasets utilizados en los experimentos.}
+\label{tab:datasets}
+\end{table}
+\footnotetext{El target (quality $\in [0,10]$) se binarizó: $\geq 7 = \text{buen vino} = +1$.}
+
+\subsection{Preprocesamiento}
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Normalización:} Los datasets reales se escalaron al rango $[-1, 1]$ con \texttt{MinMaxScaler}, justificado por el \textit{normalized training set} de las Eqs.~(39)--(43) del artículo.
+    \item \textbf{Binarización:} Las clases se mapearon a $\{\pm1\}$ para compatibilidad con los algoritmos del artículo (que asumen salidas bipolares).
+    \item \textbf{Partición:} 70\% entrenamiento, 30\% prueba, con estratificación para mantener balance de clases.
+\end{itemize}
+
+\subsection{Costo computacional}
+
+Todos los algoritmos tienen complejidad $\mathcal{O}(N_w)$ por iteración (producto punto de $X_k$ con $W_k$). El MLP con backpropagation agrega un factor proporcional al número de capas y neuronas ocultas. Los experimentos se ejecutaron en CPU estándar (sin GPU), con tiempos de entrenamiento $< 2$ segundos para todos los datasets.
+
+% ═══════════════════════════════════════════════════════════════════
+%  4. ANÁLISIS DE RESULTADOS (30%)
+% ═══════════════════════════════════════════════════════════════════
+\section{Análisis de Resultados}
+
+\subsection{Resultados obtenidos}
+
+La Tabla~\ref{tab:resultados} resume los resultados de todos los experimentos realizados.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}llccc@{}}
+\toprule
+\textbf{Algoritmo} & \textbf{Dataset} & \textbf{MSE final} & \textbf{Accuracy} & $\norm{W - W^*}$ \\
+\midrule
+$\alpha$-LMS & Sintético (separable) & 0.0000 & 100.0\% & --- \\
+$\alpha$-LMS & Sintético (10\% ruido) & 0.7854 & 70.0\% & --- \\
+Perceptron & Sintético (separable) & --- & 100.0\% & --- \\
+Perceptron & Sintético (10\% ruido) & --- & 88.0\% & --- \\
+$\mu$-LMS & Sintético (2D) & 0.3985 & 93.0\% & 0.0150 \\
+Backprop MLP & XOR & 0.0018 & 100.0\% & --- \\
+\midrule
+Perceptron & Iris (Setosa) & --- & \textbf{100.0\%} & --- \\
+$\alpha$-LMS & Wine Quality & 0.3606 & \textbf{87.3\%} & --- \\
+$\mu$-LMS & Wine Quality & 0.3580 & \textbf{87.1\%} & 0.1921 \\
+Backprop MLP & Moons & 0.0069 & \textbf{100.0\%} & --- \\
+\bottomrule
+\end{tabular}
+\caption{Resultados experimentales de los 4 algoritmos en 7 configuraciones.}
+\label{tab:resultados}
+\end{table}
+
+\subsection{Interpretación}
+
+\subsubsection{Convergencia del Perceptrón}
+
+El Perceptrón \textbf{convergió en solo 2 épocas} tanto en el dataset sintético separable como en Iris Setosa (100\% accuracy en ambos). Esto valida el teorema de convergencia del Perceptrón (Cover, 1964): si los datos son linealmente separables, el algoritmo encuentra un hiperplano separador en un número finito de iteraciones. Sin embargo, ante un 10\% de ruido, el Perceptrón alcanzó solo 88\% —no converge a 100\% porque el conjunto de entrenamiento ya no es separable.
+
+\subsubsection{Robustez de $\alpha$-LMS vs Perceptron Rule}
+
+Un hallazgo no trivial es que el Perceptrón (88\%) superó a $\alpha$-LMS (70\%) en el dataset con ruido. Esto se explica porque $\alpha$-LMS minimiza el \textbf{error lineal} (MSE), mientras que el Perceptrón minimiza directamente el \textbf{error de clasificación} (quantizer error). La optimización del MSE no siempre maximiza la accuracy de clasificación, especialmente cuando las clases están solapadas.
+
+\subsubsection{Convergencia de $\mu$-LMS al óptimo de Wiener}
+
+$\mu$-LMS convergió al peso óptimo de Wiener con una distancia $\norm{W - W^*} = 0.0150$ sobre el dataset sintético 2D. Esto confirma la teoría de la Sección VI-A del artículo: la superficie MSE de un combinador lineal es convexa, y el gradiente estocástico converge en media a $W^* = R^{-1}P$. La convergencia es más lenta que $\alpha$-LMS (requiere más épocas), pero la solución es óptima en el sentido de mínimo MSE.
+
+\subsubsection{Poder del MLP con Backpropagation}
+
+El MLP con backpropagation fue el \textbf{único algoritmo capaz de resolver XOR} (100\% accuracy) y Moons (100\% accuracy). Estos problemas son inherentemente \textbf{no linealmente separables}: ninguna recta (o hiperplano) puede separar las clases. La arquitectura multicapa con función sigmoide permite trazar fronteras de decisión no lineales, confirmando que:
+\begin{itemize}[leftmargin=*]
+    \item Un Adaline simple \textbf{no puede} implementar XOR (14 de 16 funciones lógicas para $n=2$).
+    \item Un MLP de 2 capas (4 neuronas ocultas) \textbf{sí puede}, gracias a que la capa oculta transforma el espacio de entrada en una representación donde los patrones se vuelven linealmente separables.
+\end{itemize}
+
+\subsubsection{Wine Quality: limitaciones del clasificador lineal}
+
+En el dataset Wine Quality, los clasificadores lineales ($\alpha$-LMS y $\mu$-LMS) alcanzaron $\approx 87.3\%$ de accuracy. Este resultado es consistente con la hipótesis de que la calidad del vino \textbf{no es perfectamente separable} por un hiperplano en el espacio de 11 features fisicoquímicas. Un MLP con backpropagation podría potencialmente superar esta cota, pero no se incluyó en este experimento por limitaciones de tiempo.
+
+\subsection{Métricas de eficiencia}
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Accuracy:} fracción de predicciones correctas sobre el total.
+    \item \textbf{MSE (Mean Square Error):} $\frac{1}{N}\sum (d_k - s_k)^2$, usado para evaluar convergencia de $\alpha$-LMS y $\mu$-LMS.
+    \item \textbf{$\norm{W - W^*}$:} distancia euclidiana al peso óptimo de Wiener, indicador de convergencia para $\mu$-LMS.
+    \item \textbf{Épocas hasta convergencia:} número de pasadas completas sobre el training set necesarias para alcanzar el criterio de parada.
+\end{itemize}
+
+\subsection{Criterios de selección del modelo}
+
+De los experimentos se desprenden los siguientes criterios para la selección del algoritmo apropiado:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Si los datos son linealmente separables:} El Perceptron Rule converge en el menor número de épocas y garantiza 100\% accuracy en training.
+    \item \textbf{Si los datos tienen ruido o solapamiento:} $\alpha$-LMS o $\mu$-LMS ofrecen mejor compromiso MSE-accuracy y no divergen catastróficamente.
+    \item \textbf{Si el problema es no lineal:} Solo el MLP con backpropagation (o arquitecturas equivalentes como Madaline) puede resolverlo.
+\end{enumerate}
+
+% ═══════════════════════════════════════════════════════════════════
+%  5. CONCLUSIONES (20%)
+% ═══════════════════════════════════════════════════════════════════
+\section{Conclusiones}
+
+\subsection{Aporte al conocimiento}
+
+El artículo de Widrow \& Lehr (1990) —y los experimentos realizados en este trabajo— demuestran que el \textbf{principio de mínima perturbación} es el hilo conductor que unifica 30 años de desarrollo de algoritmos de aprendizaje para RNA feedforward. Los experimentos confirman que:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{El Perceptron converge} en tiempo finito solo si los datos son linealmente separables, validando el resultado teórico de Cover (1964) tanto en datos sintéticos (2 épocas) como en Iris Setosa (2 épocas, 100\% test accuracy).
+    \item \textbf{$\alpha$-LMS es más robusto} que el Perceptron ante datos no separables en términos de MSE, aunque no necesariamente en accuracy de clasificación. La elección entre minimizar MSE o error de clasificación depende del problema concreto.
+    \item \textbf{$\mu$-LMS converge al óptimo de Wiener} $W^* = R^{-1}P$, confirmando experimentalmente que la superficie MSE del combinador lineal es un paraboloide convexo ($\norm{W - W^*} = 0.015$).
+    \item \textbf{El MLP con backpropagation} es indispensable para problemas no lineales (XOR, Moons), donde los clasificadores lineales fracasan por definición.
+\end{enumerate}
+
+\subsection{Evaluación de la hipótesis}
+
+Los experimentos \textbf{validan parcialmente} la hipótesis del artículo. Todos los algoritmos ($\alpha$-LMS, Perceptron, $\mu$-LMS, backpropagation) efectivamente comparten el principio de mínima perturbación: el cambio de pesos $\Delta W_k$ es siempre colineal con el vector de entrada $X_k$, minimizando $\norm{\Delta W_k}$ para la corrección de error deseada. Sin embargo, los resultados también revelan una \textbf{limitación} de los clasificadores lineales cuando se aplican a datasets reales como Wine Quality:
+
+\begin{quote}
+\textit{``Los clasificadores lineales alcanzan un techo de $\approx 87\%$ en Wine Quality. Este resultado es consistente con la naturaleza no perfectamente separable del problema, y sugiere que incluso un Adaline óptimo (Wiener) no puede superar la cota impuesta por la inseparable linealidad de los datos.''}
+\end{quote}
+
+\subsection{Limitaciones}
+
+\begin{itemize}[leftmargin=*]
+    \item Los experimentos se limitaron a datasets de baja dimensionalidad ($\leq 11$ features). La escalabilidad a problemas de alta dimensionalidad no fue evaluada.
+    \item No se implementaron las variantes Madaline Rule II ni III, que el artículo describe como alternativas a backpropagation.
+    \item La inicialización de pesos fue siempre en cero (o cercana a cero), lo cual es válido para arquitecturas monocapa pero subóptimo para MLP (Sección VII del artículo recomienda inicialización tipo Nguyen-Widrow).
+    \item El dataset Wine Quality tiene un desbalance de clases (13.6\% buenos vs 86.4\% regulares), lo cual puede sesgar las métricas de accuracy.
+\end{itemize}
+
+\subsection{Trabajo futuro}
+
+\begin{enumerate}[leftmargin=*]
+    \item Implementar Madaline Rule II y III para comparar su desempeño con backpropagation estándar en el mismo conjunto de datasets.
+    \item Explorar la inicialización Nguyen-Widrow para el MLP y evaluar su impacto en la velocidad de convergencia.
+    \item Aplicar los algoritmos a un dataset de mayor dimensionalidad (por ejemplo, MNIST reducido) para evaluar la escalabilidad del principio de mínima perturbación.
+    \item Incorporar métricas adicionales (F1-score, AUC-ROC) para datasets desbalanceados como Wine Quality.
+\end{enumerate}
+
+% ═══════════════════════════════════════════════════════════════════
+%  REFERENCIAS (10%)
+% ═══════════════════════════════════════════════════════════════════
+\begin{thebibliography}{99}
+
+\bibitem{widrow1990}
+B.~Widrow and M.~A.~Lehr, ``30 years of adaptive neural networks: Perceptron, Madaline, and backpropagation,''
+\textit{Proceedings of the IEEE}, vol.~78, no.~9, pp.~1415--1442, 1990.
+
+\bibitem{rosenblatt1958}
+F.~Rosenblatt, ``The perceptron: A probabilistic model for information storage and organization in the brain,''
+\textit{Psychological Review}, vol.~65, no.~6, pp.~386--408, 1958.
+
+\bibitem{widrow1960}
+B.~Widrow and M.~E.~Hoff, ``Adaptive switching circuits,''
+in \textit{IRE WESCON Convention Record}, vol.~4, 1960, pp.~96--104.
+
+\bibitem{cover1965}
+T.~M.~Cover, ``Geometrical and statistical properties of systems of linear inequalities with applications in pattern recognition,''
+\textit{IEEE Transactions on Electronic Computers}, vol.~EC-14, no.~3, pp.~326--334, 1965.
+
+\bibitem{rumelhart1986}
+D.~E.~Rumelhart, G.~E.~Hinton, and R.~J.~Williams, ``Learning representations by back-propagating errors,''
+\textit{Nature}, vol.~323, pp.~533--536, 1986.
+
+\bibitem{fisher1936}
+R.~A.~Fisher, ``The use of multiple measurements in taxonomic problems,''
+\textit{Annals of Eugenics}, vol.~7, no.~2, pp.~179--188, 1936.
+
+\bibitem{cortez2009}
+P.~Cortez, A.~Cerdeira, F.~Almeida, T.~Matos, and J.~Reis, ``Modeling wine preferences by data mining from physicochemical properties,''
+\textit{Decision Support Systems}, vol.~47, no.~4, pp.~547--553, 2009.
+
+\bibitem{lecun2015}
+Y.~LeCun, Y.~Bengio, and G.~Hinton, ``Deep learning,''
+\textit{Nature}, vol.~521, pp.~436--444, 2015.
+
+\end{thebibliography}
+
+\end{document}
