@@ -1,0 +1,2 @@
+https://deep-learning.ikor.org/entrenamiento/perceptrones
+https://isl.stanford.edu/~widrow/publications.html

@@ -1,0 +1,4 @@
+https://github.com/dccuchile/CC6204
+https://github.com/m2dsupsdlclass/lectures-labs
+https://github.com/karpathy/nn-zero-to-hero
+https://github.com/raimbekovm/cs231n-2025-notes
