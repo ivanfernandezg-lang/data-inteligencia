@@ -71,6 +71,9 @@ pero entre 3.5$\times$ y 74$\times$ más costoso computacionalmente. Se discuten
 del principio de mínima perturbación como marco unificador del aprendizaje supervisado en RNA.
 \end{abstract}
 
+\tableofcontents
+\newpage
+
 % ═══════════════════════════════════════════════════════════════════
 %  1. INTRODUCCIÓN (15%)
 % ═══════════════════════════════════════════════════════════════════
@@ -315,18 +318,18 @@ consiste en \textbf{implementar desde cero los algoritmos descritos} y verificar
 las hipótesis H1--H4 mediante siete experimentos (E1--E7), más validación en dos datasets reales
 adicionales (Wine y MNIST reducido). La Tabla~\ref{tab:diseno} resume el diseño experimental.
 
-\begin{table}[H]\centering\small
-\begin{tabular}{@{}cllll@{}}
+\begin{table}[H]\centering\footnotesize
+\begin{tabular}{@{}clllp{3.2cm}@{}}
 \toprule
-\textbf{Exp.} & \textbf{Tema} & \textbf{Hipótesis} & \textbf{Algoritmos} & \textbf{Dataset} \\
+\textbf{Exp.} & \textbf{Tema} & \textbf{Hip.} & \textbf{Algoritmos} & \textbf{Dataset} \\
 \midrule
-E1 & Capacidad de Cover & H1 & Programación Lineal & Sintético Monte Carlo \\
-E2 & Reglas lineales, separable & H2 & Perceptrón, \aLMS, \muLMS & Gaussianas separables \\
-E3 & Datos no separables & H2 & Perceptrón, \aLMS, \muLMS & Gaussianas solapadas \\
-E4 & Superficies MSE & — & Adaline 2D & Patrones aleatorios \\
+E1 & Capacidad de Cover & H1 & Programaci\'on Lineal & Sint\'etico Monte Carlo \\
+E2 & Reglas lineales, separable & H2 & Perceptr\'on, \aLMS, \muLMS & Gaussianas separables \\
+E3 & Datos no separables & H2 & Perceptr\'on, \aLMS, \muLMS & Gaussianas solapadas \\
+E4 & Superficies MSE & --- & Adaline 2D & Patrones aleatorios \\
 E5 & XOR: MRII vs MLP & H3 & MRII, MLP-\bp & XOR (4 patrones) \\
-E6 & Datasets reales & — & MLP-\bp, \aLMS, \muLMS & Iris, Wine, MNIST-04, two-moons \\
-E7 & MRIII $\equiv$ \bp~+ costo & H4 & MRIII, \bp & Iris (1 patrón) \\
+E6 & Datasets reales & --- & MLP-\bp, \aLMS, \muLMS & Iris, Wine, MNIST-04, moons \\
+E7 & MRIII $\equiv$ \bp~+ costo & H4 & MRIII, \bp & Iris (1 patr\'on) \\
 \bottomrule
 \end{tabular}
 \caption{Diseño experimental.}\label{tab:diseno}

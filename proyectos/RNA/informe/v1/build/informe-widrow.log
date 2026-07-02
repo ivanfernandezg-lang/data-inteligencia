@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.26)  1 JUL 2026 22:07
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.26)  1 JUL 2026 23:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -382,10 +382,10 @@ File: l3backend-pdftex.def 2026-02-18 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count322
 )
 (build/informe-widrow.aux
-LaTeX Info: Redefining \. on input line 11.
-LaTeX Info: Redefining \% on input line 11.
+LaTeX Info: Redefining \. on input line 7.
+LaTeX Info: Redefining \% on input line 7.
 Package babel Info: 'spanish' activates 'spanish' shorthands.
-(babel)             Reported on input line 11.
+(babel)             Reported on input line 7.
 )
 \openout1 = `informe-widrow.aux'.
 
@@ -495,11 +495,19 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 59.
 
 (c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [1
+)
+(build/informe-widrow.toc
+LaTeX Info: Redefining \. on input line 1.
+LaTeX Info: Redefining \% on input line 1.
+ [1
 
 {c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2026/
-texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}]
-Overfull \hbox (12.52602pt too wide) in paragraph at lines 157--160
+texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}])
+\tf@toc=\write4
+\openout4 = `informe-widrow.toc'.
+
+ [2] [3]
+Overfull \hbox (12.52602pt too wide) in paragraph at lines 160--163
 []\T1/cmr/m/n/10.95 Un \T1/cmr/bx/n/10.95 com-bi-na-dor li-neal adap-ta-ti-vo \
 T1/cmr/m/n/10.95 que cal-cu-la $\OML/cmm/m/it/10.95 s[] \OT1/cmr/m/n/10.95 = \O
 ML/cmm/m/it/10.95 X[]W[]$\T1/cmr/m/n/10.95 , don-de $\OML/cmm/m/it/10.95 X[] \O
@@ -507,157 +515,160 @@ T1/cmr/m/n/10.95 = [\OML/cmm/m/it/10.95 x[] \OT1/cmr/m/n/10.95 = +1\OML/cmm/m/i
 t/10.95 ; x[]; [] ; x[]\OT1/cmr/m/n/10.95 ][]$
  []
 
-[2]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 194.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\alpha' on input line 194.
+(hyperref)                removing `math shift' on input line 197.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 194.
+(hyperref)                removing `\alpha' on input line 197.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 216.
+(hyperref)                removing `math shift' on input line 197.
+
+[4]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 219.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mu' on input line 216.
+(hyperref)                removing `\mu' on input line 219.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 216.
+(hyperref)                removing `math shift' on input line 219.
 
-[3] [4]
-Overfull \hbox (116.59097pt too wide) in paragraph at lines 319--332
+[5]
+Overfull \hbox (6.51608pt too wide) in paragraph at lines 322--335
  [][] 
  []
 
-[5]
-<../../notebook/v1/figs/fig_cover.png, id=239, 640.67355pt x 423.86356pt>
+[6]
+<../../notebook/v1/figs/fig_cover.png, id=282, 640.67355pt x 423.86356pt>
 File: ../../notebook/v1/figs/fig_cover.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_cover.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_cover.png  used on input li
-ne 370.
+ne 373.
 (pdftex.def)             Requested size: 429.29416pt x 284.01944pt.
-<../../notebook/v1/figs/fig_datasets.png, id=243, 1074.6549pt x 351.59355pt>
+ [7]
+<../../notebook/v1/figs/fig_datasets.png, id=292, 1074.6549pt x 351.59355pt>
 File: ../../notebook/v1/figs/fig_datasets.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_datasets.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_datasets.png  used on input
- line 382.
+ line 385.
 (pdftex.def)             Requested size: 429.29416pt x 140.45251pt.
- [6 <../../notebook/v1/figs/fig_cover.png>]
-<../../notebook/v1/figs/fig_fronteras.png, id=250, 1074.6549pt x 351.59355pt>
+<../../notebook/v1/figs/fig_fronteras.png, id=293, 1074.6549pt x 351.59355pt>
 File: ../../notebook/v1/figs/fig_fronteras.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_fronteras.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_fronteras.png  used on inpu
-t line 385.
+t line 388.
 (pdftex.def)             Requested size: 429.29416pt x 140.45251pt.
-<../../notebook/v1/figs/fig_convergencia.png, id=251, 639.95085pt x 351.2322pt>
+ [8 <../../notebook/v1/figs/fig_cover.png> <../../notebook/v1/figs/fig_datasets
+.png>]
+<../../notebook/v1/figs/fig_convergencia.png, id=303, 639.95085pt x 351.2322pt>
 
 File: ../../notebook/v1/figs/fig_convergencia.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_convergencia.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_convergencia.png  used on i
-nput line 389.
+nput line 392.
 (pdftex.def)             Requested size: 429.29416pt x 235.61911pt.
- [7 <../../notebook/v1/figs/fig_datasets.png> <../../notebook/v1/figs/fig_front
-eras.png> <../../notebook/v1/figs/fig_convergencia.png>]
-<../../notebook/v1/figs/fig_noseparable.png, id=265, 1002.02354pt x 351.2322pt>
+<../../notebook/v1/figs/fig_noseparable.png, id=306, 1002.02354pt x 351.2322pt>
 
 File: ../../notebook/v1/figs/fig_noseparable.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_noseparable.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_noseparable.png  used on in
-put line 405.
+put line 408.
 (pdftex.def)             Requested size: 429.29416pt x 150.48024pt.
- (../../notebook/v1/tabs/tab_lineales.tex)
-<../../notebook/v1/figs/fig_superficies_mse.png, id=268, 1186.31206pt x 355.568
+ [9 <../../notebook/v1/figs/fig_fronteras.png> <../../notebook/v1/figs/fig_conv
+ergencia.png>] (../../notebook/v1/tabs/tab_lineales.tex)
+<../../notebook/v1/figs/fig_superficies_mse.png, id=317, 1186.31206pt x 355.568
 4pt>
 File: ../../notebook/v1/figs/fig_superficies_mse.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_superficies_mse.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_superficies_mse.png  used o
-n input line 424.
+n input line 427.
 (pdftex.def)             Requested size: 429.29416pt x 128.67186pt.
- [8 <../../notebook/v1/figs/fig_noseparable.png>]
-<../../notebook/v1/figs/fig_xor.png, id=277, 1291.4649pt x 351.2322pt>
+ [10 <../../notebook/v1/figs/fig_noseparable.png> <../../notebook/v1/figs/fig_s
+uperficies_mse.png>]
+<../../notebook/v1/figs/fig_xor.png, id=328, 1291.4649pt x 351.2322pt>
 File: ../../notebook/v1/figs/fig_xor.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_xor.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_xor.png  used on input line
- 443.
+ 446.
 (pdftex.def)             Requested size: 429.29416pt x 116.75375pt.
 
-Underfull \hbox (badness 3919) in paragraph at lines 443--443
+Underfull \hbox (badness 3919) in paragraph at lines 446--446
 []\T1/cmr/m/n/10.95 Figura 7: |Iz-quier-da: Re-gio-nes de de-ci-sión de MRII 2-
 -3--1 con rui-do. Cen-tro: MLP-
  []
 
-(../../notebook/v1/tabs/tab_xor.tex) [9 <../../notebook/v1/figs/fig_superficies
-_mse.png> <../../notebook/v1/figs/fig_xor.png>]
-<../../notebook/v1/figs/fig_iris_mlp.png, id=290, 1273.03606pt x 351.2322pt>
+(../../notebook/v1/tabs/tab_xor.tex)
+<../../notebook/v1/figs/fig_iris_mlp.png, id=332, 1273.03606pt x 351.2322pt>
 File: ../../notebook/v1/figs/fig_iris_mlp.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_iris_mlp.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_iris_mlp.png  used on input
- line 472.
+ line 475.
 (pdftex.def)             Requested size: 429.29416pt x 118.44196pt.
-<../../notebook/v1/figs/fig_moons.png, id=291, 568.7649pt x 424.2249pt>
+ [11 <../../notebook/v1/figs/fig_xor.png>]
+<../../notebook/v1/figs/fig_moons.png, id=341, 568.7649pt x 424.2249pt>
 File: ../../notebook/v1/figs/fig_moons.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_moons.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_moons.png  used on input li
-ne 474.
+ne 477.
 (pdftex.def)             Requested size: 429.29416pt x 320.20044pt.
- [10 <../../notebook/v1/figs/fig_iris_mlp.png>]
-<../../notebook/v1/figs/fig_wine.png, id=299, 1002.02354pt x 351.2322pt>
+<../../notebook/v1/figs/fig_wine.png, id=342, 1002.02354pt x 351.2322pt>
 File: ../../notebook/v1/figs/fig_wine.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_wine.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_wine.png  used on input lin
-e 477.
+e 480.
 (pdftex.def)             Requested size: 429.29416pt x 150.48024pt.
-<../../notebook/v1/figs/fig_mnist.png, id=300, 1001.30086pt x 351.2322pt>
+
+[12 <../../notebook/v1/figs/fig_iris_mlp.png> <../../notebook/v1/figs/fig_moons
+.png>]
+<../../notebook/v1/figs/fig_mnist.png, id=351, 1001.30086pt x 351.2322pt>
 File: ../../notebook/v1/figs/fig_mnist.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_mnist.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_mnist.png  used on input li
-ne 479.
+ne 482.
 (pdftex.def)             Requested size: 429.29416pt x 150.58743pt.
- [11 <../../notebook/v1/figs/fig_moons.png> <../../notebook/v1/figs/fig_wine.pn
-g>] (../../notebook/v1/tabs/tab_iris.tex)
-(../../notebook/v1/tabs/tab_relevancia.tex)
+ (../../notebook/v1/tabs/tab_iris.tex)
+(../../notebook/v1/tabs/tab_relevancia.tex) [13 <../../notebook/v1/figs/fig_win
+e.png> <../../notebook/v1/figs/fig_mnist.png>]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 511.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\equiv' on input line 511.
+(hyperref)                removing `math shift' on input line 514.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 511.
+(hyperref)                removing `\equiv' on input line 514.
 
-<../../notebook/v1/figs/fig_mriii_bp.png, id=318, 1000.9395pt x 349.42545pt>
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 514.
+
+<../../notebook/v1/figs/fig_mriii_bp.png, id=372, 1000.9395pt x 349.42545pt>
 File: ../../notebook/v1/figs/fig_mriii_bp.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_mriii_bp.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_mriii_bp.png  used on input
- line 516.
+ line 519.
 (pdftex.def)             Requested size: 429.29416pt x 149.8661pt.
-[12 <../../notebook/v1/figs/fig_mnist.png>]
-(../../notebook/v1/tabs/tab_mriii.tex) (../../notebook/v1/tabs/tab_resumen.tex)
-
-Overfull \hbox (53.12723pt too wide) in paragraph at lines 1--535
- [][] 
+(../../notebook/v1/tabs/tab_mriii.tex) (../../notebook/v1/tabs/tab_resumen.tex
+Underfull \hbox (badness 3977) in paragraph at lines 10--11
+[]\T1/cmr/m/n/10 Mejor acc test=91.1$ $% ($\OML/cmm/m/it/10 ^^V$\T1/cmr/m/n/10 
+=0.05,
  []
 
-[13 <../../notebook/v1/figs/fig_mriii_bp.png>]
-Overfull \hbox (1.57864pt too wide) in paragraph at lines 576--579
+) [14 <../../notebook/v1/figs/fig_mriii_bp.png>]
+Overfull \hbox (1.57864pt too wide) in paragraph at lines 579--582
 []\T1/cmr/bx/n/10.95 Confirmada. \T1/cmr/m/n/10.95 El error re-la-ti-vo en-tre 
 gra-dien-
  []
 
-[14] [15] (build/informe-widrow.aux
-LaTeX Info: Redefining \. on input line 11.
-LaTeX Info: Redefining \% on input line 11.
+[15] [16] [17] (build/informe-widrow.aux
+LaTeX Info: Redefining \. on input line 7.
+LaTeX Info: Redefining \% on input line 7.
 )
  ***********
 LaTeX2e <2025-11-01>
@@ -667,41 +678,46 @@ Package rerunfilecheck Info: File `informe-widrow.out' has not changed.
 (rerunfilecheck)             Checksum: A964088B6FC02715CF8AEF1E54B5AA19;6496.
  ) 
 Here is how much of TeX's memory you used:
- 13933 strings out of 467349
- 222311 string characters out of 5419856
- 655635 words of memory out of 5000000
- 42720 multiletter control sequences out of 15000+600000
- 648626 words of font info for 90 fonts, out of 8000000 for 9000
+ 13959 strings out of 467349
+ 222631 string characters out of 5419856
+ 658641 words of memory out of 5000000
+ 42733 multiletter control sequences out of 15000+600000
+ 652398 words of font info for 99 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,79p,464b,646s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,79p,464b,756s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/tex
 live/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2026
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/texlive/2026/texmf-dis
 t/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2026/texmf-dist/fonts/ty
 pe1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmr10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmr7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb
-><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texl
-ive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2026/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2026/texmf-dist/
-fonts/type1/public/amsfonts/symbols/msbm10.pfb><c:/texlive/2026/texmf-dist/font
-s/type1/public/cm-super/sfbi1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/pu
-blic/cm-super/sfbx1000.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-su
-per/sfbx1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx12
-00.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb><c:
-/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb><c:/texlive/2
-026/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb><c:/texlive/2026/texmf-
-dist/fonts/type1/public/cm-super/sfrm1000.pfb><c:/texlive/2026/texmf-dist/fonts
-/type1/public/cm-super/sfrm1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/pub
-lic/cm-super/sfrm1200.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-sup
-er/sfti1000.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfti109
-5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb><c:/
-texlive/2026/texmf-dist/fonts/type1/public/cm-super/sftt1095.pfb><c:/texlive/20
-26/texmf-dist/fonts/type1/public/cm-super/sfxc1095.pfb>
-Output written on build/informe-widrow.pdf (15 pages, 3474775 bytes).
+/amsfonts/cm/cmmi9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmr10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pf
+b><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texli
+ve/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2026/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2026/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2026/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmsy9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/a
+msfonts/symbols/msbm10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-su
+per/sfbi1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx09
+00.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb><c:
+/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx1095.pfb><c:/texlive/2
+026/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb><c:/texlive/2026/texmf-
+dist/fonts/type1/public/cm-super/sfbx1440.pfb><c:/texlive/2026/texmf-dist/fonts
+/type1/public/cm-super/sfbx1728.pfb><c:/texlive/2026/texmf-dist/fonts/type1/pub
+lic/cm-super/sfrm0800.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-sup
+er/sfrm0900.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm100
+0.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb><c:/
+texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb><c:/texlive/20
+26/texmf-dist/fonts/type1/public/cm-super/sfti0900.pfb><c:/texlive/2026/texmf-d
+ist/fonts/type1/public/cm-super/sfti1000.pfb><c:/texlive/2026/texmf-dist/fonts/
+type1/public/cm-super/sfti1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/publ
+ic/cm-super/sfti1200.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-supe
+r/sftt1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfxc1095
+.pfb>
+Output written on build/informe-widrow.pdf (17 pages, 3548693 bytes).
 PDF statistics:
- 502 PDF objects out of 1000 (max. 8388607)
- 402 compressed objects within 5 object streams
- 110 named destinations out of 1000 (max. 500000)
+ 570 PDF objects out of 1000 (max. 8388607)
+ 458 compressed objects within 5 object streams
+ 113 named destinations out of 1000 (max. 500000)
  333 words of extra memory for PDF output out of 10000 (max. 10000000)
 
