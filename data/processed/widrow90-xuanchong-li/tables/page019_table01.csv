@@ -1,0 +1,8 @@
+May’s Algorithm,,
+"Non-linear error correction rule
+Introduce the ”deadzone” γ
+Separate any linearly separable set; For nonlinearly separable set,
+Mays rule performs much better than Perceptron rule because a
+sufficiently large dead zone tends to cause the weight vector to adapt
+away from zero when any reasonably good solution exists",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam19il y/ 41"

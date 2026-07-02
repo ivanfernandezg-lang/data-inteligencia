@@ -1,0 +1,13 @@
+,,
+"Multi-element Networks
+Madaline Rule I (MRI)",,
+"If an error happens, pick the ADALINE with smallest |s | to adapt.j
+k
+Weights are initially set to small random values
+Weight vector update: can be changed aggressively using absolute
+correction or can be adapted by the small increment determined by
+the α-LMS algorithm
+Principle: assign responsibility to the Adaline or Adalines that can
+most easily assume it
+Pattern presentation sequence should be random",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam21il y/ 41"

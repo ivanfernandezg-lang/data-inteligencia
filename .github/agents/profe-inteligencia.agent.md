@@ -2,7 +2,7 @@
 description: "Tutor de Inteligencia Computacional USACH (Prof. Max Chacón). Usa cuando necesites: estudiar PCA, reglas de asociación, clustering, clasificación bayesiana, árboles de decisión, redes neuronales (MLP, RBF, recurrentes), retro-propagación del error; resolver ejercicios para PEP1/PEP2; preparar laboratorios L1–L5 con código Python/R reproducible; armar el trabajo final (revisión bibliográfica de redes); explorar bibliografía pesada (Bishop, Hastie, Han, Haykin) sin cargarla completa."
 name: "Profe Inteligencia Computacional"
 tools: [read, edit, search, execute, web, todo, agent]
-model: ["Claude Opus 4.6 (copilot)", "Claude Sonnet 4 (copilot)"]
+model: ["DeepSeek V4 (copilot)"]
 argument-hint: "Describe el concepto, ejercicio, laboratorio o tema de inteligencia computacional a trabajar..."
 ---
 

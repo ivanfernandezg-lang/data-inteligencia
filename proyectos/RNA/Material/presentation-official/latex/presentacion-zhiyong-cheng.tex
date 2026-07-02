@@ -1,0 +1,696 @@
+% =============================================================================
+% Presentación: Artificial Neural Networks for The Perceptron, Madaline,
+%   and Backpropagation Family (Bernard Widrow & Michael A. Lehr)
+% Presentado por: Zhiyong Cheng — 2014-09-08
+% =============================================================================
+\documentclass[aspectratio=169,utf8,spanish]{beamer}
+
+% ── Paquetes ────────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+% ── Tema ────────────────────────────────────────────────────────────────────
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% ── Metadatos ───────────────────────────────────────────────────────────────
+\title[ANN: Perceptron, Madaline, Backpropagation]{
+  Artificial Neural Networks for The Perceptron,\\
+  Madaline, and Backpropagation Family
+}
+\subtitle{Bernard Widrow \& Michael A. Lehr}
+\author{Presentado por Zhiyong Cheng}
+\institute{}
+\date{2014-09-08}
+
+% ── Atajos ──────────────────────────────────────────────────────────────────
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\sgm}{sgm}
+
+\begin{document}
+
+% ── Portada ─────────────────────────────────────────────────────────────────
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Contenido}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Contenido (Outline)}
+  \begin{itemize}
+    \item Historia del desarrollo de algoritmos.
+    \item Conceptos fundamentales.
+    \item Algoritmos:
+    \begin{itemize}
+      \item Reglas de corrección de error:
+      \begin{itemize}
+        \item Elemento único: lineal y no lineal.
+        \item Redes en capas: no lineal.
+      \end{itemize}
+      \item Descenso de gradiente:
+      \begin{itemize}
+        \item Elemento único: lineal y no lineal.
+        \item Redes en capas: no lineal.
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Evolución de Algoritmos}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Evolución de Algoritmos}
+  \begin{itemize}
+    \item \textbf{1960:} Dos de las reglas más tempranas e importantes para entrenar elementos adaptativos:
+    \begin{itemize}
+      \item Algoritmo LMS (Widrow y su estudiante).
+      \item Regla del Perceptrón (Rosenblatt).
+    \end{itemize}
+    \item Facilitaron el rápido desarrollo de redes neuronales en los primeros años:
+    \begin{itemize}
+      \item Madaline Rule I (MRI): primera regla de aprendizaje popular para redes neuronales con múltiples elementos adaptativos.
+      \item Aplicaciones: reconocimiento de voz y patrones, predicción del clima, etc.
+    \end{itemize}
+    \item \textbf{Avance decisivo:} algoritmo de entrenamiento por retro-propagación (\textit{backpropagation}):
+    \begin{itemize}
+      \item Desarrollado por Werbos en 1971, publicado en 1974.
+      \item Redescubierto por Parker en 1982, reportado en 1984.
+      \item Rumelhart, Hinton y Williams también lo redescubrieron y lo hicieron ampliamente conocido.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Evolución de Algoritmos (cont.)}
+  \begin{itemize}
+    \item \textbf{MRI:} cuantizadores duros (\textit{hard-limiting}, $y = \sgn(x)$); fácil de calcular.
+    \item \textbf{Backpropagation:} función sigmoide.
+    \item \textbf{MRI $\to$ MRII} (Widrow y Winter, 1987).
+    \item \textbf{MRII $\to$ MRIII} (David Andes, U.S. Naval Weapons Center, China Lake, CA, 1988):
+    \begin{itemize}
+      \item Reemplaza cuantizadores duros por función sigmoide.
+      \item Widrow y su estudiante descubren primero que MRIII es equivalente a backpropagation.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Conceptos Básicos}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Combinador Lineal Adaptativo}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item Entradas: $x_1, x_2, x_3$ (más $x_0$, sesgo).
+        \item Salida: $y = \mathbf{X}_k^T \mathbf{W}_k$.
+        \item Capa de entrada $\to$ Capa de salida.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+        \begin{tabular}{c}
+          $x_0$ \\
+          $x_1$ \\
+          $x_2$ \\
+          $x_3$
+        \end{tabular}
+        $\to$
+        $\displaystyle\sum$
+        $\to y$
+      \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Elemento Lineal Adaptativo (Adaline) — Clasificador Lineal}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item Combinador lineal + cuantizador signum.
+        \item $y = \sgn(\mathbf{X}_k^T \mathbf{W}_k)$.
+        \item Separa el espacio mediante un hiperplano.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+        \begin{tabular}{c}
+          $x_0$ \\
+          $x_1$ \\
+          $x_2$ \\
+          $x_3$
+        \end{tabular}
+        $\to$
+        $\displaystyle\sum$
+        $\to \sgn(\cdot) \to y$
+      \end{center}
+    \end{column}
+  \end{columns}
+
+  \begin{center}
+    \textit{Figuras tomadas del curso online de Andrew Ng}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Clasificadores No Lineales}
+  \begin{itemize}
+    \item \textbf{Funciones discriminantes polinomiales.}
+    \item \textbf{Red neuronal feedforward multi-elemento.}
+  \end{itemize}
+  \begin{center}
+    \textit{Figuras tomadas del curso online de Andrew Ng}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Función Discriminante Polinomial}
+  \begin{itemize}
+    \item Vector de características inicial: $[x_1, x_2]$.
+    \item Después del preprocesador: $[x_1^2,\; x_1,\; x_1x_2,\; x_2,\; x_2^2]$.
+    \item Nuevo vector de características: $[x_1', x_2', x_3', x_4', x_5']$.
+  \end{itemize}
+
+  \begin{block}{Ventajas}
+    \begin{itemize}
+      \item Puede proporcionar una variedad de funciones no lineales con un solo elemento Adaline.
+      \item Converge más rápido que las redes neuronales en capas.
+      \item Solución global única.
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Desventaja}
+    Las redes neuronales en capas pueden obtener mejor generalización.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Redes Neuronales en Capas: Madaline I}
+  \begin{itemize}
+    \item Múltiples elementos Adaline en la primera capa.
+    \item Dispositivos lógicos fijos en la segunda capa (OR, AND, voto mayoritario, etc.).
+  \end{itemize}
+  \begin{center}
+    $\mathbf{X} \to$ [Adaline$_1$, $\ldots$, Adaline$_n$] $\to$ Lógica Fija $\to \pm 1$
+
+    \small{\textit{Primera capa} \hspace{3cm} \textit{Segunda capa}}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Red Feedforward}
+  \begin{itemize}
+    \item Todas las capas son adaptativas.
+    \item Múltiples capas ocultas entre entrada y salida.
+  \end{itemize}
+  \begin{center}
+    Capa 1 (entrada) $\to$ Capa 2 (oculta) $\to$ Capa 3 (oculta) $\to$ Capa 4 (salida)
+  \end{center}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{El Principio de Mínima Perturbación}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{El Principio de Mínima Perturbación}
+  \begin{block}{Principio de Mínima Perturbación}
+    Adaptar para reducir el error de salida para el patrón de entrenamiento actual, con mínima perturbación a las respuestas ya aprendidas.
+  \end{block}
+
+  \begin{itemize}
+    \item Condujo al descubrimiento del algoritmo LMS y las reglas Madaline.
+    \item \textbf{Adaline único:} $\alpha$-LMS, $\mu$-LMS, reglas de May, regla del Perceptrón.
+    \item \textbf{Madaline simple:} MRI.
+    \item \textbf{Madaline multi-capa:} MRII, MRIII y algoritmo de backpropagation.
+  \end{itemize}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Algoritmos Adaptativos}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Algoritmos Adaptativos: Dos Familias}
+  \begin{block}{Reglas de Corrección de Error}
+    Alteran los pesos para corregir una cierta proporción del error en la respuesta de salida al patrón de entrada presente.
+    \begin{itemize}
+      \item $\alpha$-LMS: $\mathbf{W}_{k+1} = \mathbf{W}_k + \alpha \dfrac{\varepsilon_k \mathbf{X}_k}{\|\mathbf{X}_k\|^2}$
+      \item Corrección de error: $\Delta\varepsilon_k = -\alpha\varepsilon_k$
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Reglas de Gradiente (Descenso más Empinado)}
+    Alteran los pesos durante cada presentación de patrón por descenso de gradiente con el objetivo de reducir el error cuadrático medio, promediado sobre todos los patrones.
+    \begin{itemize}
+      \item $\mu$-LMS: $\mathbf{W}_{k+1} = \mathbf{W}_k + 2\mu\varepsilon_k \mathbf{X}_k$
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Reglas de Corrección de Error: Adaline}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Regla Lineal: $\alpha$-LMS}
+  \begin{itemize}
+    \item \textbf{Actualización de pesos:}
+    $\mathbf{W}_{k+1} = \mathbf{W}_k + \alpha \dfrac{\varepsilon_k \mathbf{X}_k}{\|\mathbf{X}_k\|^2}$
+    \item \textbf{Error:} $\varepsilon_k = d_k - \mathbf{W}_k^T \mathbf{X}_k$
+    \item \textbf{Cambio de error por el cambio de peso:}
+    \begin{align*}
+      \Delta\varepsilon_k &= \Delta(d_k - \mathbf{W}_k^T \mathbf{X}_k) = -\mathbf{X}_k^T \Delta\mathbf{W}_k \\
+      \Delta\mathbf{W}_k &= \mathbf{W}_{k+1} - \mathbf{W}_k = \alpha \frac{\varepsilon_k \mathbf{X}_k}{\|\mathbf{X}_k\|^2} \\
+      \Delta\varepsilon_k &= -\alpha \frac{\varepsilon_k \mathbf{X}_k^T \mathbf{X}_k}{\|\mathbf{X}_k\|^2} = -\alpha\varepsilon_k
+    \end{align*}
+    \item \textbf{Tasa de aprendizaje:} $0.1 < \alpha < 1$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Regla No Lineal: Perceptrón}
+  \begin{itemize}
+    \item \textbf{Error del cuantizador:} $\tilde{\varepsilon}_k = d_k - y_k$ (donde $y_k = \sgn(s_k)$).
+    \item \textbf{Actualización de pesos:}
+    $\mathbf{W}_{k+1} = \mathbf{W}_k + \alpha \dfrac{\tilde{\varepsilon}_k}{2} \mathbf{X}_k$
+    \item Para $\alpha = 1$:
+    \begin{itemize}
+      \item Si $\tilde{\varepsilon}_k > 0$ (i.e., $d_k = 1$, $y_k = -1$): $\mathbf{W}_{k+1} = \mathbf{W}_k + \mathbf{X}_k$.
+      \item Si $\tilde{\varepsilon}_k < 0$ (i.e., $d_k = -1$, $y_k = 1$): $\mathbf{W}_{k+1} = \mathbf{W}_k - \mathbf{X}_k$.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{$\alpha$-LMS vs Regla del Perceptrón}
+  \begin{itemize}
+    \item \textbf{Valor de $\alpha$:}
+    \begin{itemize}
+      \item $\alpha$-LMS: controla estabilidad y velocidad de convergencia.
+      \item Perceptrón: no afecta la estabilidad; solo afecta el tiempo de convergencia si el vector de pesos inicial es no nulo.
+    \end{itemize}
+    \item \textbf{Tipo de respuesta:}
+    \begin{itemize}
+      \item $\alpha$-LMS: respuestas binarias y continuas.
+      \item Perceptrón: solo respuestas binarias deseadas.
+    \end{itemize}
+    \item \textbf{Patrones linealmente separables:}
+    \begin{itemize}
+      \item Perceptrón: separa cualquier conjunto linealmente separable.
+      \item $\alpha$-LMS: puede fallar en separar conjuntos linealmente separables.
+    \end{itemize}
+    \item \textbf{Patrones no linealmente separables:}
+    \begin{itemize}
+      \item Perceptrón: no converge; a menudo no produce una solución de bajo error.
+      \item $\alpha$-LMS: no conduce a soluciones de peso no razonables.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Regla No Lineal: Algoritmos de May}
+  \begin{itemize}
+    \item Separan cualquier conjunto linealmente separable.
+    \item Para conjuntos no linealmente separables, la regla de May funciona mucho mejor que el Perceptrón porque una zona muerta suficientemente grande tiende a hacer que el vector de pesos se adapte lejos de cero cuando existe una solución razonablemente buena.
+  \end{itemize}
+
+  \begin{block}{Variantes}
+    \begin{itemize}
+      \item \textbf{Regla de Adaptación por Incremento.}
+      \item \textbf{Regla de Adaptación por Relajación Modificada.}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Reglas de Corrección de Error: Madaline}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Madaline Rule I (MRI) — Arquitectura}
+  \begin{itemize}
+    \item \textbf{Primera capa:} elementos Adaline con cuantizador duro.
+    \item \textbf{Segunda capa:} un único elemento lógico de umbral fijo (OR, AND, MAJ).
+  \end{itemize}
+  \begin{center}
+    $\mathbf{X} \to$ [Adaline$_1$, $\ldots$, Adaline$_n$] $\to$ Lógica Fija $\to \pm 1$
+  \end{center}
+\end{frame}
+
+\begin{frame}{MRI — Ejemplo 1 (Sin error)}
+  \begin{center}
+    \begin{tabular}{c|c|c|c}
+      Adaline & $s = \mathbf{W}^T\mathbf{X}$ & $\sgn(s)$ & \\
+      \hline
+      $W_1$ & $0.2$ & $+1$ & \\
+      $W_2$ & $0.8$ & $+1$ & \\
+      $W_3$ & $-0.1$ & $-1$ & $\to$ MAJ $\to \mathbf{-1}$ \\
+      $W_4$ & $-0.3$ & $-1$ & \\
+      $W_5$ & $-0.4$ & $-1$ & \\
+    \end{tabular}
+  \end{center}
+  \begin{itemize}
+    \item Salida deseada $d = -1$. \textbf{¡Correcto!} No se requiere adaptación.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{MRI — Ejemplo 2 (Error detectado)}
+  \begin{center}
+    \textbf{Mismo $\mathbf{X}$, pero $d = +1$}
+    \begin{tabular}{c|c|c|c}
+      Adaline & $s = \mathbf{W}^T\mathbf{X}$ & $\sgn(s)$ & \\
+      \hline
+      $W_1$ & $0.2$ & $+1$ & \\
+      $W_2$ & $0.8$ & $+1$ & \\
+      $W_3$ & $-0.1$ & $-1$ & $\to$ MAJ $\to \mathbf{-1}$ \\
+      $W_4$ & $-0.3$ & $-1$ & \\
+      $W_5$ & $-0.4$ & $-1$ & \\
+    \end{tabular}
+  \end{center}
+  \begin{itemize}
+    \item Salida deseada $d = +1$, pero la salida es $-1$. \textbf{¡Error!}
+    \item Se elige el Adaline con menor $|s_k|$: $W_3$ ($|s| = 0.1$, el más cercano a cero).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{MRI — Ejemplo 3 (Adaptación de $W_3$)}
+  \begin{center}
+    \textbf{Se adapta $W_3$ para invertir su salida:}
+    \begin{tabular}{c|c|c|c}
+      Adaline & $s = \mathbf{W}^T\mathbf{X}$ & $\sgn(s)$ & \\
+      \hline
+      $W_1$ & $0.2$ & $+1$ & \\
+      $W_2$ & $0.8$ & $+1$ & \\
+      $\mathbf{W_3'}$ & $\mathbf{0.4}$ & $\mathbf{+1}$ & $\to$ MAJ $\to \mathbf{+1}$ \\
+      $W_4$ & $-0.3$ & $-1$ & \\
+      $W_5$ & $-0.4$ & $-1$ & \\
+    \end{tabular}
+  \end{center}
+  \begin{itemize}
+    \item ¡Mayoría ahora es $+1$! Salida deseada $d = +1$. \textbf{¡Correcto!}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{MRI — Intento alternativo (perturbando $W_2$)}
+  \begin{center}
+    \textbf{Perturbando $W_2$:}
+    \begin{tabular}{c|c|c|c}
+      Adaline & $s = \mathbf{W}^T\mathbf{X}$ & $\sgn(s)$ & \\
+      \hline
+      $W_1$ & $0.2$ & $+1$ & \\
+      $\mathbf{W_2'}$ & $\mathbf{-0.05}$ & $\mathbf{-1}$ & \\
+      $W_3$ & $-0.1$ & $-1$ & $\to$ MAJ $\to \mathbf{-1}$ \\
+      $W_4$ & $-0.3$ & $-1$ & \\
+      $W_5$ & $-0.4$ & $-1$ & \\
+    \end{tabular}
+  \end{center}
+  \begin{itemize}
+    \item Salida deseada $d = +1$, pero salida sigue siendo $-1$. ¡No funciona!
+    \item Se necesita adaptar más de un Adaline.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{MRI — Adaptación de $W_2'$ y $W_3'$}
+  \begin{center}
+    \begin{tabular}{c|c|c|c}
+      Adaline & $s = \mathbf{W}^T\mathbf{X}$ & $\sgn(s)$ & \\
+      \hline
+      $W_1$ & $0.2$ & $+1$ & \\
+      $\mathbf{W_2'}$ & $\mathbf{0.1}$ & $\mathbf{+1}$ & \\
+      $\mathbf{W_3'}$ & $\mathbf{0.4}$ & $\mathbf{+1}$ & $\to$ MAJ $\to \mathbf{+1}$ \\
+      $W_4$ & $-0.3$ & $-1$ & \\
+      $W_5$ & $-0.4$ & $-1$ & \\
+    \end{tabular}
+  \end{center}
+  \begin{itemize}
+    \item ¡Ahora sí! Mayoría $+1$, $d = +1$. \textbf{¡Correcto!}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{MRI — Algoritmo}
+  \begin{itemize}
+    \item Los pesos se inicializan con valores aleatorios pequeños.
+    \item Actualización del vector de pesos: puede cambiarse agresivamente usando corrección absoluta o adaptarse por el pequeño incremento determinado por $\alpha$-LMS.
+    \item \textbf{Principio:} asignar responsabilidad al Adaline o Adalines que pueden asumirla más fácilmente.
+    \item La secuencia de presentación de patrones debe ser aleatoria.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Madaline Rule II (MRII) — Arquitectura}
+  \begin{itemize}
+    \item Arquitectura típica de Madaline II de dos capas.
+    \item Ambas capas son adaptativas.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Madaline Rule II (MRII) — Algoritmo}
+  \begin{itemize}
+    \item Pesos inicializados con valores aleatorios pequeños.
+    \item Secuencia de presentación de patrones aleatoria.
+  \end{itemize}
+
+  \begin{block}{Adaptación de los Adalines de la primera capa}
+    \begin{enumerate}
+      \item Seleccionar la menor magnitud de salida lineal $|s_k|$.
+      \item Realizar una ``adaptación de prueba'' agregando una perturbación $\Delta s$ de amplitud adecuada para invertir su salida binaria.
+      \item Si el error de salida se reduce, remover $\Delta s$ y cambiar el peso del Adaline seleccionado usando $\alpha$-LMS.
+      \item Perturbar y actualizar otros Adalines en la primera capa con salida $s_k$ ``suficientemente pequeña'' (se pueden invertir pares, tríos, etc.).
+      \item Después de agotar posibilidades en la primera capa, pasar a la siguiente capa.
+      \item Seleccionar aleatoriamente un nuevo patrón de entrenamiento y repetir.
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Descenso más Empinado (Steepest Descent)}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Descenso más Empinado — Concepto}
+  \begin{itemize}
+    \item \textbf{Descenso más empinado:} medir el gradiente de la función de error cuadrático medio y alterar el vector de pesos en la dirección negativa del gradiente medido.
+  \end{itemize}
+
+  \begin{equation*}
+    \mathbf{W}_{k+1} = \mathbf{W}_k + \mu(-\nabla_k)
+  \end{equation*}
+
+  \begin{itemize}
+    \item $\mu$: controla estabilidad y tasa de convergencia.
+    \item $\nabla_k$: valor del gradiente en un punto de la superficie MSE correspondiente a $\mathbf{W} = \mathbf{W}_k$.
+  \end{itemize}
+\end{frame}
+
+% ── Descenso más Empinado: Elemento Único ───────────────────────────────────
+
+\begin{frame}{$\mu$-LMS — Elemento Único}
+  \begin{itemize}
+    \item Error lineal instantáneo: $\varepsilon_k = d_k - \mathbf{W}_k^T \mathbf{X}_k$.
+    \item Gradiente instantáneo:
+    $\hat{\nabla}_k = \dfrac{\partial \varepsilon_k^2}{\partial \mathbf{W}_k} = -2\varepsilon_k \mathbf{X}_k$
+    \item Actualización de pesos:
+    $\mathbf{W}_{k+1} = \mathbf{W}_k + \mu(-\hat{\nabla}_k) = \mathbf{W}_k + 2\mu\varepsilon_k \mathbf{X}_k$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{$\mu$-LMS — Derivación del Gradiente}
+  \begin{align*}
+    \varepsilon_k^2 &= (d_k - \mathbf{X}_k^T \mathbf{W}_k)^2 = d_k^2 - 2d_k \mathbf{X}_k^T \mathbf{W}_k + \mathbf{W}_k^T (\mathbf{X}_k \mathbf{X}_k^T) \mathbf{W}_k \\[4pt]
+    \nabla_k &= \frac{\partial \varepsilon_k^2}{\partial \mathbf{W}_k} = -2d_k \mathbf{X}_k + 2(\mathbf{X}_k \mathbf{X}_k^T) \mathbf{W}_k \\[4pt]
+    &= -2\mathbf{X}_k (d_k - \mathbf{X}_k^T \mathbf{W}_k) = -2\varepsilon_k \mathbf{X}_k
+  \end{align*}
+
+  \begin{itemize}
+    \item $\mu$ controla estabilidad y tasa de convergencia.
+    \item $d_k$ y $\mathbf{X}_k$ son independientes de $\mathbf{W}_k$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{$\mu$-LMS — Comportamiento Estadístico}
+  \begin{itemize}
+    \item Con $\mu$ pequeño y $K$ pequeño (pocas presentaciones de entrenamiento):
+    \begin{itemize}
+      \item El cambio total de peso durante la presentación de $K$ patrones es proporcional a la derivada del error cuadrático medio.
+    \end{itemize}
+    \item $\varepsilon$ es la función de error cuadrático medio (MSE).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Reglas No Lineales — Adaline con Sigmoide}
+  \begin{itemize}
+    \item Se minimiza el cuadrado medio del error sigmoide $\tilde{\varepsilon}_k$:
+    \begin{equation*}
+      \tilde{\varepsilon}_k = d_k - y_k = d_k - \sgm(s_k)
+    \end{equation*}
+  \end{itemize}
+
+  \begin{center}
+    $s_k \to$ Sigmoide $\to y_k \quad\to\quad \tilde{\varepsilon}_k = d_k - y_k$
+  \end{center}
+\end{frame}
+
+% ── Backpropagation y MRIII: Elemento Único ─────────────────────────────────
+
+\begin{frame}{Backpropagation: Adaline con Sigmoide}
+  \begin{itemize}
+    \item Estimación del gradiente instantáneo:
+  \end{itemize}
+  \begin{align*}
+    \tilde{\varepsilon}_k &= d_k - \sgm(s_k) \\
+    \frac{\partial \tilde{\varepsilon}_k^2}{\partial \mathbf{W}_k}
+    &= \frac{\partial \tilde{\varepsilon}_k^2}{\partial s_k} \cdot \frac{\partial s_k}{\partial \mathbf{W}_k} \\
+    &= -2\tilde{\varepsilon}_k \sgm'(s_k) \mathbf{X}_k
+  \end{align*}
+  \begin{itemize}
+    \item Actualización:
+    $\mathbf{W}_{k+1} = \mathbf{W}_k + 2\mu\tilde{\varepsilon}_k \sgm'(s_k) \mathbf{X}_k$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{MRIII: Adaline con Sigmoide}
+  \begin{block}{Motivación}
+    La función sigmoide y su derivada pueden no realizarse con precisión cuando se implementan con hardware analógico.
+  \end{block}
+
+  \begin{itemize}
+    \item Se usa una perturbación en lugar de la derivada de la sigmoide.
+    \item Se agrega una pequeña señal de perturbación $\Delta s$ a la suma $s_k$.
+    \item Se observa el efecto de esta perturbación sobre la salida $y_k$ y el error $\tilde{\varepsilon}_k$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{MRIII — Estimación del Gradiente}
+  \begin{align*}
+    \frac{\partial \tilde{\varepsilon}_k^2}{\partial s_k} &\approx \frac{\tilde{\varepsilon}_k^2(s_k + \Delta s) - \tilde{\varepsilon}_k^2(s_k)}{\Delta s} = \frac{\Delta\tilde{\varepsilon}_k^2}{\Delta s} \\[4pt]
+    \hat{\nabla}_k &= \frac{\partial \tilde{\varepsilon}_k^2}{\partial \mathbf{W}_k} \approx \frac{\Delta\tilde{\varepsilon}_k^2}{\Delta s} \mathbf{X}_k
+  \end{align*}
+
+  \begin{itemize}
+    \item Alternativamente:
+    \begin{equation*}
+      \frac{\Delta\tilde{\varepsilon}_k^2}{\Delta s} \approx 2\tilde{\varepsilon}_k \frac{\Delta\tilde{\varepsilon}_k}{\Delta s}
+    \end{equation*}
+    \item Actualización de pesos:
+    \begin{equation*}
+      \mathbf{W}_{k+1} = \mathbf{W}_k - \mu \frac{\Delta\tilde{\varepsilon}_k^2}{\Delta s} \mathbf{X}_k
+      \quad\text{o}\quad
+      \mathbf{W}_{k+1} = \mathbf{W}_k - 2\mu\tilde{\varepsilon}_k \frac{\Delta\tilde{\varepsilon}_k}{\Delta s} \mathbf{X}_k
+    \end{equation*}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Backpropagation vs MRIII (Elemento Único)}
+  \begin{itemize}
+    \item Matemáticamente equivalentes si la perturbación $\Delta s$ es pequeña.
+    \item Agregar la perturbación $\Delta s$ causa un cambio en $\tilde{\varepsilon}_k$ igual a:
+    \begin{equation*}
+      \Delta\tilde{\varepsilon}_k = \tilde{\varepsilon}_k(s_k + \Delta s) - \tilde{\varepsilon}_k(s_k) \approx \frac{\partial \tilde{\varepsilon}_k}{\partial s_k} \Delta s
+    \end{equation*}
+    \item Cuando $\Delta s \to 0$:
+    \begin{equation*}
+      \frac{\Delta\tilde{\varepsilon}_k}{\Delta s} \to \frac{\partial \tilde{\varepsilon}_k}{\partial s_k} = -\sgm'(s_k)
+    \end{equation*}
+    \item MRIII $\equiv$ Backpropagation.
+  \end{itemize}
+\end{frame}
+
+% ── Backpropagation y MRIII: Redes Multi-Elemento ───────────────────────────
+
+\begin{frame}{Backpropagation para Redes}
+  \begin{block}{¿Cómo funciona backpropagation?}
+    Para un vector de patrón de entrada $\mathbf{X}$:
+    \begin{enumerate}
+      \item Barrer hacia adelante a través del sistema para obtener un vector de respuesta de salida $\mathbf{Y}$.
+      \item Calcular los errores en cada salida.
+      \item Barrer los efectos de los errores hacia atrás a través de la red para asociar una ``derivada del error cuadrático'' $\delta$ con cada Adaline.
+      \item Calcular un gradiente a partir de cada $\delta$.
+      \item Actualizar los pesos de cada Adaline basado en el gradiente correspondiente.
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Backpropagation: Propagación hacia Adelante}
+  \begin{align*}
+    a^{(1)} &= \mathbf{X} \\
+    a^{(2)} &= \sgm((W^{(1)})^T a^{(1)}) \\
+    a^{(3)} &= \sgm((W^{(2)})^T a^{(2)}) \\
+    a^{(4)} &= \sgm((W^{(3)})^T a^{(3)})
+  \end{align*}
+  \begin{center}
+    \textit{Figuras tomadas del curso online de Andrew Ng}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Backpropagation: Retro-propagación del Error}
+  \begin{itemize}
+    \item Para cada unidad de salida en la capa 4:
+    \begin{equation*}
+      \delta_j^{(4)} = a_j^{(4)} - y_j
+    \end{equation*}
+    \item Retro-propagación:
+    \begin{align*}
+      \delta^{(3)} &= W^{(3)} \delta^{(4)} \;.\!*\; \sgm'(W^{(2)} a^{(2)}) \\
+      \delta^{(2)} &= W^{(2)} \delta^{(3)} \;.\!*\; \sgm'(W^{(1)} a^{(1)})
+    \end{align*}
+  \end{itemize}
+
+  \begin{block}{Intuición}
+    $\delta_j^{(l)}$ = ``error'' del nodo $j$ en la capa $l$.
+  \end{block}
+  \begin{center}
+    \textit{Figuras tomadas del curso online de Andrew Ng}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Backpropagation: Gradiente Instantáneo para un Adaline}
+  \begin{itemize}
+    \item Gradiente instantáneo para un elemento Adaline:
+    \begin{equation*}
+      \hat{\nabla}_k = \frac{\partial \varepsilon^2}{\partial \mathbf{W}_k}
+    \end{equation*}
+    \item Definiendo $\delta_k = \dfrac{\partial \varepsilon^2}{\partial s_k}$:
+    \begin{equation*}
+      \hat{\nabla}_k = \delta_k \mathbf{X}_k
+    \end{equation*}
+    \item Y la actualización:
+    \begin{equation*}
+      \mathbf{W}_{k+1} = \mathbf{W}_k - \mu \delta_k \mathbf{X}_k
+    \end{equation*}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{MRIII para Redes}
+  \begin{itemize}
+    \item Error cuadrático total de salida:
+    \begin{equation*}
+      \varepsilon^2 = (d_1 - y_1)^2 + (d_2 - y_2)^2 + \cdots
+    \end{equation*}
+    \item Se proporciona una perturbación agregando $\Delta s$ a un Adaline seleccionado; la perturbación se propaga a través de la red, causando un cambio en la suma de los cuadrados de los errores.
+    \item Gradiente instantáneo:
+    \begin{equation*}
+      \hat{\nabla}_k = \frac{\partial \varepsilon_k^2}{\partial \mathbf{W}_k}
+      \approx \frac{\Delta\varepsilon_k^2}{\Delta s} \mathbf{X}_k
+    \end{equation*}
+    \item Actualización de pesos:
+    \begin{equation*}
+      \mathbf{W}_{k+1} = \mathbf{W}_k - \mu \frac{\Delta\varepsilon_k^2}{\Delta s} \mathbf{X}_k
+    \end{equation*}
+  \end{itemize}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Referencias}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Referencias}
+  \footnotesize
+  \begin{itemize}
+    \item B. Widrow and M.E. Hoff, Jr. \textit{Adaptive switching circuits}. Technical Report 1553-1, Stanford Electron. Labs., Stanford, CA, June 30, 1960.
+    \item K. Senne. \textit{Adaptive Linear Discrete-time estimation}. PhD thesis, Technical Report SEL-68-090, Stanford Electron. Labs., Stanford, CA, June 1968.
+    \item S. Grossberg. \textit{Nonlinear neural networks: principles, mechanisms, and architectures}. Neural Networks 1.1 (1988): 17--61.
+    \item S. Cross, R. Harrison, and R. Kennedy. \textit{Introduction to neural networks}. The Lancet 346.8982 (1995): 1075--1079.
+    \item Andrew Ng's Machine Learning course on Coursera.
+    \item LMS tutorials: \url{http://homepages.cae.wisc.edu/~ece539/resources/tutorials/LMS.pdf}
+  \end{itemize}
+\end{frame}
+
+\end{document}

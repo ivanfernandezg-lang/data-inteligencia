@@ -1,0 +1,18 @@
+α-LMS V.S. Perceptron,,
+"α Value
+α-LMS: controls stability and speed of convergence
+Perceptron rule: does not affect the stability of the perceptron
+algorithm, and it affects convergence time only if the initial weight
+vector is nonzero
+Binary or continuous response
+α-LMS: both binary and continuous response
+Perceptron: only binary
+Linearly separable training patterns
+α-LMS: may fail to separate linearly separable set
+Perceptron: separate any linearly separable set
+Nonlinearly separable training patterns
+α-LMS: does not lead to unreasonable weight solution
+Perceptron: goes on forever is not linearly separable, and often does
+not yield a low-error solution. Usually end up with a small norm weight
+vector.",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam18il y/ 41"

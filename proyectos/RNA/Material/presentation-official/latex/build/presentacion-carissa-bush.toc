@@ -1,0 +1,12 @@
+\babel@toc {spanish}{}\relax 
+\beamer@sectionintoc {1}{Introducción}{2}{0}{1}
+\beamer@sectionintoc {2}{Conceptos Fundamentales}{3}{0}{2}
+\beamer@sectionintoc {3}{Clasificadores No Lineales}{6}{0}{3}
+\beamer@sectionintoc {4}{Adaptación: El Principio de Mínima Perturbación}{12}{0}{4}
+\beamer@sectionintoc {5}{Reglas de Corrección de Error}{13}{0}{5}
+\beamer@sectionintoc {6}{Reglas de Corrección de Error: Redes Multi-Elemento}{17}{0}{6}
+\beamer@sectionintoc {7}{Reglas de Descenso más Empinado}{22}{0}{7}
+\beamer@sectionintoc {8}{Retro-propagación (Backpropagation)}{26}{0}{8}
+\beamer@sectionintoc {9}{Madaline Rule III (MRIII)}{28}{0}{9}
+\beamer@sectionintoc {10}{¿Qué se usa hoy?}{31}{0}{10}
+\beamer@sectionintoc {11}{Cierre}{32}{0}{11}

@@ -1,0 +1,22 @@
+,,
+"Linear Rules
+α-LMS Algorithm",,
+"Linear Rule: alter the weights of the adaptive threshold element with
+each pattern presentation to make an error correction which is
+proportional to the error itself.
+Follows Error Correction Rule
+Weight update rule:
+ϵ X
+k k
+W = W + α
+k+1 k |X |2
+k
+Error at k: ϵ = d −W kT X
+k k k
+Error Change: ∆ϵ = −αϵ
+k k
+Weights are usually initialized as 0.
+Learning Rate: 0.1 < α < 1, controls stability and convergence rate.
+Self-normalizing: choice of α does not depend on the magnitude of
+the input signals.",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam16il y/ 41"

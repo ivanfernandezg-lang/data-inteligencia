@@ -1,0 +1,29 @@
+"Madaline Rule I: Adaptation
+● The weights of the Adalines are initially
+set to small random values
+● Weight vector can be adapted by any of
+the single error-correction rules
+○ Reverse the Adaline’s output
+○ 𝛂-LMS
+○ Perceptron
+● Main idea: Assign responsibility to the
+Adaline or Adalines that can most easily
+assume it
+23",,,,
+,,"ly
+of
+ly",,
+,"● The weights of the Adalines are initially
+set to small random values
+● Weight vector can be adapted by any of
+the single error-correction rules
+○ Reverse the Adaline’s output
+○ 𝛂-LMS
+○ Perceptron
+● Main idea: Assign responsibility to the
+Adaline or Adalines that can most easily
+assume it","ly
+of
+ly",,
+,,,23,
+,,,,

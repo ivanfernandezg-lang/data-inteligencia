@@ -1,0 +1,8 @@
+Two Classes of Rules,,
+"Error correction rules: alter the weights of a network to correct a
+certain proportion of the error in the output response to the present
+input pattern
+Steepest descent rules: alter the weights during each pattern
+presentation by gradient descent with the objective of reducing
+mean-square-error, average over all training patterns",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam14il y/ 41"

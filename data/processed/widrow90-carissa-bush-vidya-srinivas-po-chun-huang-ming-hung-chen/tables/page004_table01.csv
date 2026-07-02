@@ -1,0 +1,7 @@
+"Binary Classification
+● Target task is to classify input patterns into two groups: positive and negative",
+"Linear Separability
+● A set of input patterns is linearly separable if",
+"there exists a line that can separate points
+with positive labels from points with negative
+labels",

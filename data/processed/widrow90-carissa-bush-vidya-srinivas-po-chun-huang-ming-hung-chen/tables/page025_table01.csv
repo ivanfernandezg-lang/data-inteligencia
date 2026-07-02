@@ -1,0 +1,8 @@
+,
+"● Extended from MRI
+● Used for multilayer binary networks
+● Weights are initially set to small
+random values
+● Training patterns are presented in a
+random sequence
+● Could hang up in local optima",

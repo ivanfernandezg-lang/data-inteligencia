@@ -1,0 +1,21 @@
+Madaline Rule III (MRIII) for Sigmoid Adaline,,
+"Motivation: the backpropagation algorithm requires accurate
+implementation of sigmoid function hardware. Need another way to
+compute the gradient, which does not rely on the accurate function
+hardware.
+Adding a small perturbation signal ∆s to s , record the effect on y
+k k
+and ϵ .
+k
+▽ˆ = ∂∂ Weϵ2 k = ∂ ∂eϵ sk2 k ∂∂ Wsk = ∂ ∂eϵ sk2 k X ≈  ∆ ∆eϵ s2 k X ≈ 2 eϵ k ∆ ∆eϵ sk X
+k k k k
+k k
+ ∆ϵ2
+W k+1 = W k −µ ∆e sk X k or
+ 
+Weightsupdate : W = W −2µ eϵ ∆ ∆eϵ sk X
+k+1 k k k
+Backpropagation and MRIII are mathmatically equivalent if the
+perturbation ∆s is small. MRIII is robust even with the analog
+implementation.",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam34il y/ 41"

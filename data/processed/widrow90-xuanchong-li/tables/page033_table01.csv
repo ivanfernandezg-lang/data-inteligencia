@@ -1,0 +1,8 @@
+Backpropagation for Sigmoid Adaline,,
+"y = sgm(s k)
+k
+Use instantaneous gradient: ▽ˆ = −2 eϵ ksgm′(s k)X
+k k
+Update weights: W = W + µ(−▽ˆ k) = W + 2 eϵ ksgm′(s k)X
+k+1 k k k",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam33il y/ 41"

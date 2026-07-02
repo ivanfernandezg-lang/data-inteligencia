@@ -1,0 +1,12 @@
+µ-LMS V.S. α-LMS,,
+"α-LMS: W = W + α |ϵ XkX k|k , µ-LMS: W = W + 2µϵ kX
+k+1 k 2 k+1 k k
+α-LMS is self-normalization, with the parameter α determining the
+fraction of the instantaneous error to be corrected with each adaption.
+µ-LMS is constant-coefficient linear algorithm.
+In practice, α-LMS usually converges faster than µ-LMS.
+µ-LMS converges to minimum MSE solution (Wiener solution), while
+α-LMS converges to a biased solution.
+Normalized training set: Xe k ≜ |X Xk k|, dek ≜ |Xdk k|.
+α-LMS achieves minimum MSE solution for normalized training set.",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam31il y/ 41"

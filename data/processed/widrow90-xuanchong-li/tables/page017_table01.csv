@@ -1,0 +1,9 @@
+,,
+"Non-linear Rules
+Perceptron",,
+"A non-linear algorithm: weights change is collinear with the input
+pattern vector and the linear error.
+Follows Error Correction Rule
+Weight update rule:W = W + αϵ ee2k X
+k+1 k k",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam17il y/ 41"

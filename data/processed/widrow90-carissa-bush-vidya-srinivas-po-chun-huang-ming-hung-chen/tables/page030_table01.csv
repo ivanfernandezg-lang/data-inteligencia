@@ -1,0 +1,6 @@
+LMS instantaneous gradient,LMS instantaneous gradient
+self-normalizing,not self-normalizing
+more difficult to analyze,easier to analyze
+faster convergence,slower convergence
+may converge to biased point,"always converges in mean to
+minimum"

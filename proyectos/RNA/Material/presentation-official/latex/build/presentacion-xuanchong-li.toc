@@ -1,0 +1,10 @@
+\babel@toc {spanish}{}\relax 
+\beamer@sectionintoc {1}{Contenido y Algoritmos}{2}{0}{1}
+\beamer@sectionintoc {2}{Conceptos Fundamentales}{4}{0}{2}
+\beamer@sectionintoc {3}{Algoritmos de Aprendizaje}{10}{0}{3}
+\beamer@subsectionintoc {3}{1}{Reglas de Corrección de Error: Elemento Único}{13}{0}{3}
+\beamer@subsectionintoc {3}{2}{Redes Multi-Elemento}{17}{0}{3}
+\beamer@subsectionintoc {3}{3}{Reglas de Descenso más Empinado}{23}{0}{3}
+\beamer@subsectionintoc {3}{4}{Redes Multicapa}{30}{0}{3}
+\beamer@sectionintoc {4}{Invarianza de Redes Neuronales}{32}{0}{4}
+\beamer@sectionintoc {5}{Resumen}{33}{0}{5}

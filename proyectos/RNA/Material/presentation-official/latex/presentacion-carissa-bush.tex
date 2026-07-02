@@ -1,0 +1,533 @@
+% =============================================================================
+% Presentación: 30 Years of Adaptive Neural Networks
+%   Perceptron, Madaline, and Backpropagation (Widrow et al.)
+% Presentado por: Carissa Bush, Vidya Srinivas, Po-Chun Huang, Ming Hung Chen
+% =============================================================================
+\documentclass[aspectratio=169,utf8,spanish]{beamer}
+
+% ── Paquetes ────────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+% ── Tema ────────────────────────────────────────────────────────────────────
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% ── Metadatos ───────────────────────────────────────────────────────────────
+\title[30 Years of Adaptive Neural Networks]{
+  30 Years of Adaptive Neural Networks:\\
+  Perceptron, Madaline, and Backpropagation
+}
+\subtitle{Widrow \textit{et al.}}
+\author{Carissa Bush, Vidya Srinivas, Po-Chun Huang, Ming Hung Chen}
+\institute{}
+\date{}
+
+% ── Atajos ──────────────────────────────────────────────────────────────────
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\sgm}{sgm}
+
+\begin{document}
+
+% ── Portada ─────────────────────────────────────────────────────────────────
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Introducción}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Introducción}
+  \begin{itemize}
+    \item Los conceptos de aprendizaje de máquina (\textit{machine learning}) existen hace décadas.
+    \item Muchas ideas fueron descubiertas, y redescubiertas independientemente.
+    \item Muchas ideas fueron inspiradas biológicamente.
+    \item Todo comenzó con conceptos simples.
+  \end{itemize}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Conceptos Fundamentales}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{El Combinador Lineal Adaptativo}
+  \begin{itemize}
+    \item Produce una suma ponderada de las entradas.
+    \item Cada entrada tiene un peso asociado.
+    \item Los pesos pueden ser discretos o continuos.
+    \item Los pesos pueden ser adaptados.
+  \end{itemize}
+  \begin{center}
+    $y = \sum_{i} w_i x_i = \mathbf{W}^T \mathbf{X}$
+  \end{center}
+\end{frame}
+
+\begin{frame}{Clasificación Binaria y Separabilidad Lineal}
+  \textbf{Clasificación Binaria}
+  \begin{itemize}
+    \item La tarea objetivo es clasificar patrones de entrada en dos grupos: positivo y negativo.
+  \end{itemize}
+
+  \textbf{Separabilidad Lineal}
+  \begin{itemize}
+    \item Un conjunto de patrones de entrada es \textbf{linealmente separable} si existe una línea (o hiperplano) que puede separar puntos con etiquetas positivas de puntos con etiquetas negativas.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Un Clasificador Lineal Adaptativo: Adaline}
+  \begin{center}
+    \begin{tabular}{c|c|c}
+      Vector de entrada &
+      \begin{tabular}{c}
+        Combinador Lineal \\
+        Adaptativo
+      \end{tabular} &
+      \begin{tabular}{c}
+        Elemento Umbral \\
+        Signum
+      \end{tabular} \\
+      & & $\downarrow$ \\
+      & & $\pm 1$
+    \end{tabular}
+  \end{center}
+  \begin{itemize}
+    \item Realiza tareas de clasificación binaria.
+    \item Es capaz de realizar fronteras de separación lineales.
+    \item Estas fronteras clasifican perfectamente conjuntos de datos linealmente separables.
+  \end{itemize}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Clasificadores No Lineales}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Realizando Fronteras de Separación No Lineales}
+  \begin{itemize}
+    \item Cuando los datos no son linealmente separables en el espacio original, se necesitan técnicas no lineales.
+    \item Dos enfoques principales:
+    \begin{enumerate}
+      \item Mapas de características (\textit{feature maps}): proyectar a un espacio de mayor dimensión.
+      \item Combinaciones no lineales de fronteras lineales (Madaline, redes feedforward).
+    \end{enumerate}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Clasificadores No Lineales: Mapas de Características}
+  \begin{itemize}
+    \item Si los patrones de entrada no son separables en el espacio original, se mapean a un espacio de mayor dimensión donde sí son linealmente separables.
+  \end{itemize}
+  \begin{center}
+    Vector de entrada $\rightarrow$ Mapa de Características $\rightarrow$ Adaline $\rightarrow \pm 1$
+  \end{center}
+  \begin{itemize}
+    \item Sea $\phi$ nuestro mapa de características.
+    \item Ejemplo: $\phi: \R \to \R^2$, donde $\phi(x) = (x, x^2)$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Ejemplo de Mapa de Características}
+  \textbf{Espacio original (1D):} puntos $1, 2, 3$ no separables linealmente.
+  \bigskip
+
+  \textbf{Espacio mapeado (2D):}
+  \begin{itemize}
+    \item $1 \to (1, 1)$
+    \item $2 \to (2, 4)$
+    \item $3 \to (3, 9)$
+  \end{itemize}
+  \bigskip
+
+  Frontera lineal en el espacio mapeado: $x_1^2 - 4x_1 + 3.5 = 0$.
+\end{frame}
+
+\begin{frame}{Clasificadores No Lineales: Madaline I}
+  \begin{itemize}
+    \item Si los patrones no son separables en el espacio original, se usa una combinación no lineal de fronteras de separación lineales.
+  \end{itemize}
+  \begin{center}
+    \begin{tabular}{c}
+      Vector de entrada \\
+      $\downarrow$ \\
+      \begin{tabular}{cc}
+        Adaline & Adaline \\
+      \end{tabular} \\
+      $\downarrow$ \\
+      Elemento Lógico Fijo (No Lineal) \\
+      $\downarrow$ \\
+      $\pm 1$
+    \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Clasificadores No Lineales: Redes Feedforward}
+  \begin{itemize}
+    \item Combina múltiples Adalines en capas y alimenta las salidas de una capa a las entradas de la siguiente.
+    \item Diferentes capas pueden tener diferentes funciones de activación.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Clasificadores No Lineales: Adaptación}
+  \begin{itemize}
+    \item Se puede calcular la señal de error en el vector de salida.
+    \item La adaptación de la capa de salida es posible.
+    \item ¿Qué hacemos con la adaptación de las capas ocultas?
+    \item $\to$ Retro-propagación del error (\textit{backpropagation}).
+  \end{itemize}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Adaptación: El Principio de Mínima Perturbación}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Adaptación — Principio de Mínima Perturbación}
+  \textbf{Reglas de Corrección de Error (EC)}
+  \begin{itemize}
+    \item Alteran los pesos de una red para corregir el error en la respuesta de salida al patrón de entrada presente.
+  \end{itemize}
+
+  \textbf{Reglas de Descenso más Empinado (SD)}
+  \begin{itemize}
+    \item Alteran los pesos de una red mediante descenso de gradiente.
+    \item Reducen el error promediado sobre todos los patrones de entrada.
+  \end{itemize}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Reglas de Corrección de Error}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Reglas de Corrección de Error: Elemento Umbral Único}
+  \begin{itemize}
+    \item Cada nuevo patrón de entrada inicia un nuevo ciclo de adaptación.
+    \item El objetivo es actualizar los pesos para reducir el error.
+    \item Las reglas lineales hacen correcciones directamente proporcionales al error.
+    \item Las reglas no lineales hacen correcciones que no son directamente proporcionales al error.
+  \end{itemize}
+  \begin{center}
+    Patrón de entrada $\to$ Adaline $\to$ Regla EC $\to$ Error $\to$ Pesos actualizados
+  \end{center}
+\end{frame}
+
+\begin{frame}{EC Elemento Umbral Único: $\alpha$-LMS}
+  \begin{itemize}
+    \item La actualización de pesos es independiente de la magnitud del patrón de entrada (auto-normalizante).
+    \item La elección de $\alpha$ controla la estabilidad y velocidad de convergencia.
+  \end{itemize}
+  \begin{align*}
+    \mathbf{W}_{k+1} &= \mathbf{W}_k + \alpha \frac{\varepsilon_k \mathbf{X}_k}{\|\mathbf{X}_k\|^2} \\[4pt]
+    \varepsilon_k &= d_k - \mathbf{W}_k^T \mathbf{X}_k \\[4pt]
+    \Delta\varepsilon_k &= -\alpha\varepsilon_k
+  \end{align*}
+  \begin{itemize}
+    \item Rango típico: $0.1 < \alpha < 1$.
+    \item Pesos inicializados usualmente en $0$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{EC Elemento Umbral Único: Regla del Perceptrón}
+  \begin{itemize}
+    \item Suma o resta patrones de entrada a los pesos para corregir el error.
+    \item Garantiza convergencia para cualquier conjunto de patrones linealmente separable.
+    \item Sin garantías de convergencia para patrones no linealmente separables.
+  \end{itemize}
+  \begin{align*}
+    \mathbf{W}_{k+1} &= \mathbf{W}_k + \alpha \frac{\tilde{\varepsilon}_k}{2} \mathbf{X}_k
+  \end{align*}
+  donde $\tilde{\varepsilon}_k = d_k - y_k$ es el error del cuantizador (error binario).
+\end{frame}
+
+\begin{frame}{EC Elemento Umbral Único: Reglas de May}
+  \begin{itemize}
+    \item Todas las respuestas deseadas son $+1$ o $-1$.
+    \item Define una ``zona muerta'' (\textit{dead zone}) o margen alrededor de $0$, denotada por $\pm\gamma$.
+  \end{itemize}
+
+  \textbf{Regla de Adaptación por Incremento}
+  \begin{itemize}
+    \item Patrón fuera del margen: se adapta por la regla del Perceptrón.
+    \item Patrón dentro del margen: se adapta por una variante normalizada del Perceptrón de incremento fijo.
+  \end{itemize}
+
+  \textbf{Regla de Adaptación por Relajación Modificada}
+  \begin{itemize}
+    \item Patrón fuera del margen y correctamente clasificado: no se modifica.
+    \item Patrón dentro del margen o mal clasificado: variante normalizada del Perceptrón.
+    \item Si $\gamma \to \infty$, se convierte en $\alpha$-LMS.
+  \end{itemize}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Reglas de Corrección de Error: Redes Multi-Elemento}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Madaline Rule I (MRI)}
+  \begin{itemize}
+    \item Permite la adaptación de un elemento de la primera capa porque el elemento lógico es fijo.
+    \item La segunda capa consiste en un único elemento lógico de umbral fijo (OR, AND, voto mayoritario, etc.).
+  \end{itemize}
+  \begin{center}
+    Vector de entrada $\to$
+    \begin{tabular}{c}
+      Adaline \\
+      Adaline \\
+      $\vdots$
+    \end{tabular}
+    $\to$ Lógica Fija $\to \pm 1$
+
+    \small{\textit{Primera capa} \hspace{2cm} \textit{Segunda capa}}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Madaline Rule I: Adaptación}
+  \begin{itemize}
+    \item Los pesos de los Adalines se inicializan con valores aleatorios pequeños.
+    \item El vector de pesos puede adaptarse mediante cualquiera de las reglas de corrección de error para un solo elemento:
+    \begin{itemize}
+      \item Invertir la salida del Adaline.
+      \item $\alpha$-LMS.
+      \item Perceptrón.
+    \end{itemize}
+    \item \textbf{Idea principal:} asignar responsabilidad al Adaline o Adalines que pueden asumirla más fácilmente.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Madaline Rule I: Características}
+  \begin{itemize}
+    \item Un asignador de trabajo (\textit{job assigner}) asigna la responsabilidad.
+    \item El reparto de carga (\textit{load sharing}) es importante.
+    \item La secuencia de presentación de patrones debe ser aleatoria.
+    \item El proceso de adaptación puede atascarse en óptimos locales.
+    \item Obedece el principio de mínima perturbación.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Madaline Rule II (MRII)}
+  \begin{itemize}
+    \item Extendido desde MRI.
+    \item Usado para redes binarias multicapa.
+    \item Los pesos se inicializan con valores aleatorios pequeños.
+    \item Los patrones de entrenamiento se presentan en secuencia aleatoria.
+    \item Puede atascarse en óptimos locales.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Madaline Rule II: Adaptación}
+  \begin{itemize}
+    \item El objetivo es reducir el error de Hamming.
+    \item Si la red produce un error, adaptar la primera capa:
+    \begin{enumerate}
+      \item \textbf{Adaptación de prueba:} invertir la salida binaria.
+      \item Agregar una perturbación $\Delta s$ sin adaptación.
+      \item Si el error de salida se reduce, remover $\Delta s$ y adaptar los Adalines seleccionados mediante $\alpha$-LMS.
+      \item Si el error no se reduce, no hay adaptación de pesos.
+    \end{enumerate}
+    \item Agotar todos los Adalines en la primera capa.
+    \item Repetir para todas las capas.
+  \end{itemize}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Reglas de Descenso más Empinado}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Reglas de Descenso más Empinado: Motivación}
+  \begin{itemize}
+    \item Las reglas de corrección de error corrigen una proporción del error para el patrón actual.
+    \item Las reglas de descenso más empinado buscan minimizar el error cuadrático medio (MSE) sobre todos los patrones.
+  \end{itemize}
+
+  \begin{center}
+    $\mathbf{W}_{k+1} = \mathbf{W}_k + \mu(-\nabla_k)$
+  \end{center}
+
+  donde $\mu$ controla la estabilidad y velocidad de convergencia, y $\nabla_k$ es el gradiente en $\mathbf{W} = \mathbf{W}_k$.
+\end{frame}
+
+\begin{frame}{Reglas de Descenso más Empinado: $\mu$-LMS}
+  \begin{itemize}
+    \item Se usa un gradiente crudo en lugar del gradiente real.
+    \item El gradiente instantáneo se determina a partir de un solo patrón de entrada.
+    \item $\mu$ es la constante de aprendizaje que determina estabilidad y tasa de convergencia.
+  \end{itemize}
+  \begin{align*}
+    \hat{\nabla}_k &= \frac{\partial \varepsilon_k^2}{\partial \mathbf{W}_k} = -2\varepsilon_k \mathbf{X}_k \\
+    \mathbf{W}_{k+1} &= \mathbf{W}_k + 2\mu\varepsilon_k \mathbf{X}_k
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Comparación: $\alpha$-LMS vs $\mu$-LMS}
+  \begin{center}
+    \begin{tabular}{ll}
+      \toprule
+      \textbf{$\alpha$-LMS} & \textbf{$\mu$-LMS} \\
+      \midrule
+      Gradiente instantáneo LMS & Gradiente instantáneo LMS \\
+      Auto-normalizante & No auto-normalizante \\
+      Más difícil de analizar & Más fácil de analizar \\
+      Convergencia más rápida & Convergencia más lenta \\
+      Puede converger a punto sesgado & Converge en media al mínimo (Wiener) \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Descenso más Empinado: Adaline con Sigmoide}
+  \begin{itemize}
+    \item Se extiende el Adaline para usar una función sigmoide en lugar de la función signum.
+    \item $y_k = \sgm(s_k)$ donde $s_k = \mathbf{W}_k^T \mathbf{X}_k$.
+  \end{itemize}
+  \begin{align*}
+    \tilde{\varepsilon}_k &= d_k - y_k \\
+    \hat{\nabla}_k &= -2\tilde{\varepsilon}_k \sgm'(s_k) \mathbf{X}_k \\
+    \mathbf{W}_{k+1} &= \mathbf{W}_k + 2\mu\tilde{\varepsilon}_k \sgm'(s_k) \mathbf{X}_k
+  \end{align*}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Retro-propagación (Backpropagation)}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Retro-propagación (Backpropagation)}
+  \textbf{Proceso:}
+  \begin{enumerate}
+    \item Entrada $\to$ Salida (propagación hacia adelante).
+    \item Encontrar los errores en la salida.
+    \item Propagar los efectos de los errores hacia atrás a través de la red para asociar una ``derivada del error cuadrático'' ($\delta$) con cada Adaline.
+    \item Usar $\delta$ para determinar el gradiente.
+    \item Actualizar los pesos basados en el gradiente.
+    \item Repetir para todas las capas.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Ejemplo de Backpropagation}
+  \begin{itemize}
+    \item Para una red feedforward de 3 capas:
+  \end{itemize}
+  \begin{align*}
+    a^{(1)} &= \mathbf{X} \\
+    a^{(2)} &= \sgm((W^{(1)})^T a^{(1)}) \\
+    a^{(3)} &= \sgm((W^{(2)})^T a^{(2)}) \\
+    a^{(4)} &= \sgm((W^{(3)})^T a^{(3)})
+  \end{align*}
+  \begin{align*}
+    \delta_j^{(4)} &= a_j^{(4)} - y_j \quad \text{(error de salida)} \\
+    \delta^{(3)} &= W^{(3)} \delta^{(4)} \;.\!*\; \sgm'(W^{(2)} a^{(2)}) \\
+    \delta^{(2)} &= W^{(2)} \delta^{(3)} \;.\!*\; \sgm'(W^{(1)} a^{(1)})
+  \end{align*}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Madaline Rule III (MRIII)}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Redes Multi-Elemento: Madaline Rule III}
+  \begin{itemize}
+    \item Motivación: el algoritmo de backpropagation requiere implementación precisa de la función sigmoide en hardware.
+    \item MRIII usa una perturbación $\Delta s$ en lugar de la derivada de la sigmoide.
+  \end{itemize}
+  \begin{align*}
+    \hat{\nabla}_k &= \frac{\partial \tilde{\varepsilon}_k^2}{\partial \mathbf{W}_k}
+    \approx \frac{\Delta\tilde{\varepsilon}_k^2}{\Delta s} \mathbf{X}_k
+    \approx 2\tilde{\varepsilon}_k \frac{\Delta\tilde{\varepsilon}_k}{\Delta s} \mathbf{X}_k
+  \end{align*}
+  \begin{itemize}
+    \item MRIII es matemáticamente equivalente a backpropagation si $\Delta s$ es pequeño.
+    \item MRIII es robusto incluso con implementación analógica.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{MRIII vs Backpropagation}
+  \begin{itemize}
+    \item MRIII es esencialmente equivalente a Backpropagation:
+    \begin{itemize}
+      \item Mismos argumentos para cada uno de los elementos Adaline.
+      \item El $\Delta s$ (perturbación) es pequeño.
+      \item La adaptación se aplica a todos los elementos de la red a la vez.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{MRII vs MRIII}
+  \begin{center}
+    \begin{tabular}{p{0.45\textwidth}|p{0.45\textwidth}}
+      \textbf{MRII} & \textbf{MRIII} \\
+      \hline
+      Discontinuo y no lineal & Todos los Adalines se adaptan \\
+      No es posible usar gradientes instantáneos & Los que tienen sumas analógicas más cercanas a cero se adaptan más fuerte \\
+      Problemas con mínimos locales & \\
+    \end{tabular}
+  \end{center}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{¿Qué se usa hoy?}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{¿Qué se sigue usando hoy?}
+  \begin{itemize}
+    \item Diferentes métodos son mejores en diferentes aplicaciones.
+  \end{itemize}
+
+  \textbf{Se usa menos:}
+  \begin{itemize}
+    \item Clasificación lineal.
+    \item Elementos únicos.
+    \item Una sola capa.
+  \end{itemize}
+
+  \textbf{Se usa más:}
+  \begin{itemize}
+    \item Multi-capa.
+    \item Multi-elemento.
+    \item Retro-propagación (\textit{backpropagation}).
+  \end{itemize}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{Cierre}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{¿Preguntas?}
+  \begin{center}
+    \Large ¿Preguntas?
+  \end{center}
+\end{frame}
+
+% ── Apéndice ────────────────────────────────────────────────────────────────
+\appendix
+
+\begin{frame}{Apéndice: Mapa de Características — Ejemplo Detallado}
+  \textbf{Espacio original (1D):} puntos $1, 2, 3$.
+  \bigskip
+
+  \textbf{Mapa de características:} $\phi(x) = (x, x^2)$
+  \begin{itemize}
+    \item $1 \to (1, 1)$
+    \item $2 \to (2, 4)$
+    \item $3 \to (3, 9)$
+  \end{itemize}
+
+  \textbf{Frontera lineal en espacio mapeado:}
+  $x_1^2 - 4x_1 + 3.5 = 0$
+\end{frame}
+
+\begin{frame}{Apéndice: $\mu$-LMS — Derivación}
+  \begin{itemize}
+    \item Sea $P^T \triangleq \E[d_k \mathbf{X}_k^T]$, $R \triangleq \E[\mathbf{X}_k \mathbf{X}_k^T]$.
+    \item El gradiente del MSE: $\nabla_k = -2P + 2R\mathbf{W}_k$.
+    \item Igualando a cero: $\mathbf{W}^* = R^{-1}P$ (vector de pesos de Wiener).
+    \item $\mu$-LMS evita calcular $R^{-1}$ y $P$ usando el gradiente instantáneo.
+    \item Para $0 < \mu < 1/\lambda_{\max}$, el algoritmo converge en media a $\mathbf{W}^*$.
+  \end{itemize}
+\end{frame}
+
+\end{document}

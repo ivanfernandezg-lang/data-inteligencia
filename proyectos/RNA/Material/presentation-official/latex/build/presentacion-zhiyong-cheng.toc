@@ -1,0 +1,10 @@
+\babel@toc {spanish}{}\relax 
+\beamer@sectionintoc {1}{Contenido}{2}{0}{1}
+\beamer@sectionintoc {2}{Evolución de Algoritmos}{3}{0}{2}
+\beamer@sectionintoc {3}{Conceptos Básicos}{5}{0}{3}
+\beamer@sectionintoc {4}{El Principio de Mínima Perturbación}{11}{0}{4}
+\beamer@sectionintoc {5}{Algoritmos Adaptativos}{12}{0}{5}
+\beamer@sectionintoc {6}{Reglas de Corrección de Error: Adaline}{13}{0}{6}
+\beamer@sectionintoc {7}{Reglas de Corrección de Error: Madaline}{17}{0}{7}
+\beamer@sectionintoc {8}{Descenso más Empinado (Steepest Descent)}{26}{0}{8}
+\beamer@sectionintoc {9}{Referencias}{40}{0}{9}

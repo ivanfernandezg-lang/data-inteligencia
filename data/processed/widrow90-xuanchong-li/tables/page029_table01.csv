@@ -1,0 +1,18 @@
+,,
+"Steepest Descent Rules
+Linear Rules",,
+"The steepest descent rule is linear if weight changes are proportional
+to the linear error
+Linear Combiner:
+ϵ2 = (d −X T W k)2 = d k2 −2d kX T W + W kX kX T W
+k k k k k k k
+MSE: E[ϵ2 k] = E[d k2] −2E[d kX T ]W + W kT E[X kX T ]W
+k k k k
+PT ≜ E[d kX T ], R ≜ E[X kX T ]
+k k
+∂E[ϵ2]
+▽ = ∂Wkk = −2P + 2RW
+k k
+Set the gradient to zero: W ∗ = R−1P (Wiener weight vector)
+Need to compute R−1 and P?",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam29il y/ 41"

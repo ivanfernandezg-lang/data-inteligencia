@@ -1,0 +1,688 @@
+% ═══════════════════════════════════════════════════════════════════
+%  INFORME — Tarea IC RNA 2026-1
+%  Paper: Widrow & Lehr (1990)
+%  "30 Years of Adaptive Neural Networks:
+%   Perceptron, Madaline, and Backpropagation"
+% ═══════════════════════════════════════════════════════════════════
+
+\documentclass[11pt,a4paper]{article}
+
+% ── Paquetes ──────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+% ── Macros para figuras y tablas (compilacion robusta) ───────────
+\newcommand{\figura}[4][0.92]{%
+\begin{figure}[H]\centering
+\IfFileExists{../../notebook/v1/figs/#2.png}{%
+\includegraphics[width=#1\textwidth]{../../notebook/v1/figs/#2.png}}{%
+\fbox{\parbox[c][2.6cm][c]{0.8\textwidth}{\centering\texttt{figs/#2.png}\\(pendiente: ejecutar el notebook)}}}
+\caption{#3}\label{fig:#4}
+\end{figure}}
+
+\newcommand{\tabla}[3]{%
+\begin{table}[H]\centering\small
+\IfFileExists{../../notebook/v1/tabs/#1.tex}{%
+\input{../../notebook/v1/tabs/#1.tex}}{%
+\fbox{\parbox[c][1.6cm][c]{0.7\textwidth}{\centering\texttt{tabs/#1.tex}\\(pendiente)}}}
+\caption{#2}\label{tab:#3}
+\end{table}}
+
+% ── Comandos personalizados ──────────────────────────────────────
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\norm}[1]{\lVert#1\rVert}
+\newcommand{\aLMS}{$\alpha$-LMS}
+\newcommand{\muLMS}{$\mu$-LMS}
+\newcommand{\bp}{\textit{backpropagation}}
+\newcommand{\mrii}{\textit{Madaline Rule II}}
+\newcommand{\mriii}{\textit{Madaline Rule III}}
+
+% ── Metadatos ─────────────────────────────────────────────────────
+\title{\textbf{Algoritmos de Aprendizaje en Redes Neuronales Feedforward}\\[4pt]
+\large Un análisis del artículo de Widrow \& Lehr (1990):\\
+\textit{30 Years of Adaptive Neural Networks: Perceptron, Madaline, and Backpropagation}}
+\author{Estudiante\\Universidad de Santiago de Chile\\Magíster en Ingeniería Informática}
+\date{Julio 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Este informe presenta un análisis comprehensivo del artículo de revisión de Widrow \& Lehr (1990)
+sobre 30 años de algoritmos de aprendizaje supervisado en redes neuronales artificiales (RNA)
+feedforward. Se implementaron desde cero en NumPy puro los seis algoritmos descritos en el artículo
+—Perceptrón, \aLMS, \muLMS, MLP con \bp, \mrii~y \mriii— y se ejecutaron siete experimentos
+para verificar experimentalmente las hipótesis fundamentales del principio de mínima perturbación.
+Los resultados confirman que: (1) la capacidad estadística $C_s \approx 2N_w$ de Cover se verifica
+empíricamente, (2) el Perceptrón converge en tiempo finito solo en datos separables mientras \muLMS
+se aproxima al óptimo de Wiener, (3) el MLP con \bp~resuelve XOR (6/20, 2--2--1) y alcanza 91.1\% en
+Iris, (4) \mriii~es matemáticamente equivalente a \bp~con error relativo de $5.05 \times 10^{-8}$
+pero entre 3.5$\times$ y 74$\times$ más costoso computacionalmente. Se discuten las implicancias
+del principio de mínima perturbación como marco unificador del aprendizaje supervisado en RNA.
+\end{abstract}
+
+% ═══════════════════════════════════════════════════════════════════
+%  1. INTRODUCCIÓN (15%)
+% ═══════════════════════════════════════════════════════════════════
+\section{Introducción}
+
+\subsection{Problema abordado}
+
+El artículo de Widrow \& Lehr (1990) \cite{widrow1990} aborda el problema fundamental del
+\textbf{aprendizaje supervisado en redes neuronales artificiales feedforward}: ¿cómo adaptar los
+pesos sinápticos de una red de elementos computacionales simples para que aproximen una función
+de clasificación o regresión a partir de ejemplos? El artículo revisa 30 años de desarrollo de
+algoritmos de entrenamiento —desde el Perceptrón de Rosenblatt (1958) hasta la retropropagación
+del error de Rumelhart, Hinton \& Williams (1986)— y demuestra que todos ellos comparten un
+principio unificador: el \textbf{principio de mínima perturbación} (\textit{minimal disturbance
+principle}), que establece que durante el entrenamiento es recomendable inyectar nueva información
+en la red de manera que perturbe la información ya almacenada en la menor medida posible
+\cite{widrow1990}.
+
+El artículo es una revisión (\textit{survey}) y tutorial, no un estudio experimental sobre un
+dataset único. Su contribución es \textbf{conceptual e histórica}: traza la evolución desde las
+primeras reglas de aprendizaje (1960) hasta las redes multicapa con \bp, y demuestra conexiones
+matemáticas profundas entre algoritmos desarrollados independientemente. En particular, establece
+que \mriii~(Andes, 1988) es matemáticamente equivalente a \bp, un hallazgo realizado por Widrow
+y sus estudiantes \cite{widrow1990}.
+
+\subsection{¿Por qué redes neuronales artificiales?}
+
+La motivación para usar RNA en problemas de clasificación y regresión se fundamenta en tres
+argumentos presentados en las Secciones I--II del artículo \cite{widrow1990}:
+
+\begin{enumerate}[label=\textbf{(\roman*)},leftmargin=*]
+    \item \textbf{Paralelismo masivo y robustez:} Los sistemas biológicos resuelven tareas de
+    reconocimiento de patrones, procesamiento de voz e imágenes con una facilidad que las
+    computadoras von Neumann no igualan. Las RNA emulan este paralelismo mediante miles de
+    elementos simples interconectados que procesan información simultáneamente.
+    \item \textbf{Aprendizaje por ejemplos:} A diferencia de los sistemas algorítmicos
+    tradicionales, las RNA no requieren programación explícita de reglas. Aprenden la función
+    de mapeo entrada-salida directamente de los datos mediante algoritmos iterativos.
+    \item \textbf{Generalización:} Una RNA correctamente entrenada clasifica patrones no vistos
+    durante el entrenamiento. La capacidad de generalización está inversamente relacionada con la
+    capacidad de almacenamiento ($C_s \approx 2N_w$, Cover, 1964 \cite{cover1965}), un
+    \textit{trade-off} fundamental que el artículo explora en profundidad.
+\end{enumerate}
+
+Aplicaciones históricas que demuestran la viabilidad práctica incluyen NETtalk (Sejnowski \&
+Rosenberg, 1987), una red de 80--26 Adalines que aprende a pronunciar texto en inglés; el
+\textit{truck backer-upper} de Nguyen \& Widrow (1989), donde una red de 26 Adalines aprende a
+retroceder un camión con acoplado; y los ecualizadores adaptativos basados en LMS para módems
+de alta velocidad, la primera aplicación comercial masiva de las RNA \cite{widrow1990}.
+
+\subsection{Hipótesis}
+
+Se plantean cuatro hipótesis que guían la experimentación de este informe:
+
+\begin{description}
+    \item[H1 -- Capacidad de Cover:] La capacidad estadística de un Adaline es $C_s \approx 2N_w$
+    y la determinística $C_d = N_w$, verificable mediante simulación Monte Carlo con programación
+    lineal.
+    \item[H2 -- Convergencia finita del Perceptrón:] El Perceptrón converge en tiempo finito si
+    los datos son linealmente separables, pero oscila y diverge en norma si no lo son. Por
+    contraste, \aLMS~y \muLMS~son estables en ambos casos, con \muLMS~convergiendo al óptimo de
+    Wiener $W^* = R^{-1}P$.
+    \item[H3 -- Poder no lineal y óptimos locales:] XOR es irresoluble por un solo Adaline pero
+    resoluble por \mrii~y MLP con \bp, aunque ambos algoritmos están sujetos a óptimos locales
+    en la superficie de error. El remedio de ruido esporádico propuesto en la Sección VII-E del
+    paper \cite{widrow1990} mitiga parcialmente este problema.
+    \item[H4 -- Equivalencia MRIII $\equiv$ Backpropagation:] \mriii~converge a \bp~cuando la
+    perturbación $\Delta s \to 0$, pero su costo computacional en implementación digital es
+    proporcionalmente mayor (requiere $1 + N_{\text{Adalines}}$ pasadas hacia adelante por
+    presentación versus 1 adelante $+$ 1 atrás de \bp).
+\end{description}
+
+% ═══════════════════════════════════════════════════════════════════
+%  2. MARCO TEÓRICO (15%)
+% ═══════════════════════════════════════════════════════════════════
+\section{Marco Teórico}
+
+\subsection{El elemento adaptativo básico: Adaline}
+
+El bloque constructivo fundamental de las RNA feedforward es el \textbf{Adaptive Linear Element}
+(Adaline) \cite{widrow1990}, compuesto por:
+
+\begin{enumerate}[leftmargin=*]
+    \item Un \textbf{combinador lineal adaptativo} que calcula $s_k = X_k^T W_k$, donde
+    $X_k = [x_0=+1, x_{1k}, \ldots, x_{nk}]^T$ es el vector de entrada aumentado con bias
+    y $W_k \in \R^{n+1}$ el vector de pesos.
+    \item Un \textbf{cuantizador} (típicamente signum) que produce la salida binaria
+    $y_k = \mathrm{sgn}(s_k) \in \{\pm1\}$, o alternativamente una función de activación
+    diferenciable como la tangente hiperbólica $y_k = \tanh(s_k)$.
+\end{enumerate}
+
+La condición crítica $s = 0$ define un \textbf{hiperplano separador} en el espacio de patrones.
+Con $n$ entradas binarias, un Adaline puede implementar solo las funciones lógicas
+\textbf{linealmente separables}: 14 de 16 posibles para $n=2$, excluyendo XOR/XNOR \cite{widrow1990}.
+
+\subsection{Taxonomía de algoritmos}
+
+El artículo organiza los algoritmos en una taxonomía (Fig.~33 del paper) según dos ejes:
+\textbf{mecanismo de adaptación} (corrección de error vs. descenso más pronunciado) y
+\textbf{no linealidad} (lineal vs. no lineal), para uno o múltiples elementos:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Corrección de error -- lineal (un elemento):} \aLMS~(Widrow-Hoff, 1960),
+    que minimiza el error lineal $\varepsilon_k = d_k - s_k$ con cambio de peso colineal a $X_k$.
+    \item \textbf{Corrección de error -- no lineal (un elemento):} Regla del Perceptrón
+    (Rosenblatt, 1958), que solo adapta si la decisión es incorrecta usando el error del
+    cuantizador $\tilde{\varepsilon}_k = d_k - y_k$. Reglas de Mays con zona muerta.
+    \item \textbf{Corrección de error -- no lineal (red):} Madaline I (MRI) y II (MRII):
+    MRI usa capa oculta adaptativa con lógica fija de salida; MRII extiende la adaptación
+    a todas las capas mediante inversión tentativa (\textit{tentative flipping}) \cite{widrow1990}.
+    \item \textbf{Descenso más pronunciado -- lineal (un elemento):} \muLMS, que realiza
+    descenso por gradiente estocástico sobre la superficie de MSE, la cual es un paraboloide
+    convexo con mínimo único: la solución de Wiener $W^* = R^{-1}P$.
+    \item \textbf{Descenso más pronunciado -- no lineal (red):} \bp~(Rumelhart et al., 1986)
+    y \mriii~(Andes, 1988), que extienden el gradiente a redes multicapa con funciones de
+    activación diferenciables.
+\end{enumerate}
+
+\subsection{Ecuaciones fundamentales}
+
+\subsubsection{$\alpha$-LMS / Regla Delta de Widrow-Hoff — Eq.~(10)}
+
+\begin{equation}
+W_{k+1} = W_k + \alpha\,\frac{\varepsilon_k}{\norm{X_k}^2}\,X_k,\quad \varepsilon_k = d_k - X_k^T W_k
+\label{eq:alpha_lms}
+\end{equation}
+
+El cambio de peso $\Delta W_k$ es colineal con $X_k$, garantizando la corrección del error con
+la mínima magnitud de cambio posible (\textit{mínima perturbación geométrica}). Rango de
+estabilidad: $0 < \alpha < 2$, rango práctico: $0.1 < \alpha < 1.0$ \cite{widrow1990}.
+
+\subsubsection{Regla del Perceptrón de Rosenblatt — Eq.~(18)}
+
+\begin{equation}
+W_{k+1} = W_k + \alpha\,\frac{\tilde{\varepsilon}_k}{2}\,X_k,\quad \tilde{\varepsilon}_k = d_k - y_k \in \{-2,0,+2\}
+\label{eq:perceptron}
+\end{equation}
+
+Solo adapta si $y_k \neq d_k$. El \textbf{teorema de convergencia del Perceptrón} garantiza
+separación en pasos finitos si los datos son linealmente separables. Si no lo son, el vector
+de pesos tiende a cero y el algoritmo ``continúa para siempre'' \cite{widrow1990,rosenblatt1958}.
+
+\subsubsection{$\mu$-LMS — Eq.~(33)}
+
+\begin{equation}
+W_{k+1} = W_k + 2\mu\,\varepsilon_k\,X_k
+\label{eq:mu_lms}
+\end{equation}
+
+La superficie de MSE $\xi(W) = \E[d^2] - 2P^T W + W^T R W$ es un hiperparaboloide convexo
+con mínimo único $W^* = R^{-1}P$ (solución de Wiener). El gradiente instantáneo es insesgado:
+$\E[-2\varepsilon_k X_k] = \nabla\xi$. Estabilidad: $0 < \mu < 1/\mathrm{tr}[R]$ \cite{widrow1990}.
+
+\subsubsection{Backpropagation — Eqs.~(78--79, 87, 94)}
+
+Para el Adaline sigmoide ($y = \tanh(s)$), la regla de actualización es:
+
+\begin{equation}
+W_{k+1} = W_k + 2\mu\,\tilde{\varepsilon}_k \cdot (1 - y_k^2)\,X_k
+\label{eq:backprop_single}
+\end{equation}
+
+Para redes multicapa, las deltas se calculan como:
+\begin{align}
+\delta^{(L)}_j &= \varepsilon_j \cdot (1 - y_j^2) \quad \text{(capa de salida, Eq.~79)} \label{eq:delta_out}\\
+\delta^{(l)} &= \bigl(W^{(l+1)T} \delta^{(l+1)}\bigr) \odot (1 - (y^{(l)})^2) \quad \text{(capas ocultas, Eq.~87)} \label{eq:delta_hid}
+\end{align}
+
+Y la actualización con \textbf{momentum} (Eqs.~96--97):
+\begin{equation}
+\Delta W_k = \eta\,\Delta W_{k-1} + (1-\eta)\,2\mu\,\delta_k X_k^T,\quad \eta \approx 0.8\text{--}0.9
+\label{eq:momentum}
+\end{equation}
+
+Es crucial aclarar que $\delta$ \textbf{no es un error} en el sentido convencional: es una
+señal de gradiente que indica cómo cambiar cada peso para reducir el error cuadrático de salida
+$\varepsilon^2$ \cite{widrow1990,rumelhart1986}.
+
+\subsection{Capacidad de patrones y generalización}
+
+Cover (1964) \cite{cover1965} demostró que la probabilidad de que $N_p$ patrones aleatorios sean
+linealmente separables por un Adaline de $N_w$ pesos es:
+
+\begin{equation}
+P(N_p, N_w) =
+\begin{cases}
+1 & \text{si } N_p \leq N_w \\[4pt]
+2^{1-N_p} \displaystyle\sum_{i=0}^{N_w-1} \binom{N_p-1}{i} & \text{si } N_p > N_w
+\end{cases}
+\label{eq:cover}
+\end{equation}
+
+De aquí se derivan la \textbf{capacidad determinística} $C_d = N_w$ (garantía de solución) y la
+\textbf{capacidad estadística} $C_s \approx 2N_w$ (promedio de patrones absorbibles). Para redes
+multicapa, Baum extendió estos resultados acotando $N_w/N_y - K_1 \leq C_d \leq
+(N_w/N_y)\log_2(N_w/N_y) + K_2$ \cite{widrow1990}. La regla práctica de generalización es
+$N_p \gg N_w/N_y$: el número de patrones de entrenamiento debe exceder significativamente la
+relación pesos/salidas para que la red generalice en lugar de memorizar.
+
+\subsection{Madaline Rule II (MRII)}
+
+\mrii~(Widrow, Winter \& Baxter, 1987) \cite{widrow1990} extiende la adaptación a todas las capas
+de una red de Adalines con cuantizador signum. Para cada patrón erróneo:
+
+\begin{enumerate}[leftmargin=*]
+    \item Se ordenan las Adalines ocultas por $|s|$ creciente (\textit{load-sharing}: ``asignar
+    responsabilidad a quien puede asumirla más fácilmente'').
+    \item Se invierte tentativamente (\textit{flip}) la salida de una Adaline; si reduce el error
+    de Hamming del patrón, se acepta y se refuerza con corrección absoluta colineal.
+    \item Si no, se prueban pares de Adalines.
+    \item La capa de salida se entrena con \aLMS~moderado.
+\end{enumerate}
+
+El artículo advierte que MRII puede estancarse en óptimos locales, y propone como remedio la
+\textbf{adición esporádica de ruido a los pesos} (Sección VII-E) \cite{widrow1990}.
+
+\subsection{Madaline Rule III (MRIII) y equivalencia con Backpropagation}
+
+\mriii~(Andes, 1988) reemplaza el cuantizador signum por sigmoides y estima el gradiente de
+$\varepsilon^2$ respecto a $s_j$ mediante perturbación del sumidero \cite{widrow1990}:
+
+\begin{equation}
+\frac{\partial \varepsilon^2}{\partial s_j} \approx
+\frac{\varepsilon^2_{\text{perturbado}} - \varepsilon^2_{\text{base}}}{\Delta s}
+\label{eq:mriii}
+\end{equation}
+
+Cuando $\Delta s \to 0$, MRIII es \textbf{matemáticamente equivalente a backpropagation}.
+Requiere $1 + N_{\text{Adalines}}$ pasadas hacia adelante por patrón (vs. $1+1$ de \bp),
+lo que lo hace menos eficiente en implementación digital, pero más robusto para hardware
+analógico (existió un chip comercial de MRIII) \cite{widrow1990}.
+
+% ═══════════════════════════════════════════════════════════════════
+%  3. EXPERIMENTACIÓN (15%)
+% ═══════════════════════════════════════════════════════════════════
+\section{Experimentación}
+
+\subsection{Diseño experimental}
+
+Dado que el artículo de Widrow \& Lehr es una revisión teórica, la experimentación propia
+consiste en \textbf{implementar desde cero los algoritmos descritos} y verificar empíricamente
+las hipótesis H1--H4 mediante siete experimentos (E1--E7), más validación en dos datasets reales
+adicionales (Wine y MNIST reducido). La Tabla~\ref{tab:diseno} resume el diseño experimental.
+
+\begin{table}[H]\centering\small
+\begin{tabular}{@{}cllll@{}}
+\toprule
+\textbf{Exp.} & \textbf{Tema} & \textbf{Hipótesis} & \textbf{Algoritmos} & \textbf{Dataset} \\
+\midrule
+E1 & Capacidad de Cover & H1 & Programación Lineal & Sintético Monte Carlo \\
+E2 & Reglas lineales, separable & H2 & Perceptrón, \aLMS, \muLMS & Gaussianas separables \\
+E3 & Datos no separables & H2 & Perceptrón, \aLMS, \muLMS & Gaussianas solapadas \\
+E4 & Superficies MSE & — & Adaline 2D & Patrones aleatorios \\
+E5 & XOR: MRII vs MLP & H3 & MRII, MLP-\bp & XOR (4 patrones) \\
+E6 & Datasets reales & — & MLP-\bp, \aLMS, \muLMS & Iris, Wine, MNIST-04, two-moons \\
+E7 & MRIII $\equiv$ \bp~+ costo & H4 & MRIII, \bp & Iris (1 patrón) \\
+\bottomrule
+\end{tabular}
+\caption{Diseño experimental.}\label{tab:diseno}
+\end{table}
+
+\subsection{Datasets}
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Sintéticos separables:} 200 puntos, dos gaussianas $N([\pm2,\pm2], 0.35^2I)$.
+    \item \textbf{Sintéticos no separables:} 200 puntos, dos gaussianas $N([\pm0.9,\pm0.9], 1.3^2I)$.
+    \item \textbf{XOR:} 4 patrones $\{\pm1\}^2$, $d = [-1, +1, +1, -1]$.
+    \item \textbf{Iris} (Fisher, 1936; UCI): 150 flores, 4 atributos, 3 clases. Split 70/30 estratificado, normalizado a $[-1,1]$.
+    \item \textbf{Two-moons} (scikit-learn): 300 puntos, ruido 0.20.
+    \item \textbf{Wine} (UCI): 178 muestras, 13 atributos fisicoquímicos, binarizado (clase 0 vs. resto).
+    \item \textbf{MNIST-04} (UCI digits): dígitos 0--4, 8$\times$8=64 atributos, 901 instancias, normalizado.
+\end{itemize}
+
+\subsection{Implementación}
+
+Todos los algoritmos se implementaron desde cero en \textbf{NumPy puro} (sin usar PyTorch,
+TensorFlow ni scikit-learn para el aprendizaje). Se usó scikit-learn exclusivamente para carga
+de datos, partición train/test y métricas auxiliares. La reproducibilidad se garantiza con
+semilla global \texttt{SEED=1990}. El costo computacional por presentación es $\mathcal{O}(N_w)$
+para Perceptrón/LMS y $\mathcal{O}(N_w)$ para \bp~(forward $+$ backward). Para MRIII, el costo
+es $\mathcal{O}(N_w \cdot N_{\text{Adalines}})$.
+
+\subsection{Complejidad computacional}
+
+En implementación digital, \bp~requiere exactamente 1 pasada hacia adelante $+$ 1 hacia atrás por
+patrón, con complejidad comparable en ambas direcciones. MRIII requiere $1 + N_{\text{Adalines}}$
+pasadas hacia adelante (una sin perturbar, una por cada Adaline perturbada), lo que lo hace
+intrínsecamente más costoso. Esta diferencia se cuantifica en el Experimento E7.
+
+% ═══════════════════════════════════════════════════════════════════
+%  4. ANÁLISIS DE RESULTADOS (30%)
+% ═══════════════════════════════════════════════════════════════════
+\section{Análisis de Resultados}
+
+\subsection{E1: Capacidad de Cover}
+
+\figura{fig_cover}{Probabilidad de separabilidad lineal: empírica (puntos) vs.~fórmula teórica de Cover (curvas). Líneas verticales en $C_d=N_w$ (punteada) y $C_s \approx 2N_w$ (discontinua).}{cover}
+
+La Figura~\ref{fig:cover} muestra un ajuste estrecho entre la probabilidad empírica (80 ensayos
+Monte Carlo por punto, separabilidad testeada con \texttt{linprog}) y la fórmula teórica de
+Cover (Eq.~\ref{eq:cover}). Las desviaciones medias $|\text{empírica} - \text{teórica}|$ son
+$0.0337$ para $N_w=2$, $0.0259$ para $N_w=5$ y $0.0105$ para $N_w=15$, decreciendo con $N_w$
+como predice la teoría asintótica. La transición en $N_p/N_w = 1$ ($C_d$) y $N_p/N_w = 2$
+($C_s$) se agudiza al aumentar $N_w$, confirmando \textbf{H1}.
+
+\subsection{E2: Reglas lineales en datos separables}
+
+\figura{fig_datasets}{Visualización de los datasets sintéticos utilizados: separable,
+no separable, y XOR.}{datasets}
+
+\figura{fig_fronteras}{Fronteras de decisión de los tres algoritmos lineales (color) vs.~el
+hiperplano óptimo de Wiener (negro discontinuo). Ángulos respecto a $W^*$ indicados.}{fronteras}
+
+\figura{fig_convergencia}{Convergencia de \muLMS~para distintos $\mu$. $\mu=0.12$ diverge por
+exceder la cota de estabilidad $\mu_{\max} = 1/\mathrm{tr}[R] = 0.111$. La línea horizontal
+marca el MSE del óptimo de Wiener (0.015).}{convergencia}
+
+La Figura~\ref{fig:fronteras} revela un resultado fundamental: \textbf{el Perceptrón converge
+en solo 2 épocas} (confirmando el teorema de convergencia), pero su frontera queda a $20.6^\circ$
+del óptimo de Wiener — el Perceptrón ``se detiene donde primero separa''. En contraste, \aLMS~y
+\muLMS~optimizan el MSE, acercándose a $4.4^\circ$ y $3.5^\circ$ de $W^*$ respectivamente.
+
+La Figura~\ref{fig:convergencia} demuestra la cota de estabilidad: con $\mu=0.12 >
+1/\mathrm{tr}[R] = 1/9.02 = 0.111$, el MSE diverge exponencialmente. Los valores $\mu \in
+\{0.001, 0.01, 0.05\}$ convergen al MSE de Wiener ($0.015$), con mayor $\mu$ implicando
+convergencia más rápida. La \textbf{MSE de Wiener} ($0.0148$) se alcanza asintóticamente.
+Estos resultados confirman \textbf{H2} para el caso separable.
+
+\subsection{E3: Datos no separables}
+
+\figura{fig_noseparable}{Izquierda: Accuracy por época en datos no separables. Derecha: Evolución
+de $\norm{W}$. Nótese la oscilación del Perceptrón (azul).}{noseparable}
+
+La Tabla~\ref{tab:lineales} resume los resultados cuantitativos.
+
+\tabla{tab_lineales}{Resultados comparativos de algoritmos lineales en datos separables y no separables.}{lineales}
+
+En el dataset no separable (Figura~\ref{fig:noseparable}), el \textbf{Perceptrón oscila}
+significativamente: $75.7\% \pm 5.5$ en las últimas 40 épocas, con $\norm{W}$ fluctuante (el
+vector de pesos ``gravita hacia cero'' como advierte el paper). \aLMS~es estable pero ruidoso
+($75.0\% \pm 7.4$). \muLMS~ofrece el mejor desempeño: $79.6\% \pm 1.5$, a solo 1.4 puntos
+porcentuales del óptimo de Wiener ($81.0\%$), y con la menor varianza. Esto confirma
+\textbf{H2} en el caso no separable: \muLMS~proporciona una solución estable cercana al
+mejor clasificador lineal posible.
+
+\subsection{E4: Superficies de MSE}
+
+\figura{fig_superficies_mse}{Superficies de MSE para un Adaline de 2 pesos sin bias
+(6 patrones aleatorios). Izquierda: error lineal (paraboloide convexo). Centro: error
+sigmoide (no cuadrático pero suave). Derecha: error signum (escalonado con mesetas
+y óptimos locales).}{superficies}
+
+La Figura~\ref{fig:superficies} ilustra por qué el descenso de gradiente \textbf{exige funciones
+de activación diferenciables}:
+
+\begin{itemize}[leftmargin=*]
+    \item El error \textbf{lineal} ($\min = 0.936$) forma un paraboloide perfectamente convexo:
+    cualquier algoritmo de gradiente converge al mínimo global.
+    \item El error \textbf{sigmoide} ($\min = 0.940$) es no cuadrático pero suave y navegable:
+    el gradiente existe en todas partes, aunque pueden existir mínimos locales en redes multicapa.
+    \item El error \textbf{signum} ($\min = 1.333$) es escalonado: presenta \textbf{mesetas}
+    donde el gradiente es exactamente cero y la optimización se detiene. Esto explica por qué
+    algoritmos como MRII (que usan signum) requieren mecanismos de escape como el ruido
+    esporádico.
+\end{itemize}
+
+\subsection{E5: XOR — MRII vs MLP-Backpropagation}
+
+\figura{fig_xor}{Izquierda: Regiones de decisión de MRII 2--3--1 con ruido. Centro: MLP-\bp~2--2--1.
+Derecha: Curva de aprendizaje MSE del MLP.}{xor}
+
+\tabla{tab_xor}{Tasa de éxito en XOR sobre 20 inicializaciones distintas.}{xor}
+
+La Tabla~\ref{tab:xor} presenta el resultado más revelador de este experimento:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{MRII 2--2--1 sin ruido: 0/20.} Sin el mecanismo de escape, MRII se estanca
+    sistemáticamente en óptimos locales, tal como advierte la Sección VII-E del paper. Este es
+    un \textbf{resultado}, no un error de implementación.
+    \item \textbf{MRII con ruido esporádico ($\sigma=0.15$): 0/20 incluso con 3 Adalines ocultas.}
+    En nuestra implementación, el ruido gaussiano no fue suficiente para escapar de los mínimos
+    locales en XOR, posiblemente porque la corrección absoluta agresiva del refuerzo colineal
+    domina sobre el escape estocástico.
+    \item \textbf{MLP-\bp~2--2--1: 6/20} (mediana $\approx$ 40 épocas). La inicialización
+    aleatoria de pesos determina si la red cae o no en un mínimo local, consistente con la
+    literatura \cite{widrow1990,rumelhart1986}.
+    \item \textbf{MLP-\bp~2--3--1: 11/20.} Una Adaline adicional en la capa oculta casi duplica
+    la tasa de éxito al proporcionar más grados de libertad para sortear los mínimos locales.
+\end{itemize}
+
+Estos resultados confirman \textbf{H3}: XOR es resoluble por arquitecturas multicapa pero tanto
+MRII como \bp~están sujetos a óptimos locales. La diferencia en las tasas de éxito (6/20 para
+MLP vs. 0/20 para MRII) refleja que la superficie de error sigmoide (E4) es inherentemente más
+navegable que la del signum.
+
+\subsection{E6: MLP en datasets reales}
+
+\figura{fig_iris_mlp}{Resultados del MLP 4--8--3 en Iris. Izquierda: Curva MSE. Centro: Accuracy
+por época. Derecha: Matriz de confusión (91.1\% test).}{iris_mlp}
+
+\figura{fig_moons}{Regiones de decisión del MLP 2--8--1 en two-moons (93.3\% test).}{moons}
+
+\figura{fig_wine}{Convergencia de clasificadores lineales en Wine. Wiener y \muLMS~alcanzan
+98.1\% test.}{wine}
+
+\figura{fig_mnist}{MLP 64--16--5 en MNIST dígitos 0--4 (98.5\% test).}{mnist}
+
+\tabla{tab_iris}{Resultados del MLP 4--8--3 en Iris para la grilla $\mu \times \eta$.}{iris}
+
+\tabla{tab_relevancia}{Relevancia de variables en Iris medida como $\norm{W_1}_2$ por atributo.}{relevancia}
+
+\textbf{Iris (Figura~\ref{fig:iris_mlp}, Tablas~\ref{tab:iris}--\ref{tab:relevancia}):} Como
+predice la teoría, Setosa es linealmente separable del resto: el Perceptrón converge en 2 épocas
+(100\% test). Versicolor vs. Virginica \textbf{no es separable}, con un techo de $\approx 83\%$
+para un clasificador lineal. El MLP 4--8--3 alcanza consistentemente \textbf{91.1\% en test} para
+todas las configuraciones de $\mu$ y $\eta$, con convergencia más rápida para $\mu=0.05$ (4
+épocas al 95\% train). El momentum ($\eta=0.9$) no aporta beneficio en este problema pequeño y
+bien condicionado, consistente con la observación del paper: ``el momentum por sí solo suele ser
+de poco valor'' \cite{widrow1990}. La matriz de confusión concentra los 4 errores (de 45)
+exclusivamente en el par versicolor $\leftrightarrow$ virginica.
+
+El análisis de relevancia de variables (Tabla~\ref{tab:relevancia}) revela que los atributos de
+pétalos concentran el 74.4\% del peso total de la primera capa (\textit{petal width}: 48.0\%,
+\textit{petal length}: 26.4\%), consistente con el conocimiento botánico de que estas medidas
+son los discriminantes más informativos en Iris \cite{fisher1936}.
+
+\textbf{Two-moons (Figura~\ref{fig:moons}):} El MLP 2--8--1 con \bp~alcanza \textbf{93.3\% test},
+trazando una frontera no lineal que se ajusta a la geometría de las medias lunas.
+
+\textbf{Wine (Figura~\ref{fig:wine}):} Los clasificadores lineales alcanzan un rendimiento
+sorprendentemente alto: Wiener = 98.1\%, \muLMS~= 98.1\%, \aLMS~= 96.3\%. Esto sugiere que
+la clase 0 es mayoritariamente separable del resto en el espacio de 13 atributos fisicoquímicos.
+
+\textbf{MNIST-04 (Figura~\ref{fig:mnist}):} El MLP 64--16--5 alcanza \textbf{98.5\% test},
+demostrando que incluso una arquitectura simple con \bp~puede manejar datos de mediana
+dimensionalidad (64 features) con alta precisión.
+
+\subsection{E7: MRIII $\equiv$ Backpropagation}
+
+\figura{fig_mriii_bp}{Izquierda: Error relativo $\norm{\nabla_{\text{MRIII}} -
+\nabla_{\text{BP}}} / \norm{\nabla_{\text{BP}}}$ vs.~$\Delta s$ (escala log-log, eje
+$x$ invertido). El error mínimo es $5.05 \times 10^{-8}$ en $\Delta s = 10^{-8}$.
+Derecha: Costo computacional por presentación (ms).}{mriii_bp}
+
+\tabla{tab_mriii}{Costo computacional de \bp~vs.~MRIII para redes 4--H--3.}{mriii}
+
+La Figura~\ref{fig:mriii_bp}(a) confirma \textbf{H4} con precisión numérica: el gradiente
+estimado por perturbación (MRIII) converge al gradiente analítico de \bp~con error relativo
+mínimo de \textbf{$5.05 \times 10^{-8}$} en $\Delta s = 10^{-8}$. El error decrece linealmente
+con $\Delta s$ hasta que la precisión de punto flotante de 64 bits ($\approx 10^{-16}$) causa
+un rebote para $\Delta s < 10^{-8}$.
+
+La Figura~\ref{fig:mriii_bp}(b) y la Tabla~\ref{tab:mriii} cuantifican el costo de esta
+equivalencia: MRIII es $3.5\times$ más costoso para $H=4$ y \textbf{$74.1\times$} para $H=256$.
+La razón crece aproximadamente como $\mathcal{O}(N_{\text{Adalines}})$, validando que \bp~es la
+opción óptima para implementación digital, mientras MRIII tiene sentido únicamente en hardware
+analógico donde la perturbación física del sumidero es más simple que la retropropagación de
+señales de error.
+
+\subsection{Tabla resumen}
+
+\tabla{tab_resumen}{Resumen consolidado de todos los experimentos.}{resumen}
+
+% ═══════════════════════════════════════════════════════════════════
+%  5. CONCLUSIONES (20%)
+% ═══════════════════════════════════════════════════════════════════
+\section{Conclusiones}
+
+\subsection{Aporte al conocimiento}
+
+El artículo de Widrow \& Lehr (1990) realiza un aporte fundamental a la disciplina al
+\textbf{unificar 30 años de algoritmos de aprendizaje supervisado} para RNA feedforward bajo un
+principio común: la mínima perturbación. Los experimentos realizados en este trabajo verifican
+empíricamente esta unificación:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{El linaje Perceptrón $\to$ Adaline $\to$ Madaline $\to$ Backpropagation} no es
+    una colección arbitraria de algoritmos, sino una progresión lógica gobernada por el mismo
+    principio geométrico: $\Delta W_k$ es siempre colineal con $X_k$, minimizando $\norm{\Delta
+    W_k}$ para la corrección deseada.
+    \item \textbf{El trade-off capacidad--generalización} ($C_s \approx 2N_w$, $N_p \gg N_w/N_y$)
+    establece límites fundamentales que siguen siendo relevantes en la era del \textit{deep
+    learning}: una red sobreparametrizada ($N_w > N_p$) memoriza; una red correctamente
+    dimensionada generaliza.
+    \item \textbf{El valor pedagógico e histórico} del artículo es inmenso: las ecuaciones de
+    \bp~(1986) ya estaban implícitas en el trabajo de Werbos (1974), y la equivalencia
+    MRIII $\equiv$ \bp~demuestra que el descubrimiento científico a menudo ocurre por múltiples
+    caminos independientes.
+\end{enumerate}
+
+\subsection{Evaluación de las hipótesis}
+
+\begin{description}
+    \item[H1 -- Capacidad de Cover:] \textbf{Confirmada.} La simulación Monte Carlo (E1) reproduce
+    la fórmula teórica con desviación media $\leq 0.034$.
+    \item[H2 -- Convergencia del Perceptrón:] \textbf{Confirmada.} El Perceptrón converge en 2
+    épocas en datos separables (E2), pero oscila $\pm5.5$ puntos en datos no separables (E3),
+    mientras \muLMS~mantiene estabilidad ($\pm1.5$ pts, a 1.4 pts del óptimo de Wiener).
+    \item[H3 -- Poder no lineal y óptimos locales:] \textbf{Confirmada con matices.} XOR es
+    resoluble solo por arquitecturas multicapa, pero MRII (0/20) resultó más vulnerable a óptimos
+    locales que MLP-\bp~(6/20 para 2--2--1, 11/20 para 2--3--1). El ruido esporádico no fue
+    suficiente para rescatar MRII en nuestra implementación.
+    \item[H4 -- Equivalencia MRIII $\equiv$ Backpropagation:] \textbf{Confirmada.} El error
+    relativo entre gradientes es $5.05 \times 10^{-8}$, y el costo de MRIII escala como
+    $\mathcal{O}(N_{\text{Adalines}})$, siendo $3.5\times$ a $74.1\times$ más costoso que \bp.
+\end{description}
+
+\subsection{Limitaciones}
+
+\begin{itemize}[leftmargin=*]
+    \item Los datasets utilizados son de baja dimensionalidad ($\leq 64$ atributos). No se evaluó
+    la escalabilidad a problemas de alta dimensionalidad.
+    \item La implementación de MRII, aunque conceptualmente completa, no logró resolver XOR ni
+    siquiera con el mecanismo de ruido. Una implementación más refinada del escape (recocido
+    simulado, \textit{random restarts}) podría mejorar estos resultados.
+    \item No se implementaron variantes avanzadas de \bp~mencionadas en el artículo
+    (\textit{quickprop}, \textit{delta-bar-delta}, \textit{backprop through time}).
+    \item Las comparaciones se limitan a los algoritmos del artículo; no se incluyen métodos
+    modernos (SVM, Random Forest, \textit{transformers}) que podrían establecer una línea base
+    más exigente.
+\end{itemize}
+
+\subsection{Reflexión personal}
+
+Treinta y cinco años después de su publicación, el artículo de Widrow \& Lehr permanece
+sorprendentemente vigente. El principio de mínima perturbación es, en esencia, el mismo que
+gobierna el \textit{stochastic gradient descent} (SGD) que entrena los modelos de \textit{deep
+learning} actuales: $\mu$-\textit{LMS} generalizado a arquitecturas profundas. El momentum
+(Eqs.~96--97) sigue siendo un hiperparámetro estándar en optimizadores como Adam. Y la
+perturbación de MRIII anticipa los métodos de optimización de orden cero (\textit{zeroth-order
+optimization}) usados hoy en escenarios donde el gradiente no está disponible. La gran lección
+del artículo es que los fundamentos importan: comprender la geometría del aprendizaje —el
+hiperplano separador, el paraboloide de MSE, las mesetas del error signum— es esencial para
+diseñar, depurar y mejorar cualquier sistema de aprendizaje automático, clásico o moderno.
+
+% ═══════════════════════════════════════════════════════════════════
+%  REFERENCIAS (10%)
+% ═══════════════════════════════════════════════════════════════════
+\begin{thebibliography}{99}
+
+\bibitem{widrow1990}
+B.~Widrow and M.~A.~Lehr,
+``30 years of adaptive neural networks: Perceptron, Madaline, and backpropagation,''
+\textit{Proceedings of the IEEE}, vol.~78, no.~9, pp.~1415--1442, 1990.
+
+\bibitem{rosenblatt1958}
+F.~Rosenblatt,
+``The perceptron: A probabilistic model for information storage and organization in the brain,''
+\textit{Psychological Review}, vol.~65, no.~6, pp.~386--408, 1958.
+
+\bibitem{widrow1960}
+B.~Widrow and M.~E.~Hoff,
+``Adaptive switching circuits,''
+in \textit{IRE WESCON Convention Record}, vol.~4, 1960, pp.~96--104.
+
+\bibitem{cover1965}
+T.~M.~Cover,
+``Geometrical and statistical properties of systems of linear inequalities with applications
+in pattern recognition,''
+\textit{IEEE Transactions on Electronic Computers}, vol.~EC-14, no.~3, pp.~326--334, 1965.
+
+\bibitem{rumelhart1986}
+D.~E.~Rumelhart, G.~E.~Hinton, and R.~J.~Williams,
+``Learning representations by back-propagating errors,''
+\textit{Nature}, vol.~323, pp.~533--536, 1986.
+
+\bibitem{werbos1974}
+P.~J.~Werbos,
+``Beyond regression: New tools for prediction and analysis in the behavioral sciences,''
+Ph.D.~dissertation, Harvard University, Cambridge, MA, 1974.
+
+\bibitem{minsky1969}
+M.~L.~Minsky and S.~A.~Papert,
+\textit{Perceptrons: An Introduction to Computational Geometry}.
+Cambridge, MA: MIT Press, 1969.
+
+\bibitem{cybenko1989}
+G.~Cybenko,
+``Approximation by superpositions of a sigmoidal function,''
+\textit{Mathematics of Control, Signals and Systems}, vol.~2, no.~4, pp.~303--314, 1989.
+
+\bibitem{fisher1936}
+R.~A.~Fisher,
+``The use of multiple measurements in taxonomic problems,''
+\textit{Annals of Eugenics}, vol.~7, no.~2, pp.~179--188, 1936.
+
+\bibitem{widrow1987}
+B.~Widrow, R.~G.~Winter, and R.~A.~Baxter,
+``Layered neural nets for pattern recognition,''
+\textit{IEEE Transactions on Acoustics, Speech, and Signal Processing}, vol.~36, no.~7,
+pp.~1109--1118, 1988.
+
+\bibitem{sejnowski1987}
+T.~J.~Sejnowski and C.~R.~Rosenberg,
+``Parallel networks that learn to pronounce English text,''
+\textit{Complex Systems}, vol.~1, pp.~145--168, 1987.
+
+\bibitem{nguyen1989}
+D.~H.~Nguyen and B.~Widrow,
+``Neural networks for self-learning control systems,''
+\textit{IEEE Control Systems Magazine}, vol.~10, no.~3, pp.~18--23, 1990.
+
+\bibitem{hastie2009}
+T.~Hastie, R.~Tibshirani, and J.~Friedman,
+\textit{The Elements of Statistical Learning: Data Mining, Inference, and Prediction},
+2nd ed. New York: Springer, 2009.
+
+\bibitem{bishop2006}
+C.~M.~Bishop,
+\textit{Pattern Recognition and Machine Learning}.
+New York: Springer, 2006.
+
+\end{thebibliography}
+
+\end{document}

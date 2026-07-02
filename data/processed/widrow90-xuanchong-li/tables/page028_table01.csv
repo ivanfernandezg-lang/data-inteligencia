@@ -1,0 +1,12 @@
+,,
+"Steepest Descent Rules
+Single Threshold Element",,
+"Objective of adaptation: reduce error averaged over the training set
+rather than reducing a given proportion of the error in each
+presentation of training data.
+The most common error: mean-square-error (MSE)
+W = W + µ(−▽ k). µ: controls stability and convergence speed.
+k+1 k
+In practice, it works with on data at a time. It minimizes MSE
+approximately.",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam28il y/ 41"

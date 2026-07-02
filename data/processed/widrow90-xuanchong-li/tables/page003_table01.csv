@@ -1,0 +1,14 @@
+Algorithms History 1960s - 1990s,,
+"1960: Least Mean Square (LMS) algorithm (Widrow and his
+student), Perceptron rule (Rosenblatt)
+Mid 1960s: Madaline (Multiple adaptive linear elements) rule I (MRI)
+and application in speech, weather forecasting, pattern recognition
+(Widrow and his student)
+1971: Backpropagation (Werbos). It was first ignored by community,
+then re-discovered in 1982 by Parker, finally became famous with
+work of Rumehart, Hinton, and Williams.
+1987: Madaline Rule II (MRII) by Widrow and his student. The goal
+is for adapting multiple players network
+1988: Madaline Rule III (MRIII) by David Andes. Widrow and his
+student found it is mathmatically equivalent to backpropagation",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MadParleinseen, taendd b By aXcukapnrocphaognagt iLoin Fam3il y/ 41"

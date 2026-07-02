@@ -1,0 +1,17 @@
+Madaline Rule II (MRII),,
+"Weights in both layers are adaptive
+Weights are initially set to small random values
+Random pattern presentation sequence
+Adapting the first-layer Adalines
+Select the smallest linear output magnitude
+Perform a “trial adaption” by adding a ∆s perturbation of suitable
+amplitude to invert its binary output
+If the output error is reduced, remove ∆s, and change the weight of
+the select Adaline using α-LMS algorithm
+Perturb and update other Adalines in the first layer with sufficiently
+small s output
+k
+After exhausting possibilities with the first layer, move on to next layer
+and proceed in a like manner
+Random select a new training pattern and repeat the procedure.",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam27il y/ 41"

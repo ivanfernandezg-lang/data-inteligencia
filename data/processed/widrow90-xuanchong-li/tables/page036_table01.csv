@@ -1,0 +1,15 @@
+MRIII for Networks,,
+"Same idea as MRIII for sigmoid Madaline
+Measure the sum square output response error
+ϵ2 = (d −y 1)2 + (d −y 2)2 = ϵ2 + ϵ2
+1 2 1 2
+∆(ϵ2) ∆(ϵ2 1+ϵ2 2) ∂ϵ2
+= ≈
+∆s ∆s ∂s
+▽ˆ = ∂∂ Wϵ2 k = ∂ ∂ϵ sk2 k ∂∂ Wsk = ∂ ∂ϵ sk2 k X ≈ ∆ ∆ϵ s2 k X
+k k k
+k k
+∆ϵ2
+W = W −µ ∆sk X
+k+1 k k",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam36il y/ 41"

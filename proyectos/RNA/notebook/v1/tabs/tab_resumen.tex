@@ -1,0 +1,16 @@
+\begin{tabular}{@{}llll@{}}
+\toprule
+Exp. & Problema & Algoritmo & Resultado clave \\
+\midrule
+E1 & Capacidad de Cover & Monte Carlo LP & $C_s\approx 2N_w$, $C_d=N_w$ verificado \\
+E2 & Datos separables & Perceptron, $\alpha$-LMS, $\mu$-LMS & Perceptron converge en 2 ep.; $\mu$-LMS a 3.5$^\circ$ de Wiener \\
+E3 & Datos no separables & Perceptron, $\alpha$-LMS, $\mu$-LMS & $\mu$-LMS mejor: 79.6\% $\pm$1.5 vs Wiener 81.0\% \\
+E4 & Superficies MSE & Adaline 2D & MSE signum tiene mesetas y optimos locales \\
+E5 & XOR & MRII, MLP-BP & MRII 0/20; MLP-BP 6/20 (2-2-1), 11/20 (2-3-1) \\
+E6 & Iris (real) & MLP 4-8-3 & Mejor acc test=91.1\% ($\mu$=0.05, $\eta$=0) \\
+E6b & Two-moons & MLP 2-8-1 & Acc test=93.3\% \\
+E6c & Wine (real) & $\alpha$-LMS, $\mu$-LMS, Wiener & Wiener acc=98.1\% \\
+E6d & MNIST-04 & MLP 64-16-5 & Acc test=98.5\% \\
+E7 & MRIII vs BP & Gradiente + costo & Err min=$5.05\times 10^{-8}$ en $\Delta s=10^{-8}$; MRIII 11$\times$ mas caro \\
+\bottomrule
+\end{tabular}

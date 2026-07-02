@@ -1,0 +1,13 @@
+Backpropagation for Networks,,
+"Intuition: propagate the error backward from the output layer to the
+first layer
+For an input pattern vector X:
+Sweep forward through the system to get an output respond vector Y
+Compute the errors in each output
+Sweep the effects of the errors backward through the network to
+associate a “square error derivative” δ with each Adaline
+Compute a gradient from each δ
+Update the weights of each Adaline based upon the corresponding
+gradient
+More details are in the next talk.",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam35il y/ 41"

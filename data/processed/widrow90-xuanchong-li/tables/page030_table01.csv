@@ -1,0 +1,13 @@
+,,
+"Steepest Descent Rules
+µ-LMS Algorithm",,
+"Obtain accurate estimate of W ∗ without computing R−1 and P
+Use instantaneous gradient ▽ˆ = ∂∂ Wϵ2 k . It is a unbiased estimate of
+k
+k
+the true gradient.
+Weight update: W = W + µ(−▽ˆ k) = W + 2µϵ kX
+k+1 k k k
+µ controls stability and convergence speed. Training data should be
+in random order.",,
+"Bernard Widrow, Micheal A. Lehr (Stanford)","Artificial Neural Networks of The Perceptron,","MaPdraesliennet,e adn bdy B Xaucaknpcrohpoangga Ltiion Fam30il y/ 41"
