@@ -1,1 +1,5 @@
 /.venv
+
+# Archivos grandes — PDFs y comprimidos (usar Git LFS o almacenamiento externo)
+*.zip
+proyectos/RNA/Material/paper-official/**/*.pdf
