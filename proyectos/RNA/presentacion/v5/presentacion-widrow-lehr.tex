@@ -49,16 +49,16 @@
 \setbeamertemplate{headline}{}
 \setbeamertemplate{navigation symbols}{}
 
-% --- Reducir espacio entre bloques para aprovechar mejor la diapositiva ---
+% - Reducir espacio entre bloques para aprovechar mejor la diapositiva -
 \setlength{\medskipamount}{3pt plus 1pt minus 1pt}
 
-% --- AUTO-SHRINK MODERADO + MARGEN INFERIOR -------------------------
+% - AUTO-SHRINK MODERADO + MARGEN INFERIOR ---------
 \makeatletter
 \let\beamer@@frameORIG\beamer@@frame
 \def\beamer@@frame[#1]{\beamer@@frameORIG[shrink=55,#1]}
 \makeatother
 
-% --- FOOTLINE COMPACTA -----------------------------------------------
+% - FOOTLINE COMPACTA -----------------
 \setbeamertemplate{footline}{%
   \leavevmode%
   \hbox{%
@@ -139,7 +139,7 @@
 \author[I. Fernández G.]{%
   Iván Fernández G.}
 \institute[USACH]{%
-  \footnotesize Magíster en Ingeniería Informática --- Universidad de Santiago de Chile\\
+  \footnotesize Magíster en Ingeniería Informática - Universidad de Santiago de Chile\\
   Inteligencia Computacional 2026-1 \quad\textbar\quad Prof.\ Gonzalo Acuña Leiva}
 \date{Julio 2026}
 
@@ -229,17 +229,17 @@ de módems (primer uso comercial masivo).
 \begin{frame}{Treinta años de evolución (1960--1990)}
 \begin{block}{Línea de tiempo}
 \begin{itemize}
-  \item \textbf{1960} --- Algoritmo \azul{LMS} (Widrow \& Hoff) y regla del \azul{Perceptrón} (Rosenblatt), desarrollados de forma independiente.
-  \item \textbf{Mediados 60s} --- \azul{Madaline Rule I} (MRI): primera red en capas entrenable; voz, clima, patrones.
-  \item \textbf{1971--1974} --- \azul{Backpropagation} (Werbos); ignorada, redescubierta por Parker (1982) y popularizada por Rumelhart, Hinton \& Williams (1986).
-  \item \textbf{1987} --- \azul{Madaline Rule II} (MRII): adapta redes multicapa con cuantizadores duros.
-  \item \textbf{1988} --- \azul{Madaline Rule III} (MRIII, Andes); Widrow \emph{et al.} descubren que es \textbf{equivalente a backpropagation}.
+  \item \textbf{1960} - Algoritmo \azul{LMS} (Widrow \& Hoff) y regla del \azul{Perceptrón} (Rosenblatt), desarrollados de forma independiente.
+  \item \textbf{Mediados 60s} - \azul{Madaline Rule I} (MRI): primera red en capas entrenable; voz, clima, patrones.
+  \item \textbf{1971--1974} - \azul{Backpropagation} (Werbos); ignorada, redescubierta por Parker (1982) y popularizada por Rumelhart, Hinton \& Williams (1986).
+  \item \textbf{1987} - \azul{Madaline Rule II} (MRII): adapta redes multicapa con cuantizadores duros.
+  \item \textbf{1988} - \azul{Madaline Rule III} (MRIII, Andes); Widrow \emph{et al.} descubren que es \textbf{equivalente a backpropagation}.
 \end{itemize}
 \end{block}
-\begin{tipbox}
-El artículo delimita su foco a los algoritmos de Stanford y a \emph{backprop}; deja fuera ART,
-Hopfield, Boltzmann, Kohonen y el Neocognitron.
-\end{tipbox}
+%\begin{tipbox}
+%El artículo delimita su foco a los algoritmos de Stanford y a \emph{backprop}; deja fuera ART,
+%Hopfield, Boltzmann, Kohonen y el Neocognitron.
+%\end{tipbox}
 \end{frame}
 
 \begin{frame}{El hilo conductor: principio de mínima perturbación}
@@ -268,30 +268,30 @@ la corrección deseada con el cambio de \azul{menor magnitud posible}.
 \begin{frame}{El bloque básico: combinador lineal y Adaline}
 \begin{columns}[T]
 \column{0.54\textwidth}
+%\begin{center}
+%\begin{tikzpicture}[scale=0.60, transform shape]
+%  \node[peso] (w0) at (0,2.1) {$w_0$};
+%  \node[peso] (w1) at (0,1.4) {$w_1$};
+%  \node[peso] (w2) at (0,0.7) {$w_2$};
+%  \node       (wd) at (0,0.15) {$\vdots$};
+%  \node[peso] (wn) at (0,-0.4) {$w_n$};
+%  \node[left=6pt of w0, font=\scriptsize] {$+1$};
+%  \node[left=6pt of w1, font=\scriptsize] {$x_1$};
+%  \node[left=6pt of w2, font=\scriptsize] {$x_2$};
+%  \node[left=6pt of wn, font=\scriptsize] {$x_n$};
+%  \node[suma] (S) at (1.9,0.85) {$\Sigma$};
+%  \node[cuant] (Q) at (3.3,0.85) {};
+%  \draw (3.16,0.72)--(3.3,0.72)--(3.3,0.98)--(3.44,0.98);
+%  \foreach \w in {w0,w1,w2,wn}{\draw[flarr] (\w) -- (S);}
+%  \draw[flarr] (S) -- node[above,font=\scriptsize]{$s_k$} (Q);
+%  \draw[flarr] (Q) -- ++(1.1,0) node[right,font=\scriptsize]{$y_k$};
+%\end{tikzpicture}
+%\end{center}
 \begin{center}
-\begin{tikzpicture}[scale=0.82, transform shape]
-  \node[peso] (w0) at (0,2.1) {$w_0$};
-  \node[peso] (w1) at (0,1.4) {$w_1$};
-  \node[peso] (w2) at (0,0.7) {$w_2$};
-  \node       (wd) at (0,0.15) {$\vdots$};
-  \node[peso] (wn) at (0,-0.4) {$w_n$};
-  \node[left=6pt of w0, font=\scriptsize] {$+1$};
-  \node[left=6pt of w1, font=\scriptsize] {$x_1$};
-  \node[left=6pt of w2, font=\scriptsize] {$x_2$};
-  \node[left=6pt of wn, font=\scriptsize] {$x_n$};
-  \node[suma] (S) at (1.9,0.85) {$\Sigma$};
-  \node[cuant] (Q) at (3.3,0.85) {};
-  \draw (3.16,0.72)--(3.3,0.72)--(3.3,0.98)--(3.44,0.98);
-  \foreach \w in {w0,w1,w2,wn}{\draw[flarr] (\w) -- (S);}
-  \draw[flarr] (S) -- node[above,font=\scriptsize]{$s_k$} (Q);
-  \draw[flarr] (Q) -- ++(1.1,0) node[right,font=\scriptsize]{$y_k$};
-\end{tikzpicture}
-\end{center}
-\begin{center}
-  \includegraphics[width=\textwidth,height=0.22\textheight,keepaspectratio]{figuras/paper_adaline.png}\\
+  \includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{figuras/paper_adaline.png}\\
   {\scriptsize Fig.~2 del artículo (original) sobre la reconstrucción.}
 \end{center}
-\column{0.44\textwidth}
+\column{0.40\textwidth}
 \begin{block}{Ecuaciones}
 Combinador lineal (producto interno):
 \[ s_k = X_k^{T} W_k \]
@@ -306,7 +306,7 @@ El bias $w_0$ ($+1$) fija el umbral; $s=0$ define el \textbf{hiperplano separado
 
 \begin{frame}{Separabilidad lineal: el límite del Adaline}
 \begin{columns}[T]
-\column{0.5\textwidth}
+\column{0.47\textwidth}
 \begin{block}{Un Adaline solo resuelve funciones separables}
 Con $n=2$ entradas binarias implementa \textbf{14 de 16} funciones lógicas. Las dos imposibles:
 \azul{XOR} y \azul{XNOR}.
@@ -321,7 +321,7 @@ Con $n=2$ entradas binarias implementa \textbf{14 de 16} funciones lógicas. Las
 No poder realizar \emph{todas} las funciones no es un defecto fatal: \textbf{limita la capacidad y
 por eso mejora la generalización}. Para XOR se necesita \azul{no linealidad}.
 \end{alertblock}
-\column{0.5\textwidth}
+\column{0.47\textwidth}
 \begin{center}
   \includegraphics[height=4.6cm, keepaspectratio]{figuras/paper_frontera_lineal.png}\\
   {\scriptsize Fig.~4 del artículo: la condición $s=0$ como \emph{recta separadora} en el espacio de patrones. Ninguna recta separa XOR.}
@@ -331,14 +331,14 @@ por eso mejora la generalización}. Para XOR se necesita \azul{no linealidad}.
 
 \begin{frame}{Capacidad de patrones: el teorema de Cover}
 \begin{columns}[T]
-\column{0.5\textwidth}
+\column{0.47\textwidth}
 \begin{center}
   \includegraphics[width=\textwidth, keepaspectratio]{figuras/fig_cover.png}
 \end{center}
-\column{0.5\textwidth}
+\column{0.47\textwidth}
 \begin{block}{Probabilidad de separabilidad}
 \[
-P(N_p,N_w)=2^{1-N_p}\!\sum_{i=0}^{N_w-1}\!\binom{N_p-1}{i},\quad N_p>N_w
+P(N_p,N_w)=2^{1-N_p}\!\sum_{i=0}^{N_w-1}\!\binom{N_p-1}{i} % ,\quad N_p>N_w
 \]
 \end{block}
 \begin{itemize}
@@ -346,24 +346,29 @@ P(N_p,N_w)=2^{1-N_p}\!\sum_{i=0}^{N_w-1}\!\binom{N_p-1}{i},\quad N_p>N_w
   \item Capacidad estadística: $\azul{C_s \approx 2N_w}$ (promedio).
   \item Baum extendió la cota a redes multicapa.
 \end{itemize}
-\begin{ideaclave}
-\emph{Trade-off} capacidad--generalización: entrenar con $N_p \gg N_w/N_y$ para generalizar en vez
-de memorizar.
-\end{ideaclave}
+%\begin{ideaclave}
+%\emph{Trade-off} capacidad--generalización: entrenar con $N_p \gg N_w/N_y$ para generalizar en vez
+%de memorizar.
+%\end{ideaclave}
 \end{columns}
 \end{frame}
 
 \subsection{Clasificadores no lineales}
 \begin{frame}{Clasificadores no lineales (I): preprocesador polinomial}
-Con un preprocesador fijo que expande la entrada a términos polinomiales
+  \begin{itemize}
+  \item Con un preprocesador fijo que expande la entrada a términos polinomiales
 $[x_1^2,\,x_1,\,x_1x_2,\,x_2,\,x_2^2]$, la condición de umbral $s=0$ se vuelve:
+\end{itemize}
+
 \[
 s = w_0 + x_1 w_1 + x_1^2 w_{11} + x_1 x_2 w_{12} + x_2^2 w_{22} + x_2 w_2 = 0
 \]
+\vspace{-10pt}
+
 \begin{itemize}
   \item Frontera \azul{elíptica} $\Rightarrow$ \textbf{resuelve XNOR/XOR} con un solo elemento; los pesos aproximan una \emph{serie de Taylor} (método PDM de Specht, no iterativo).
 \end{itemize}
-\vspace{4pt}
+\vspace{-10pt}
 \begin{columns}[c]
 \column{0.5\textwidth}
 \begin{center}
@@ -378,7 +383,7 @@ s = w_0 + x_1 w_1 + x_1^2 w_{11} + x_1 x_2 w_{12} + x_2^2 w_{22} + x_2 w_2 = 0
 \end{columns}
 \end{frame}
 
-% --- DIAPOSITIVA EXTRA: Fig.5 curvas de capacidad de Cover ---
+% - DIAPOSITIVA EXTRA: Fig.5 curvas de capacidad de Cover -
 % (El frame "Capacidad de Cover: las curvas originales" se movió a Experimentos, dividido en E1.)
 
 
@@ -393,7 +398,7 @@ s = w_0 + x_1 w_1 + x_1^2 w_{11} + x_1 x_2 w_{12} + x_2^2 w_{22} + x_2 w_2 = 0
   \item \emph{Load-sharing}: ``asignar la responsabilidad a quien pueda asumirla más fácilmente''.
 \end{itemize}
 \end{block}
-\column{0.5\textwidth}
+\column{0.45\textwidth}
 \begin{block}{Red feedforward}
 \begin{itemize}
   \item \textbf{Todas} las capas son adaptativas.
@@ -408,20 +413,21 @@ el problema de las señales de error en capas ocultas.
 \end{ideaclave}
 \end{frame}
 
-% --- DIAPOSITIVA EXTRA: arquitecturas originales Madaline I y red 3 capas ---
-\begin{frame}{Las arquitecturas originales: de Madaline~I a la red multicapa}
-\begin{columns}[T]
+% - DIAPOSITIVA EXTRA: arquitecturas originales Madaline I y red 3 capas -
+\begin{frame}{Las arquitecturas originales: de Madaline~I a la red multicapa }
+\vspace{-10pt}
+  \begin{columns}[T]
 \column{0.5\textwidth}
 \begin{center}
-  \includegraphics[width=\textwidth,height=0.36\textheight,keepaspectratio]{figuras/paper_madaline1.png}\\
-  {\scriptsize Fig.~15: Madaline~I --- Adalines \emph{signum} + \azul{lógica fija} (mayoría).}
+  \includegraphics[width=\textwidth,height=0.50\textheight,keepaspectratio]{figuras/paper_madaline1.png}\\
+  {\scriptsize Fig.~15: Madaline~I - Adalines \emph{signum} + \azul{lógica fija} .}%(mayoría).}
 \end{center}
 \begin{tipbox}
 El ``\emph{job assigner}'' reparte la responsabilidad usando la salida lineal.
 \end{tipbox}
 \column{0.5\textwidth}
 \begin{center}
-  \includegraphics[width=\textwidth,height=0.36\textheight,keepaspectratio]{figuras/paper_red_3capas.png}\\
+  \includegraphics[width=\textwidth,height=0.45\textheight,keepaspectratio]{figuras/paper_red_3capas.png}\\
   {\scriptsize Fig.~11: red \emph{feedforward} de tres capas totalmente conectada.}
 \end{center}
 \begin{alertblock}{El salto conceptual}
@@ -467,9 +473,9 @@ Minimizan el \azul{MSE promediado} sobre todo el conjunto, por gradiente.
   \draw[ln] (ecL)--(a4);\draw[ln] (ecS)--(a5);\draw[ln] (ecS)--(a6);
   \node[alg] at (-4.7,0.5) {MRIII\\Backprop};
   \node[alg] at (-2.5,0.5) {MRIII\\Backprop};
-  \node[alg] at (-1.2,0.5) {$\mu$-LMS};
+  \node[alg] at (-0.8,0.5) {$\mu$-LMS};
   \node[alg] at (1.9,0.5) {MRI\\MRII};
-  \node[alg] at (4.1,0.5) {Perc.\\Mays};
+  \node[alg] at (3.6,0.5) {Perceptron.\\Mays};
   \node[alg] at (5.4,0.5) {$\alpha$-LMS};
   \foreach \x in {-4.7,-2.5,-1.2,1.9,4.1,5.4}{\draw[ln] (\x,1.15)--(\x,0.85);}
 \end{tikzpicture}}
@@ -516,9 +522,10 @@ W_{k+1} = W_k + \alpha\,\frac{\tilde{\varepsilon}_k}{2}\,X_k,
   \item Si \textbf{no} lo son, el vector de pesos ``gravita hacia cero'' y el algoritmo continúa indefinidamente.
 \end{itemize}
 \column{0.46\textwidth}
+\vspace{-10pt}
 \begin{center}
   \includegraphics[width=\textwidth,height=0.58\textheight,keepaspectratio]{figuras/paper_perceptron_rosenblatt.png}\\
-  {\scriptsize Fig.~13: el $\alpha$-Perceptrón de Rosenblatt --- primera capa fija aleatoria + un elemento adaptativo.}
+  {\scriptsize Fig.~13: el $\alpha$-Perceptrón de Rosenblatt - primera capa fija aleatoria + un elemento adaptativo.}
 \end{center}
 \end{columns}
 \end{frame}
@@ -560,7 +567,7 @@ W_k + \alpha\,d_k\,\dfrac{X_k}{\lVert X_k\rVert^{2}} & |s_k| < \gamma
 \end{frame}
 
 \begin{frame}{Redes multicapa por corrección de error: Madaline Rule II}
-\begin{block}{MRII (Widrow, Winter \& Baxter, 1987) --- adapta \emph{todas} las capas}
+\begin{block}{MRII (Widrow, Winter \& Baxter, 1987) - adapta \emph{todas} las capas}
 Para cada patrón erróneo:
 \begin{enumerate}
   \item Ordenar las Adalines por $|s|$ creciente (mínima perturbación).
@@ -575,7 +582,7 @@ los pesos o reentrenar con distintas semillas (\emph{random restarts}).
 \end{alertblock}
 \end{frame}
 
-% --- DIAPOSITIVA EXTRA: arquitectura MRII (Fig.16) ---
+% - DIAPOSITIVA EXTRA: arquitectura MRII (Fig.16) -
 \begin{frame}{La arquitectura Madaline~II del artículo (Fig.~16)}
 \vfill
 \begin{center}
@@ -613,6 +620,7 @@ Mínimo único: solución de Wiener
 \begin{center}
   \includegraphics[width=0.96\textwidth, keepaspectratio]{figuras/fig_superficies_mse.png}
 \end{center}
+\footnotesize
 \vspace{-4pt}
 \begin{columns}[T]
 \column{0.32\textwidth}
@@ -630,7 +638,7 @@ Escalonado, con \textbf{mesetas} de gradiente nulo: el descenso se detiene.
 \end{columns}
 \end{frame}
 
-% --- DIAPOSITIVA EXTRA: superficies MSE originales del artículo (Figs 22-24) ---
+% - DIAPOSITIVA EXTRA: superficies MSE originales del artículo (Figs 22-24) -
 \begin{frame}{Las superficies de error originales (Figs.~22--24)}
 \begin{columns}[T]
 \column{0.34\textwidth}
@@ -676,7 +684,7 @@ para reducir el error cuadrático de salida $\varepsilon^2$.
 \end{ideaclave}
 \end{frame}
 
-% --- DIAPOSITIVA EXTRA: arquitectura backprop completa (Fig.25) ---
+% - DIAPOSITIVA EXTRA: arquitectura backprop completa (Fig.25) -
 \begin{frame}{La arquitectura de backpropagation del artículo (Fig.~25)}
 \vfill
 \begin{center}
@@ -690,7 +698,7 @@ barrido \azul{hacia atrás} que transporta los $\delta$. El barrido de retorno t
 \vfill
 \end{frame}
 
-% --- DIAPOSITIVA EXTRA: detalle del combinador (Fig.26) ---
+% - DIAPOSITIVA EXTRA: detalle del combinador (Fig.26) -
 \begin{frame}{Detalle de una Adalina en backpropagation (Fig.~26)}
 \begin{columns}[T]
 \column{0.5\textwidth}
@@ -734,14 +742,14 @@ Cuando $\Delta s \to 0$, MRIII es \textbf{matemáticamente equivalente a backpro
 \end{columns}
 \end{frame}
 
-% --- DIAPOSITIVA EXTRA: arquitectura MRIII (Fig.28) vs MRII ---
+% - DIAPOSITIVA EXTRA: arquitectura MRIII (Fig.28) vs MRII -
 \begin{frame}{MRIII en la red: la misma arquitectura, con sigmoides (Fig.~28)}
 \begin{columns}[T]
-\column{0.58\textwidth}
+\column{0.55\textwidth}
 \begin{center}
   \includegraphics[width=\textwidth,height=0.58\textheight,keepaspectratio]{figuras/paper_mriii_red.png}
 \end{center}
-\column{0.42\textwidth}
+\column{0.40\textwidth}
 \begin{block}{MRIII $\leftrightarrow$ MRII}
 La arquitectura es \textbf{idéntica} a la de MRII (Fig.~16), pero cada cuantizador \emph{signum}
 se reemplaza por una \azul{sigmoide}.
@@ -760,15 +768,15 @@ manteniendo la robustez para hardware analógico.
 \subsection{Diseño y conjuntos de datos}
 \begin{frame}{Diseño experimental e hipótesis}
 \begin{columns}[T]
-\column{0.5\textwidth}
+\column{0.47\textwidth}
 \begin{block}{Implementación}
 \begin{itemize}
   \item Seis algoritmos \textbf{desde cero en NumPy puro}.
   \item \emph{scikit-learn} solo para datos y métricas.
-  \item Reproducible: \texttt{SEED=1990}.
+  %\item Reproducible: \texttt{SEED=1990}.
 \end{itemize}
 \end{block}
-\column{0.5\textwidth}
+\column{0.47\textwidth}
 \begin{block}{Hipótesis}
 \begin{itemize}
   \item \azul{H1}: $C_s\approx2N_w$, $C_d=N_w$.
@@ -783,9 +791,12 @@ Siete experimentos (E1--E7) sobre datos sintéticos y reales (Iris, Wine, MNIST-
 \end{tipbox}
 \end{frame}
 
-% --- DIAPOSITIVA EXTRA: detalle de experimentos y datasets ---
+% - DIAPOSITIVA EXTRA: detalle de experimentos y datasets -
 \begin{frame}{Experimentos (E1--E7): qué evalúa cada uno}
-{\footnotesize
+{
+}
+
+\footnotesize
 \renewcommand{\arraystretch}{1.25}
 \begin{tabular}{@{}c p{0.5\textwidth} p{0.22\textwidth} c@{}}
 \toprule
@@ -799,15 +810,19 @@ E5 & XOR: MRII \emph{vs.}\ MLP-backprop & XOR ($2^2$) & \azul{H3} \\
 E6 & Generalización en datos reales & Iris, Wine, MNIST-04, two-moons & \azul{H3} \\
 E7 & Equivalencia del gradiente MRIII $\equiv$ backprop & Red sigmoide (Iris) & \azul{H4} \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
+
 \vspace{4pt}
+
 \begin{tipbox}
-Todo implementado \textbf{desde cero en NumPy} (\texttt{SEED=1990}); los conjuntos de datos se
+Todo implementado \textbf{desde cero en NumPy} ; los conjuntos de datos se
 detallan en las dos láminas siguientes.
 \end{tipbox}
+
+
 \end{frame}
 
-% --- DIAPOSITIVA: datasets sintéticos ---
+% - DIAPOSITIVA: datasets sintéticos -
 \begin{frame}{Conjuntos de datos sintéticos (E1--E5)}
 \begin{center}
   \includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{figuras/fig_datasets.png}
@@ -828,18 +843,18 @@ Permiten \textbf{conocer la respuesta óptima} (Wiener, Cover) y medir cuánto s
 \end{columns}
 \end{frame}
 
-% --- DIAPOSITIVA: datasets reales con imágenes ---
+% - DIAPOSITIVA: datasets reales con imágenes -
 \begin{frame}{Conjuntos de datos reales (E6--E7)}
 \begin{columns}[T]
 \column{0.5\textwidth}
 \begin{center}
   \includegraphics[width=\textwidth,height=0.34\textheight,keepaspectratio]{figuras/fig_iris_clases.png}\\
-  {\scriptsize \textbf{Iris} --- 3 especies, 4 rasgos (sépalo/pétalo). Esquema con dimensiones reales.}
+  {\scriptsize \textbf{Iris} - 3 especies, 4 rasgos (sépalo/pétalo). Esquema con dimensiones reales.}
 \end{center}
 \column{0.5\textwidth}
 \begin{center}
   \includegraphics[width=\textwidth,height=0.34\textheight,keepaspectratio]{figuras/fig_mnist04_clases.png}\\
-  {\scriptsize \textbf{MNIST-04} --- dígitos $0$--$4$, imágenes $8\times8$ (muestras reales).}
+  {\scriptsize \textbf{MNIST-04} - dígitos $0$--$4$, imágenes $8\times8$ (muestras reales).}
 \end{center}
 \end{columns}
 \vspace{2pt}
@@ -850,7 +865,7 @@ Permiten \textbf{conocer la respuesta óptima} (Wiener, Cover) y medir cuánto s
 \end{frame}
 
 \subsection{Resultados}
-\begin{frame}{E1: capacidad de Cover --- teoría \emph{vs.} experimento}
+\begin{frame}{E1: capacidad de Cover - teoría \emph{vs.} experimento}
 \begin{columns}[T]
 \column{0.5\textwidth}
 \begin{center}
@@ -864,7 +879,7 @@ Permiten \textbf{conocer la respuesta óptima} (Wiener, Cover) y medir cuánto s
 \end{center}
 \end{columns}
 \vspace{2pt}
-\begin{block}{Datos: patrones binarios aleatorios --- \textbf{H1 confirmada}}
+\begin{block}{Datos: patrones binarios aleatorios - \textbf{H1 confirmada}}
 Desviación media $\leq 0.034$ entre las curvas empíricas y la fórmula de separabilidad. Se verifica
 $C_d=N_w$ (en $N_p/N_w=1$) y $C_s\approx 2N_w$ (probabilidad $0.5$); la transición se vuelve más
 abrupta al crecer $N_w$.
@@ -876,14 +891,14 @@ abrupta al crecer $N_w$.
   \includegraphics[width=\textwidth,height=0.46\textheight,keepaspectratio]{figuras/fig_fronteras.png}\\
   {\scriptsize E2--E3: fronteras aprendidas \emph{vs.} solución de Wiener (datos gaussianos 2D).}
 \end{center}
-\begin{block}{Datos: gaussianos separables (E2) y no separables (E3) --- \textbf{H2 confirmada}}
+\begin{block}{Datos: gaussianos separables (E2) y no separables (E3) - \textbf{H2 confirmada}}
 El Perceptrón converge en 2 épocas pero queda a $20.6^\circ$ de Wiener; $\mu$-LMS a $3.5^\circ$. En
 datos \textbf{no} separables, $\mu$-LMS es el mejor ($79.6\%$ \emph{vs.} Wiener $81.0\%$) y el de
 menor varianza.
 \end{block}
 \end{frame}
 
-\begin{frame}{E5: XOR --- MRII \textit{vs.} MLP-Backpropagation}
+\begin{frame}{E5: XOR - MRII \textit{vs.} MLP-Backpropagation}
 \begin{columns}[T]
 \column{0.58\textwidth}
 \begin{center}

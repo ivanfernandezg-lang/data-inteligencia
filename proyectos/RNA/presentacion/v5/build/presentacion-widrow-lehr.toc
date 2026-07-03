@@ -1,0 +1,15 @@
+\babel@toc {spanish}{}\relax 
+\beamer@sectionintoc {1}{Introducción e historia}{3}{0}{1}
+\beamer@subsectionintoc {1}{1}{Motivación}{4}{0}{1}
+\beamer@subsectionintoc {1}{2}{Línea histórica y minimización}{5}{0}{1}
+\beamer@sectionintoc {2}{Conceptos fundamentales}{7}{0}{2}
+\beamer@subsectionintoc {2}{1}{Adaline, separabilidad y capacidad}{8}{0}{2}
+\beamer@subsectionintoc {2}{2}{Clasificadores no lineales}{11}{0}{2}
+\beamer@sectionintoc {3}{Reglas de aprendizaje}{14}{0}{3}
+\beamer@subsectionintoc {3}{1}{Corrección de error}{15}{0}{3}
+\beamer@subsectionintoc {3}{2}{Descenso de gradiente}{22}{0}{3}
+\beamer@sectionintoc {4}{Experimentos}{30}{0}{4}
+\beamer@subsectionintoc {4}{1}{Diseño y conjuntos de datos}{31}{0}{4}
+\beamer@subsectionintoc {4}{2}{Resultados}{35}{0}{4}
+\beamer@sectionintoc {5}{Conclusiones}{39}{0}{5}
+\beamer@subsectionintoc {5}{1}{Síntesis y vigencia}{40}{0}{5}
