@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1783112828.14581 "c:/Developer/data-inteligencia/proyectos/RNA/informe/v2/informe-widrow-v2.tex" "build/informe-widrow-v2.pdf" "informe-widrow-v2" 1783112831.80649 0
+["pdflatex"] 1783114144.95407 "c:/Developer/data-inteligencia/proyectos/RNA/informe/v2/informe-widrow-v2.tex" "build/informe-widrow-v2.pdf" "informe-widrow-v2" 1783114148.5492 0
   "../../notebook/v1/figs/fig_convergencia.png" 1782956908 87994 d8699ebce478991e1dddbfcea109884b ""
   "../../notebook/v1/figs/fig_cover.png" 1782956902 173983 6b9d208b68b2a9862afc64328eceb669 ""
   "../../notebook/v1/figs/fig_datasets.png" 1782956908 199828 ed2704b561334507d1c4c8e4968c667b ""
@@ -18,9 +18,9 @@
   "../../notebook/v1/tabs/tab_relevancia.tex" 1782961599 273 5c09c98ce3b59dffbe036d27f0eead2f ""
   "../../notebook/v1/tabs/tab_resumen.tex" 1782961599 1010 d0b232cad1c5fcf1832cfa2df5cf8bae ""
   "../../notebook/v1/tabs/tab_xor.tex" 1782961599 290 c7602a9d544cfa91f98ac89fa725819f ""
-  "build/informe-widrow-v2.aux" 1783112831 17004 f272e6c9c9c07034a11cb23c744640c5 "pdflatex"
-  "build/informe-widrow-v2.out" 1783112831 8631 644734508602fb2a34eb8ce2ccdaed3c "pdflatex"
-  "c:/Developer/data-inteligencia/proyectos/RNA/informe/v2/informe-widrow-v2.tex" 1783112823 46463 c354793b7ef0e878a2af2c14efb46dea ""
+  "build/informe-widrow-v2.aux" 1783114148 17029 6eecaa8ad1c35be3a791cda05d8df17b "pdflatex"
+  "build/informe-widrow-v2.out" 1783114148 8768 3e10de1a0376fc432e276f1a3b277725 "pdflatex"
+  "c:/Developer/data-inteligencia/proyectos/RNA/informe/v2/informe-widrow-v2.tex" 1783114069 46488 8e99c2c25a39731ed70150079227d808 ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1777240186 2971 def0b6c1f0b107b3b936def894055589 ""
   "c:/texlive/2026/texmf-dist/fonts/map/fontname/texfonts.map" 1777240868 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "c:/texlive/2026/texmf-dist/fonts/tfm/jknappen/ec/ecbi1095.tfm" 1777240557 3072 19a65fbc725cfc66f5a5fc183b9d418b ""
@@ -243,7 +243,7 @@
   "c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1777245836 5619402 045890036aad9b52b154ef5568e59d3a ""
   "c:/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt" 1777246022 3648469 6a63cca19e8508c969e1ef54f9b2ca36 ""
   "c:/texlive/2026/texmf.cnf" 1777245815 713 614551405fc44b98efbf516466e3c909 ""
-  "informe-widrow-v2.tex" 1783112823 46463 c354793b7ef0e878a2af2c14efb46dea ""
+  "informe-widrow-v2.tex" 1783114069 46488 8e99c2c25a39731ed70150079227d808 ""
   (generated)
   "build/informe-widrow-v2.aux"
   "build/informe-widrow-v2.log"
