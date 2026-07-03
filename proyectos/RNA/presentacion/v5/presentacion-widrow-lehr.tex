@@ -905,7 +905,7 @@ menor varianza.
   \includegraphics[width=\textwidth,height=0.55\textheight,keepaspectratio]{figuras/fig_xor.png}\\
   {\scriptsize \textbf{Datos: XOR} (4 patrones $2^2$, no separable).}
 \end{center}
-\column{0.42\textwidth}
+\column{0.40\textwidth}
 \renewcommand{\arraystretch}{1.15}
 \begin{center}
 {\footnotesize
@@ -966,30 +966,29 @@ $\azul{5.05\times10^{-8}}$; su costo crece como $\mathcal{O}(N_{\text{Adalines}}
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Vigencia: por qué sigue importando hoy}
-\begin{columns}[T]
-\column{0.6\textwidth}
-\begin{block}{Los fundamentos siguen vivos}
-\begin{itemize}
-  \item El \azul{SGD} del \emph{deep learning} es $\mu$-LMS generalizado a redes profundas.
-  \item El \azul{momentum} (Eqs.~96--97) sigue en optimizadores como Adam.
-  \item La perturbación de MRIII anticipa la \azul{optimización de orden cero} (cuando no hay gradiente).
-\end{itemize}
-\end{block}
-\column{0.4\textwidth}
-\begin{ideaclave}
-Comprender la \textbf{geometría del aprendizaje} —hiperplano separador, paraboloide de MSE, mesetas
-del signum— es esencial para diseñar y depurar cualquier sistema de ML.
-\end{ideaclave}
-\end{columns}
-\end{frame}
+%\begin{frame}{Vigencia: por qué sigue importando hoy}
+%\begin{columns}[T]
+%\column{0.6\textwidth}
+%\begin{block}{Los fundamentos siguen vivos}
+%\begin{itemize}
+%  \item El \azul{SGD} del \emph{deep learning} es $\mu$-LMS generalizado a redes profundas.
+%  \item El \azul{momentum} (Eqs.~96--97) sigue en optimizadores como Adam.
+%  \item La perturbación de MRIII anticipa la \azul{optimización de orden cero} (cuando no hay gradiente).
+%\end{itemize}
+%\end{block}
+%\column{0.4\textwidth}
+%\begin{ideaclave}
+%Comprender la \textbf{geometría del aprendizaje} —hiperplano separador, paraboloide de MSE, mesetas
+%del signum— es esencial para diseñar y depurar cualquier sistema de ML.
+%\end{ideaclave}
+%\end{columns}
+%\end{frame}
 
 % ─── CIERRE ──────────────────────────────────────────────────────────
 \begin{frame}[plain]
 \vfill
 \begin{center}
 {\Huge\bfseries\azul{Gracias}}\\[10pt]
-{\large ¿Preguntas?}\\[18pt]
 \footnotesize
 30 Years of Adaptive Neural Networks: Perceptron, Madaline, and Backpropagation\\
 \emph{B.\ Widrow \& M.\ A.\ Lehr}, Proceedings of the IEEE, 78(9), 1990.

@@ -1,10 +1,10 @@
 # Fdb version 4
-["pdflatex"] 1783108844.44018 "c:/Developer/data-inteligencia/proyectos/RNA/presentacion/v5/presentacion-widrow-lehr.tex" "build/presentacion-widrow-lehr.pdf" "presentacion-widrow-lehr" 1783108849.29715 0
-  "build/presentacion-widrow-lehr.aux" 1783108849 10437 3b7a883b862ceb5b8fbfe151ce93b078 "pdflatex"
-  "build/presentacion-widrow-lehr.nav" 1783108849 6809 54e688e785b9380da1cb4c58c1be5fa3 "pdflatex"
-  "build/presentacion-widrow-lehr.out" 1783108849 2267 000188a4e9d6e409727b0ba2e0bfb992 "pdflatex"
-  "build/presentacion-widrow-lehr.toc" 1783108849 892 ec4456f5838337da3083ec9756822d21 "pdflatex"
-  "c:/Developer/data-inteligencia/proyectos/RNA/presentacion/v5/presentacion-widrow-lehr.tex" 1783108843 40696 cf4cd3d42ee50b8ff2a496e6cd07b410 ""
+["pdflatex"] 1783109122.28689 "c:/Developer/data-inteligencia/proyectos/RNA/presentacion/v5/presentacion-widrow-lehr.tex" "build/presentacion-widrow-lehr.pdf" "presentacion-widrow-lehr" 1783109127.30228 0
+  "build/presentacion-widrow-lehr.aux" 1783109127 10289 b2a7108c25b917ff71a0febe3ee5f317 "pdflatex"
+  "build/presentacion-widrow-lehr.nav" 1783109127 6697 e8e63c1657e6c11b2a5d3eb020998c70 "pdflatex"
+  "build/presentacion-widrow-lehr.out" 1783109127 2267 000188a4e9d6e409727b0ba2e0bfb992 "pdflatex"
+  "build/presentacion-widrow-lehr.toc" 1783109127 892 ec4456f5838337da3083ec9756822d21 "pdflatex"
+  "c:/Developer/data-inteligencia/proyectos/RNA/presentacion/v5/presentacion-widrow-lehr.tex" 1783109116 40683 5daaaef31a8d43c4b09bd7674e5ad2bc ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1777241527 2375 baa924870cfb487815765f9094cf3728 ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc" 1777241527 3486 c7eadf5dcc57b3b2d11736679f6636ba ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc" 1777241527 2405 5dcf2c1b967ee25cc46c58cd52244aed ""
@@ -349,7 +349,7 @@
   "figuras/paper_perceptron_rosenblatt.png" 1783103910 77793 0efb171aa4bc6fac6cb207241101c95a ""
   "figuras/paper_preproc_poli.png" 1783102499 75934 fa493b80083683bdbbf49bfc6a7b4d20 ""
   "figuras/paper_red_3capas.png" 1783102499 101732 9ff6c67dbfeb5a4db8ba74dd4be44edc ""
-  "presentacion-widrow-lehr.tex" 1783108843 40696 cf4cd3d42ee50b8ff2a496e6cd07b410 ""
+  "presentacion-widrow-lehr.tex" 1783109116 40683 5daaaef31a8d43c4b09bd7674e5ad2bc ""
   (generated)
   "build/presentacion-widrow-lehr.aux"
   "build/presentacion-widrow-lehr.log"
