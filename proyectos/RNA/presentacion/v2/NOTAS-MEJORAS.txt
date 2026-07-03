@@ -1,0 +1,31 @@
+MEJORAS APLICADAS A LA PRESENTACIÓN
+====================================
+Se incorporaron las FIGURAS ORIGINALES del artículo de Widrow & Lehr (1990),
+recortadas del escaneo original del paper, integradas con el estilo USACH.
+
+Figuras nuevas (carpeta figuras/, prefijo "paper_"): 27 recortes del paper.
+
+DIAPOSITIVAS EXTRA agregadas (5 nuevas, de 32 -> 37 slides):
+  1. "Capacidad de Cover: las curvas originales" ....... Fig. 5
+  2. "Las arquitecturas originales: Madaline I a red" .. Figs. 15 y 11
+  3. "Las superficies de error originales" ............. Figs. 22, 23, 24
+  4. "La arquitectura de backpropagation" ............. Fig. 25 (ancho completo)
+  5. "Detalle de una Adalina en backpropagation" ...... Fig. 26
+
+FIGURAS insertadas en diapositivas existentes:
+  - Adaline .......................... Fig. 2
+  - Separabilidad lineal ............. Figs. 4 y 7
+  - Preprocesador polinomial ......... Fig. 6
+  - Regla del Perceptrón ............. Fig. 13
+  - Madaline Rule II ................. Fig. 16
+  - Madaline Rule III ................ Fig. 28
+  - Taxonomía de reglas .............. Fig. 33 (junto a la reconstrucción TikZ)
+
+NOTA DE COMPATIBILIDAD (entorno de compilación):
+  El preámbulo se hizo robusto para compilar en distribuciones TeX Live mínimas:
+    - babel: usa 'spanish' si está disponible; si no, cae a 'english'. En tu
+      equipo (con babel-spanish) seguirá en español nativo, sin cambios.
+    - lmodern/microtype: se cargan solo si existen.
+  Estos cambios NO alteran el contenido ni el diseño en tu máquina.
+
+Compilar:  pdflatex presentacion-widrow-lehr.tex   (x2, por el índice)
