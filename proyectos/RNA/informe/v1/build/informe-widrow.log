@@ -562,72 +562,96 @@ Package pdftex.def Info: ../../notebook/v1/figs/fig_datasets.png  used on input
 <../../notebook/v1/figs/fig_fronteras.png, id=293, 1074.6549pt x 351.59355pt>
 File: ../../notebook/v1/figs/fig_fronteras.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_fronteras.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_fronteras.png  used on inpu
-t line 388.
+Package pdftex.def Info: ../../notebook/v1/figs/fig_f: Citation `widrow1990' on page 4 undefined on input line 269.
+
+
+LaTeX Warning: Citation `widrow1990' on page 4 undefined on input line 275.
+
+
+LaTeX Warning: Citation `widrow1990' on page 4 undefined on input line 288.
+
+
+LaTeX Warning: Citation `widrow1990' on page 4 undefined on input line 293.
+
+
+LaTeX Warning: Citation `widrow1990' on page 4 undefined on input line 304.
+
+[4]
+
+LaTeX Warning: Reference `tab:diseno' on page 5 undefined on input line 316.
+
+
+Overfull \hbox (116.59097pt too wide) in paragraph at lines 319--332
+ [][] 
+ []
+
+[5]
+<../../notebook/v1/figs/fig_cover.png, id=94, 640.67355pt x 423.86356pt>
+File: ../../notebook/v1/figs/fig_cover.png Graphic file (type png)
+<use ../../notebook/v1/figs/fig_cover.png>
+Package pdftex.def Info: ../../notebook/v1/figs/fig_cover.png  used on input li
+ne 370.
+(pdftex.def)             Requested size: 429.29416pt x 284.01944pt.
+
+
+LaTeX Warning: Reference `fig:cover' on page 6 undefined on input line 372.
+
+
+LaTeX Warning: Reference `eq:cover' on page 6 undefined on input line 374.
+
+<../../notebook/v1/figs/fig_datasets.png, id=96, 1074.6549pt x 351.59355pt>
+File: ../../notebook/v1/figs/fig_datasets.png Graphic file (type png)
+<use ../../notebook/v1/figs/fig_datasets.png>
+Package pdftex.def Info: ../../notebook/v1/figs/fig_datasets.png  used on input
+ line 382.
 (pdftex.def)             Requested size: 429.29416pt x 140.45251pt.
- [8 <../../notebook/v1/figs/fig_cover.png> <../../notebook/v1/figs/fig_datasets
-.png>]
-<../../notebook/v1/figs/fig_convergencia.png, id=303, 639.95085pt x 351.2322pt>
+[6 <../../notebook/v1/figs/fig_cover.png>]
+<../../notebook/v1/figs/fig_fronteras.png, id=106, 1074.6549pt x 351.59355pt>
+File: ../../notebook/v1/figs/fig_fronteras.png Graphic file (type png)
+<use ../../notebook/v1/figs/fig_fronteras.png>
+Package pdftex.def Info: ../../notebook/v1/figs/fig_fronteras.png  used on inpu
+t line 385.
+(pdftex.def)             Requested size: 429.29416pt x 140.45251pt.
+<../../notebook/v1/figs/fig_convergencia.png, id=107, 639.95085pt x 351.2322pt>
 
 File: ../../notebook/v1/figs/fig_convergencia.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_convergencia.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_convergencia.png  used on i
-nput line 392.
+nput line 389.
 (pdftex.def)             Requested size: 429.29416pt x 235.61911pt.
-<../../notebook/v1/figs/fig_noseparable.png, id=306, 1002.02354pt x 351.2322pt>
+
+
+LaTeX Warning: Reference `fig:fronteras' on page 7 undefined on input line 391.
+
+
+[7 <../../notebook/v1/figs/fig_datasets.png> <../../notebook/v1/figs/fig_fronte
+ras.png> <../../notebook/v1/figs/fig_convergencia.png>]
+
+LaTeX Warning: Reference `fig:convergencia' on page 8 undefined on input line 3
+96.
+
+<../../notebook/v1/figs/fig_noseparable.png, id=120, 1002.02354pt x 351.2322pt>
 
 File: ../../notebook/v1/figs/fig_noseparable.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_noseparable.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_noseparable.png  used on in
-put line 408.
-(pdftex.def)             Requested size: 429.29416pt x 150.48024pt.
- [9 <../../notebook/v1/figs/fig_fronteras.png> <../../notebook/v1/figs/fig_conv
-ergencia.png>] (../../notebook/v1/tabs/tab_lineales.tex)
-<../../notebook/v1/figs/fig_superficies_mse.png, id=317, 1186.31206pt x 355.568
-4pt>
-File: ../../notebook/v1/figs/fig_superficies_mse.png Graphic file (type png)
-<use ../../notebook/v1/figs/fig_superficies_mse.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_superficies_mse.png  used o
-n input line 427.
-(pdftex.def)             Requested size: 429.29416pt x 128.67186pt.
- [10 <../../notebook/v1/figs/fig_noseparable.png> <../../notebook/v1/figs/fig_s
-uperficies_mse.png>]
-<../../notebook/v1/figs/fig_xor.png, id=328, 1291.4649pt x 351.2322pt>
-File: ../../notebook/v1/figs/fig_xor.png Graphic file (type png)
-<use ../../notebook/v1/figs/fig_xor.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_xor.png  used on input line
- 446.
-(pdftex.def)             Requested size: 429.29416pt x 116.75375pt.
-
-Underfull \hbox (badness 3919) in paragraph at lines 446--446
-[]\T1/cmr/m/n/10.95 Figura 7: |Iz-quier-da: Re-gio-nes de de-ci-sión de MRII 2-
--3--1 con rui-do. Cen-tro: MLP-
- []
-
-(../../notebook/v1/tabs/tab_xor.tex)
-<../../notebook/v1/figs/fig_iris_mlp.png, id=332, 1273.03606pt x 351.2322pt>
-File: ../../notebook/v1/figs/fig_iris_mlp.png Graphic file (type png)
-<use ../../notebook/v1/figs/fig_iris_mlp.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_iris_mlp.png  used on input
- line 475.
-(pdftex.def)             Requested size: 429.29416pt x 118.44196pt.
- [11 <../../notebook/v1/figs/fig_xor.png>]
-<../../notebook/v1/figs/fig_moons.png, id=341, 568.7649pt x 424.2249pt>
-File: ../../notebook/v1/figs/fig_moons.png Graphic file (type png)
-<use ../../notebook/v1/figs/fig_moons.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_moons.png  used on input li
-ne 477.
-(pdftex.def)             Requested size: 429.29416pt x 320.20044pt.
-<../../notebook/v1/figs/fig_wine.png, id=342, 1002.02354pt x 351.2322pt>
-File: ../../notebook/v1/figs/fig_wine.png Graphic file (type png)
-<use ../../notebook/v1/figs/fig_wine.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_wine.png  used on input lin
-e 480.
+put line 405.
 (pdftex.def)             Requested size: 429.29416pt x 150.48024pt.
 
-[12 <../../notebook/v1/figs/fig_iris_mlp.png> <../../notebook/v1/figs/fig_moons
-.png>]
-<../../notebook/v1/figs/fig_mnist.png, id=351, 1001.30086pt x 351.2322pt>
+LaTeX Warning: Reference `tab:lineales' on page 8 undefined on input line 407.
+
+(../../notebook/v1/tabs/tab_lineales.tex
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1 \\
+      begin{tabular}{@{}lccc@{}}\n\\toprule\nAlgoritmo & Acc. separable & Ep...
+
+? .png, id=351, 1001.30086pt x 351.2322pt>
 File: ../../notebook/v1/figs/fig_mnist.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_mnist.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_mnist.png  used on input li
