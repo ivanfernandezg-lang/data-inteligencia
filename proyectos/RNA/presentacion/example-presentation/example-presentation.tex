@@ -1,0 +1,1017 @@
+% =====================================================================
+%  PRESENTATION-VNS.TEX
+%  Presentación de Variable Neighborhood Search (VNS) para Graph Coloring.
+%  Magíster en Ingeniería USACH — Optimización en Ingeniería 2026-1.
+%  Grupo 7: Sergio Espinoza G. e Iván Fernández G.
+%
+%  Esta presentación expone la metaheurística VNS aplicada al problema
+%  de coloración de grafos (Informe 2):
+%   * Concepto de VNS y sus variantes (VND, RVNS, GVNS).
+%   * Estructuras de vecindad para Graph Coloring.
+%   * Algoritmo de shaking + búsqueda local.
+%   * Comparativa experimental con el método clásico (ILP F-1).
+%   * Resultados sobre instancias DIMACS.
+%
+%  Compilación:  pdflatex presentation-vns.tex   (x2)
+%  Dependencias: animate (para GIFs animados en Adobe Acrobat).
+% =====================================================================
+
+\documentclass[aspectratio=169, 11pt, xcolor={dvipsnames,table}]{beamer}
+
+% ── Paquetes base ────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath, amssymb, mathtools, bm}
+\usepackage{graphicx}
+\usepackage{booktabs, array, multirow}
+\usepackage{multicol}
+\usepackage{caption}
+\captionsetup{font=footnotesize, labelfont=bf}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\floatname{algorithm}{Algoritmo}
+\renewcommand{\algorithmicrequire}{\textbf{Entrada:}}
+\renewcommand{\algorithmicensure}{\textbf{Salida:}}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, calc, shapes.geometric, fit, backgrounds}
+\hypersetup{hidelinks}
+\usepackage{animate}
+\usepackage{xcolor}
+\usepackage{soul}
+
+\setul{1pt}{0.4ex}      % Grosor de 2.5 puntos, separación 0.5ex
+\setstcolor{red}          % Color de la línea de tachado (rojo)
+
+% ── Paleta USACH ─────────────────────────────────────────────────────
+\definecolor{UsachAzul}{RGB}{7,27,73}
+\definecolor{UsachNaranja}{RGB}{221,121,0}
+\definecolor{UsachGris}{RGB}{57,64,73}
+\definecolor{UsachGrisClaro}{RGB}{230,230,230}
+
+% ── Theme + colores Beamer ───────────────────────────────────────────
+\usetheme{Madrid}
+\useinnertheme{rectangles}
+\useoutertheme{infolines}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{navigation symbols}{}
+
+% --- Reducir espacio entre bloques para aprovechar mejor la diapositiva ---
+%     (evita que el footer tape el bloque inferior)
+\setlength{\medskipamount}{3pt plus 1pt minus 1pt}
+
+% --- AUTO-SHRINK MODERADO + MARGEN INFERIOR -------------------------
+%  El shrink adapta el contenido para no pisar la barra inferior.
+\makeatletter
+\let\beamer@@frameORIG\beamer@@frame
+\def\beamer@@frame[#1]{\beamer@@frameORIG[shrink=55,#1]}
+\makeatother
+% --- FOOTLINE COMPACTA -----------------------------------------------
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.33\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.34\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.33\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\setbeamercolor{structure}{fg=UsachAzul}
+\setbeamercolor{palette primary}{bg=UsachAzul, fg=white}
+\setbeamercolor{palette secondary}{bg=UsachAzul!80, fg=white}
+\setbeamercolor{palette tertiary}{bg=UsachAzul, fg=white}
+\setbeamercolor{title}{fg=UsachAzul, bg=white}
+\setbeamercolor{frametitle}{fg=white, bg=UsachAzul}
+\setbeamercolor{section in head/foot}{bg=UsachAzul, fg=white}
+\setbeamercolor{subsection in head/foot}{bg=UsachAzul!80, fg=white}
+\setbeamercolor{author in head/foot}{bg=UsachAzul, fg=white}
+\setbeamercolor{title in head/foot}{bg=UsachAzul!85, fg=white}
+\setbeamercolor{date in head/foot}{bg=UsachAzul, fg=white}
+\setbeamercolor{itemize item}{fg=UsachNaranja}
+\setbeamercolor{itemize subitem}{fg=UsachNaranja!80}
+\setbeamercolor{enumerate item}{fg=UsachNaranja}
+\setbeamercolor{block title}{bg=UsachAzul, fg=white}
+\setbeamercolor{block body}{bg=UsachAzul!5, fg=black}
+\setbeamercolor{block title alerted}{bg=UsachNaranja, fg=white}
+\setbeamercolor{block body alerted}{bg=UsachNaranja!8, fg=black}
+\setbeamercolor{block title example}{bg=UsachGris, fg=white}
+\setbeamercolor{block body example}{bg=UsachGris!8, fg=black}
+\setbeamercovered{transparent=25}
+\usefonttheme[onlymath]{serif}
+
+\newcommand{\azul}[1]{\textcolor{UsachAzul}{#1}}
+\newcommand{\naranja}[1]{\textcolor{UsachNaranja}{#1}}
+\newcommand{\gris}[1]{\textcolor{UsachGris}{#1}}
+
+% ── Estilos TikZ ─────────────────────────────────────────────────────
+\tikzset{%
+  vertice/.style   ={circle, draw=black!70, line width=0.6pt,
+                     minimum size=20pt, inner sep=0pt,
+                     font=\small\bfseries},
+  arista/.style    ={line width=0.7pt, draw=black!65},
+  c1/.style        ={fill=red!60,        text=white},
+  c2/.style        ={fill=blue!65,       text=white},
+  c3/.style        ={fill=green!55!black,text=white},
+  c4/.style        ={fill=orange!80,     text=white},
+  c5/.style        ={fill=purple!65,     text=white},
+  cgris/.style     ={fill=gray!25,       text=black},
+  fblock/.style    ={rectangle, rounded corners=3pt, draw=UsachAzul!70,
+                     fill=white, line width=0.7pt, align=center,
+                     minimum width=2.6cm, minimum height=0.6cm,
+                     font=\scriptsize},
+  fdiam/.style     ={diamond, draw=UsachAzul!70, fill=white,
+                     line width=0.7pt, align=center, inner sep=1pt,
+                     minimum width=1.8cm, font=\scriptsize},
+  fio/.style       ={trapezium, trapezium left angle=70,
+                     trapezium right angle=110, draw=UsachAzul!70,
+                     fill=UsachGrisClaro, line width=0.7pt,
+                     align=center, font=\scriptsize,
+                     minimum width=2.6cm, minimum height=0.6cm},
+  flarr/.style     ={-{Stealth[length=4pt]}, line width=0.6pt},
+  ocultar/.style         ={opacity=0},
+  desvanecer/.style      ={opacity=0.20},
+  visible on/.style      ={alt=#1{}{ocultar}},
+  resaltar on/.style     ={alt=#1{}{desvanecer}},
+  alt/.code args={<#1>#2#3}{%
+    \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}%
+  }%
+}
+
+\newtcolorbox{ideaclave}[1][]{
+  colback=UsachNaranja!8, colframe=UsachNaranja!80!black,
+  fonttitle=\bfseries, title=Idea clave, #1
+}
+
+\newtcolorbox{tipbox}[1][]{
+  colback=green!5!white, colframe=green!50!black,
+  fonttitle=\bfseries, title=Tip, #1
+}
+
+% ── Metadatos ────────────────────────────────────────────────────────
+\title[Variable Neighborhood Search (VNS)]{%
+  \textbf{Variable Neighborhood Search (VNS)}}
+\subtitle{Metaheurística de solución única basada en el cambio de vecindario}
+\author[Espinoza, Fernández]{%
+  Sergio Espinoza G. \and Iván Fernández G.}
+\institute[USACH]{%
+  %Magíster en Ingeniería --- Universidad de Santiago de Chile\\
+  %Optimización en Ingeniería 2026-1 \quad\textbar\quad Grupo 7\\
+  \footnotesize Profesores: Dra.\ Mónica Villanueva I., Dr.\ Mario Inostroza P.}
+\date{Junio 2026}
+
+%\AtBeginSection[]{%
+%  \begin{frame}{Contenido}
+%    \begin{multicols}{2}
+%      \tableofcontents[currentsection]
+%    \end{multicols}
+%  \end{frame}}
+
+% =====================================================================
+\begin{document}
+% =====================================================================
+
+% ─── PORTADA ─────────────────────────────────────────────────────────
+{
+\setbeamertemplate{background}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[UsachAzul]
+      (current page.north west) rectangle
+      ([yshift=-1.6cm]current page.north east);
+    \fill[UsachNaranja]
+      ([yshift=-1.6cm]current page.north west) rectangle
+      ([yshift=-1.75cm]current page.north east);
+    \fill[UsachGris]
+      ([yshift=0.55cm]current page.south west) rectangle
+      ([yshift=0.65cm]current page.south east);
+    \node[anchor=north west, xshift=8mm, yshift=-6mm,
+          font=\bfseries\Large, text=white]
+      at (current page.north west) {USACH};
+    \node[anchor=north east, xshift=-8mm, yshift=-6mm,
+          font=\footnotesize, text=white, align=right]
+      at (current page.north east)
+      {Magíster en Ingeniería Informática \;\textbullet\; Optimización en Ingeniería 2026-1};
+  \end{tikzpicture}}
+\setbeamertemplate{footline}{}
+\begin{frame}[plain,noframenumbering]
+  \vspace*{1.2cm}
+  \titlepage
+\end{frame}
+}
+
+% ─── CONTENIDO GLOBAL (DOBLE COLUMNA) ────────────────────────────────────────────────
+\begin{frame}{Contenido}
+    \begin{center}
+      \tableofcontents
+    \end{center}
+\end{frame}
+
+% ─── DIAPOSITIVAS DE TÍTULO ENTRE SECCIONES ─────────────────────────
+\AtBeginSection[]{%
+  \begin{frame}[plain]
+    \vspace*{2.5cm}
+    \centering
+    {\color{UsachAzul}\Huge\bfseries\insertsectionhead\par}
+    \vspace{0.6cm}
+    \textcolor{UsachNaranja}{\rule{0.25\textwidth}{2.5pt}}
+    \vfill
+  \end{frame}
+}
+
+% =====================================================================
+\section{Motivación e inspiración de VNS}
+% =====================================================================
+%\subsection{Motivación de la metaheurística VNS}
+
+\begin{frame}{Motivación de la metaheurística VNS}
+\begin{block}{¿Por qué necesitamos metaheurísticas como VNS?}
+\begin{itemize}
+  \item La mayoría de los problemas combinatoriales son \textbf{NP-Hard}.
+  \item Se necesitan métodos que produzcan \textbf{buenas soluciones en tiempo razonable}.
+  \item La explosión combinatoria hace inviable la enumeración exhaustiva.
+\end{itemize}
+\end{block}
+
+\begin{exampleblock}{Explosión combinatoria}
+El n.\textsuperscript{o} de soluciones factibles crece \textbf{exponencialmente} con el tamaño.
+\begin{itemize}
+  \item \textbf{TSP} con $n$ ciudades: $(n-1)!/2$ recorridos posibles.
+  \item \textbf{Graph Coloring}: $k^n$ coloraciones posibles ($n$ vértices, $k$ colores).
+\end{itemize}
+\end{exampleblock}
+
+\begin{alertblock}{La catástrofe de Chebyshev}
+Cuando existen \textbf{muchos} óptimos locales, el rango de valores que abarcan puede ser enorme.
+El valor óptimo global $f(x^*)$ puede diferir drásticamente del promedio de los óptimos locales.
+\end{alertblock}
+
+\end{frame}
+
+
+% =====================================================================
+%\subsection{Inspiración y Óptimos locales}
+\begin{frame}{Inspiración y Óptimos locales}
+
+
+  \begin{block}{Origen de la idea}
+  La idea de \textbf{cambiar el vecindario} durante la búsqueda proviene del
+  \azul{método de métrica variable} para optimización continua (Davidon, 1959;
+  Fletcher \& Powell, 1963).
+  \end{block}
+
+  \begin{center}
+  \begin{tikzpicture}[scale=0.55, transform shape]
+    \draw[->] (0,0) -- (12,0) node[right] {\scriptsize Espacio de soluciones $S$};
+    \draw[->] (0,0) -- (0,4.5) node[above] {\scriptsize $f(x)$};
+    \draw[thick, UsachAzul, smooth] plot coordinates {
+      (0,3.5) (0.8,3.0) (1.5,2.0) (2.0,2.3) (2.8,1.3) (3.5,2.0) (4.0,1.5)
+      (4.8,0.6) (5.5,1.5) (6.2,1.0) (7.0,1.8) (7.8,1.2) (8.5,2.0) (9.2,1.6)
+      (10.0,2.5) (10.8,3.2) (11.8,4.0)
+    };
+    \fill[UsachNaranja] (4.8,0.6) circle (2.5pt) node[below=3pt] {\tiny $x^*$ (global)};
+    \fill[UsachNaranja] (7.8,1.2) circle (2.5pt) node[below=3pt] {\tiny $x_{L2}$};
+    \fill[UsachNaranja] (1.5,2.0) circle (2.5pt) node[below=3pt] {\tiny $x_{L3}$};
+    \node[red!60] at (1.5,2.8) {\footnotesize ¡Atrapado!};
+  \end{tikzpicture}
+  \end{center}
+
+\end{frame}
+
+% =====================================================================
+\section{Descripción de la metaheurística VNS}
+% =====================================================================
+%\subsection{Los 3 hechos fundamentales}
+
+\begin{frame}{Los 3 hechos fundamentales de VNS}
+\begin{block}{Hecho 1 - No hay óptimo local universal}
+Un mínimo local respecto a \textbf{una} estructura de vecindad
+\azul{no necesariamente} lo es respecto a \textbf{otra}.
+\end{block}
+
+\begin{exampleblock}{Hecho 2 - El óptimo global es óptimo local en TODOS}
+Un mínimo global es un mínimo local respecto a \textbf{todas} las posibles
+estructuras de vecindad.
+\end{exampleblock}
+
+\begin{alertblock}{Hecho 3 - Proximidad de óptimos locales}
+Para muchos problemas, los óptimos locales respecto a uno o varios vecindarios están
+\textbf{relativamente cerca} entre sí.
+\end{alertblock}
+
+\begin{center}
+\footnotesize\textit{Hechos 1 y 2 son teóricos; el Hecho 3 es empírico.}
+\end{center}
+\end{frame}
+
+
+% =====================================================================
+
+%\subsection{Intuición geométrica de VNS}
+
+\begin{frame}{Intuición geométrica de VNS}
+\begin{center}
+\begin{tikzpicture}[scale=0.7, transform shape]
+  \draw[->] (0,0) -- (14,0) node[right] {\scriptsize Espacio de soluciones};
+  \draw[->] (0,0) -- (0,5) node[above] {\scriptsize $f(x)$};
+  \draw[thick, UsachAzul, smooth] plot coordinates {
+    (0,4.5) (1,4.0) (2,3.0) (2.5,3.2) (3,2.2) (3.5,2.6) (4,1.6)
+    (4.8,0.7) (5.5,1.4) (6.2,1.1) (7,1.8) (7.8,1.3) (8.5,2.0)
+    (9.2,1.5) (10,2.5) (11,3.0) (12,4.0) (13.5,4.8)
+  };
+  \fill[UsachNaranja] (3,2.2) circle (3pt) node[below=4pt] {\footnotesize $x$};
+  \draw[->, UsachNaranja!80!black, thick, dashed] (3,2.2) to[out=30, in=150] (7,1.8);
+  \node[UsachNaranja!80!black] at (5.0,3.0) {\footnotesize Shake $\mathcal{N}_k(x)$};
+  \fill[orange] (7,1.8) circle (2.5pt) node[above=2pt] {\footnotesize $x'$};
+  \draw[->, green!50!black, thick] (7,1.8) to[out=-80, in=120] (7.8,1.3);
+  \fill[green!50!black] (7.8,1.3) circle (2.5pt) node[below=3pt] {\footnotesize $x''$};
+  \node[green!50!black] at (8.5,0.6) {\footnotesize Búsqueda local};
+\end{tikzpicture}
+\end{center}
+
+\begin{ideaclave}
+Desde la solución actual, se da un \textbf{salto aleatorio} (shake), se realiza una \textbf{búsqueda local}, y se \textbf{compara}. Si se mejora, nos mudamos; si no, se salta más lejos.
+\end{ideaclave}
+\end{frame}
+
+
+% =====================================================================
+
+
+\subsection{Componentes}
+
+\begin{frame}{Componentes de VNS: Shaking, Búsqueda local y NeighborhoodChange}
+\begin{columns}[T]
+\column{0.40\textwidth}
+\begin{block}{1. Shaking (agitación)}
+Genera un punto aleatorio $x' \in \mathcal{N}_k(x)$.
+\begin{itemize}
+  \item A mayor $k$, mayor perturbación.
+  \item La aleatoriedad \azul{evita ciclado}.
+\end{itemize}
+\end{block}
+
+\vspace{2pt}
+\begin{block}{2. Búsqueda local}
+Desde $x'$ desciende a un óptimo local $x''$.
+\begin{itemize}
+  \item First Improvement (típico en VNS).
+  \item Best Improvement (VND).
+\end{itemize}
+\end{block}
+
+\column{0.55\textwidth}
+\begin{alertblock}{3. NeighborhoodChange}
+Decide si nos movemos o cambiamos de vecindario
+\end{alertblock}
+
+\vspace{2pt}
+\footnotesize
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
+\Function{NeighborhoodChange}{$x, x', k$}
+  \If{$f(x') < f(x)$}
+    \State $x \gets x'$; $k \gets 1$ \Comment{/* Make a move */}
+  \Else
+    \State $k \gets k + 1$ \Comment{/* Next neighborhood */}
+  \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+\end{columns}
+\end{frame}
+
+
+% =====================================================================
+%\subsection{Componentes de VNS: Best Improvement (máximo descenso)}
+
+
+\begin{frame}{Componentes de VNS: Best Improvement (máximo descenso)}
+\begin{block}{Estrategia}
+Explora \textbf{todo} el vecindario y se mueve al \textbf{mejor} vecino (el de
+menor $f$). Equivale a la dirección de \textit{steepest descent}.
+\end{block}
+
+\begin{columns}[T]
+\column{0.42\textwidth}
+\begin{itemize}
+  \item Más caro por iteración (evalúa todo $\mathcal{N}(x)$).
+  \item Pasos de mayor calidad.
+  \item Útil con vecindarios pequeños o $f$ barata de evaluar.
+\end{itemize}
+
+\column{0.58\textwidth}
+\scriptsize
+\begin{algorithm}[H]
+\caption{Best Improvement}
+\begin{algorithmic}[1]
+\Require Solución inicial $x$
+\Ensure Óptimo local $x$
+\Repeat
+  \State $x' \gets x$
+  \State $x \gets \arg\min_{y \in \mathcal{N}(x)} f(y)$
+\Until{$f(x) \ge f(x')$}
+\Return $x$
+\end{algorithmic}
+\end{algorithm}
+\end{columns}
+\end{frame}
+
+
+% =====================================================================
+
+%\subsection{Componentes de VNS: First Improvement (primer descenso)}
+
+\begin{frame}{Componentes de VNS: First Improvement (primer descenso)}
+\begin{block}{Estrategia}
+Recorre el vecindario en algún orden y se mueve al \textbf{primer} vecino que
+mejore la solución.
+\end{block}
+
+\begin{columns}[T]
+\column{0.42\textwidth}
+\begin{itemize}
+  \item Más rápido por iteración.
+  \item Puede requerir más iteraciones totales.
+  \item Ideal con vecindarios grandes o $f$ costosa.
+  \item \textbf{VNS típicamente usa First Improvement} en su búsqueda local interna
+porque el vecindario puede ser enorme.
+\end{itemize}
+
+\column{0.58\textwidth}
+\vspace{-15pt}
+\scriptsize
+\begin{algorithm}[H]
+\caption{First Improvement}
+\begin{algorithmic}[1]
+\Require Solución inicial $x$
+\Ensure Óptimo local $x$
+\Repeat
+  \State $x' \gets x$; $i \gets 0$
+  \Repeat
+    \State $i \gets i + 1$;
+    \State $x \gets \arg\min\{f(x), f(x_i)\}$, \; $x_i \in \mathcal{N}(x)$
+  \Until{$f(x) < f(x_i)$ \textbf{or} $i = |\mathcal{N}(x)|$}
+\Until{$f(x) \ge f(x')$}
+\Return $x$
+\end{algorithmic}
+\end{algorithm}
+\end{columns}
+\end{frame}
+
+
+% =====================================================================
+\subsection{Algoritmos}
+% =====================================================================
+
+%\subsubsection{Idea básica de VNS}
+
+\begin{frame}{Idea básica de VNS}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\begin{center}
+  \includegraphics[width=\textwidth, keepaspectratio]{figuras/neighborhoods.png}
+\end{center}
+
+\column{0.45\textwidth}
+\vspace{-10pt}
+\begin{block}{Vecindarios anidados}
+\[
+  \mathcal{N}_1(P) \subset \mathcal{N}_2(P) \subset \mathcal{N}_3(P)
+\]
+\vspace{-20pt}
+\begin{itemize}
+  \item Cada vecindario explora una región más amplia.
+  \item Si $k_{\max}$ es muy pequeño $\to$ VNS no diversifica (se estanca).
+\end{itemize}
+\end{block}
+
+\begin{alertblock}{Fases canónicas de VNS}
+\begin{enumerate}
+  \item \textbf{Shaking}: $x' \in \mathcal{N}_k(x)$ aleatorio.
+  \item \textbf{Búsqueda Local}.
+  \item \textbf{Decisión cambiar vecindario}: NeighborhoodChange.
+\end{enumerate}
+\end{alertblock}
+
+\end{columns}
+\end{frame}
+
+
+% =====================================================================
+
+
+%\subsubsection{VND (Variable Neighborhood Descent)}
+
+\begin{frame}{Variable Neighborhood Descent (VND)}
+\begin{block}{Caracterización}
+\textbf{Determinista}: aplica BL con $\mathcal{N}_1$, al estancarse cambia a $\mathcal{N}_2$, etc.
+\end{block}
+\vspace{-4pt}
+
+\begin{columns}[T]
+\column{0.5\textwidth}
+
+\scriptsize
+\begin{algorithm}[H]
+\caption{VND$(x, k'_{\max})$}
+\begin{algorithmic}[1]
+\Repeat
+  \State $k \gets 1$
+  \Repeat
+    \State$x'' \gets \text{BestImprovement}(x')$
+    \State $\text{NeighborhoodChange}(x, x', k)$
+  \Until{$k = k'_{\max}$}
+\Until{no improvement is obtained}
+\end{algorithmic}
+\end{algorithm}
+
+\column{0.40\textwidth}
+\center
+\begin{alertblock}{Fases de VND}
+\begin{enumerate}
+  \item \st{\textbf{Shaking}: $x' \in \mathcal{N}_k(x)$ aleatorio.}
+  \item \textbf{Búsqueda Local.}: \naranja{$x'' \gets \textbf{BestImprovement}(x')$}.
+  \item \textbf{Decisión cambiar vecindario}: NeighborhoodChange.
+\end{enumerate}
+\end{alertblock}
+\end{columns}
+
+\end{frame}
+
+
+% =====================================================================
+
+
+%\begin{frame}{Ejemplo VND}
+%\centering
+%\animategraphics[width=0.6\textwidth, autoplay, loop, controls]{12}{../notebook/videos/vnd_3d_frames/frame-}{0}{19}
+%\end{frame}
+
+
+% =====================================================================
+
+
+%\subsubsection{RVNS (Reduced VNS)}
+
+\begin{frame}{Reduced VNS (RVNS)}
+\begin{block}{Caracterización}
+\begin{itemize}
+  \item Elige puntos aleatorios en $\mathcal{N}_k(x)$ \textbf{sin búsqueda local}.
+  \item Ideal para \textbf{instancias muy grandes}; $k_{\max}=2$ suele bastar.
+\end{itemize}
+\end{block}
+
+\vspace{-4pt}
+
+\begin{columns}[T]
+\column{0.5\textwidth}
+
+\scriptsize
+\begin{algorithm}[H]
+\caption{RVNS$(x, k_{\max}, t_{\max})$}
+\begin{algorithmic}[1]
+\Repeat
+  \State $k \gets 1$
+  \Repeat
+    \State $x' \gets \text{Shake}(x, k)$
+    \State $\text{NeighborhoodChange}(x, x', k)$
+  \Until{$k = k_{\max}$}
+  \State $t \gets \text{CpuTime}()$
+\Until{$t > t_{\max}$}
+\end{algorithmic}
+\end{algorithm}
+
+
+\column{0.40\textwidth}
+\center
+\begin{alertblock}{Fases de RVNS}
+\begin{enumerate}
+  \item \textbf{Shaking}: $x' \in \mathcal{N}_k(x)$ aleatorio.
+  \item \st{\textbf{Búsqueda Local.}}
+  \item \textbf{Decisión cambiar vecindario}: NeighborhoodChange.
+\end{enumerate}
+\end{alertblock}
+\end{columns}
+
+\end{frame}
+
+
+% =====================================================================
+
+
+%\begin{frame}{Ejemplo RVNS}
+%\centering
+%\animategraphics[width=0.6\textwidth, autoplay, loop, controls]{12}{../notebook/videos/rvns_3d_frames/frame-}{0}{50}
+%\end{frame}
+
+
+% =====================================================================
+
+
+%\subsubsection{BVNS (Basic VNS)}
+
+\begin{frame}{Basic VNS (BVNS)}
+
+\begin{columns}[T]
+\column{0.5\textwidth}
+\scriptsize
+\begin{algorithm}[H]
+\caption{VNS$(x, k_{\max}, t_{\max})$}
+\begin{algorithmic}[1]
+\Repeat
+  \State $k \gets 1$
+  \Repeat
+    \State $x' \gets \text{Shake}(x, k)$
+    \State $x'' \gets \text{FirstImprovement}(x')$
+    \State $\text{NeighborhoodChange}(x, x'', k)$
+  \Until{$k = k_{\max}$}
+  \State $t \gets \text{CpuTime}()$
+\Until{$t > t_{\max}$}
+\end{algorithmic}
+\end{algorithm}
+
+\column{0.40\textwidth}
+\center
+\begin{alertblock}{Fases de BVNS}
+\begin{enumerate}
+  \item \textbf{Shaking}: $x' \in \mathcal{N}_k(x)$ aleatorio.
+  \item \textbf{Búsqueda Local}: \naranja{$x'' \gets \textbf{FirstImprovement}(x')$} .
+  \item \textbf{Decisión cambiar vecindario}: NeighborhoodChange.
+\end{enumerate}
+\end{alertblock}
+\end{columns}
+
+\end{frame}
+
+
+
+% =====================================================================
+
+
+%\subsubsection{GVNS (General VNS)}
+
+\begin{frame}{General VNS (GVNS)}
+\begin{block}{Idea}
+Reemplaza la búsqueda local de BVNS por \azul{VND}. Es la variante con
+\textbf{resultados más exitosos}..
+\end{block}
+
+\vspace{-4pt}
+
+\begin{columns}[T]
+\column{0.5\textwidth}
+\scriptsize
+\begin{algorithm}[H]
+\caption{GVNS$(x, k'_{\max}, k_{\max}, t_{\max})$}
+\begin{algorithmic}[1]
+\Repeat
+  \State $k \gets 1$
+  \Repeat
+    \State $x' \gets \text{Shake}(x, k)$
+    \State $x'' \gets \text{VND}(x', k'_{\max})$
+    \State $\text{NeighborhoodChange}(x, x'', k)$
+  \Until{$k = k_{\max}$}
+  \State $t \gets \text{CpuTime}()$
+\Until{$t > t_{\max}$}
+\end{algorithmic}
+\end{algorithm}
+
+\column{0.40\textwidth}
+\center
+\begin{alertblock}{Fases de GVNS}
+\begin{enumerate}
+  \item \textbf{Shaking}: $x' \in \mathcal{N}_k(x)$ aleatorio.
+  \item \textbf{Búsqueda Local}: \naranja{$x'' \gets \textbf{VND}(x', k'_{\max})$}.
+  \item \textbf{Decisión cambiar vecindario}: NeighborhoodChange.
+\end{enumerate}
+\end{alertblock}
+\end{columns}
+\end{frame}
+
+
+% =====================================================================
+
+
+%\begin{frame}{Ejemplo GVNS}
+%\centering
+%\animategraphics[width=0.6\textwidth, autoplay, loop, controls]{12}{../notebook/videos/gvns_3d_frames/frame-}{0}{379}
+%\end{frame}
+
+
+
+
+% =====================================================================
+\subsection{Parámetros a sintonizar}
+% =====================================================================
+
+\begin{frame}{ Parámetros a sintonizar Tabla resumen de parámetros por variante}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}p{1.5cm} p{2.8cm} p{8.5cm}@{}}
+\toprule
+\textbf{Variante} & \textbf{Parámetros} & \textbf{Descripción} \\
+\midrule
+VND  & $k'_{\max}$ & Vecindarios para el descenso determinista (sin $t_{\max}$) \\
+RVNS & $k_{\max}$, $t_{\max}$ & Sin búsqueda local; $k_{\max}=2$ suele bastar \\
+BVNS & $k_{\max}$, $t_{\max}$ & Shake + FirstImprovement + NeighborhoodChange \\
+GVNS & $k_{\max}$, $t_{\max}$, $k'_{\max}$ & VND en vez de FirstImprovement \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+\begin{ideaclave}
+La belleza de VNS está en su \textbf{simplicidad}: BVNS solo requiere $k_{\max}$ y $t_{\max}$.
+Si necesitas 10 parámetros, probablemente estás complicando demasiado el enfoque.
+\end{ideaclave}
+\end{frame}
+
+
+
+% =====================================================================
+%\section{Diseño de vecindarios}
+% =====================================================================
+
+%\begin{frame}{Ejemplos de vecindarios por representación}
+%\centering
+%\footnotesize
+%\setlength{\tabcolsep}{5pt}
+%\begin{tabular}{@{}p{2.5cm} p{3.2cm} p{3.2cm} p{3.2cm}@{}}
+%\toprule
+%\textbf{Representación} & $\boldsymbol{\mathcal{N}_1}$ \textbf{(pequeño)} & %$\boldsymbol{\mathcal{N}_2}$ \textbf{(mediano)} & $\boldsymbol{\mathcal{N}_3}$ %\textbf{(grande)} \\
+%\midrule
+%Vector binario $\{0,1\}^n$ & Cambiar 1 bit (Flip) & Cambiar 2 bits & Cambiar $k$ %bits \\
+%\addlinespace
+%Permutación (TSP) & Intercambiar 2 ciudades (Swap) & 2-opt (invertir segmento) & %3-opt, Or-opt \\
+%\addlinespace
+%Coloración de grafo & Cambiar color de 1 vértice & Cambiar color de 2 vértices & %Recolorear una clique \\
+%\addlinespace
+%Partición de conjunto & Mover 1 elemento & Intercambiar 2 elementos & Mover $k$ %elementos \\
+%\bottomrule
+%\end{tabular}
+
+%\vspace{10pt}
+%\begin{exampleblock}{Ejemplo: Shake para TSP con vecindario $k$-opt}
+%Selecciona $k$ aristas al azar del tour, las elimina, y reconecta los $k$ %segmentos
+%resultantes de forma aleatoria pero factible.
+%\end{exampleblock}
+%\end{frame}
+
+
+
+% =====================================================================
+\section{Ejemplo de uso}
+% =====================================================================
+
+\begin{frame}{Graph Coloring Problem (GCP)}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\begin{block}{Definición}
+Dado un grafo no dirigido $G = (V, E)$:
+\begin{itemize}
+  \item Asignar a cada vértice un color (entero).
+  \item Vértices adyacentes \textbf{no} pueden compartir color.
+  \item \textbf{Objetivo}: minimizar el n.\textsuperscript{o} total de colores.
+\end{itemize}
+\end{block}
+
+\begin{exampleblock}{Notación}
+\begin{itemize}
+  \item $\chi(G)$: número cromático (mínimo posible).
+  \item $k$-coloración: $f: V \to \{1, \dots, k\}$.
+  \item NP-completo (Karp, 1972).
+\end{itemize}
+\end{exampleblock}
+
+\column{0.45\textwidth}
+\begin{center}
+\begin{tikzpicture}[scale=1.0]
+  % Pentagono exterior (vertices originales 1..5)
+  \node[vertice, c1] (v1) at ( 90:2.0) {1};
+  \node[vertice, c2] (v2) at ( 18:2.0) {2};
+  \node[vertice, c3] (v3) at (-54:2.0) {3};
+  \node[vertice, c1] (v5) at (-126:2.0){5};
+  \node[vertice, c2] (v4) at (162:2.0) {4};
+
+  % Pentagono interior (twins 6..10)
+  \node[vertice, c1] (v6)  at ( 90:1.05) {6};
+  \node[vertice, c2] (v7)  at ( 18:1.05) {7};
+  \node[vertice, c3] (v8)  at (-54:1.05) {8};
+  \node[vertice, c1] (v10) at (-126:1.05){10};
+  \node[vertice, c2] (v9)  at (162:1.05) {9};
+
+  % Vertice universal 11 (centro)
+  \node[vertice, c4] (v11) at (0,0) {11};
+
+  % Aristas del 5-ciclo original (1-2-3-5-4-1)
+  \draw[arista] (v1)--(v2);
+  \draw[arista] (v2)--(v3);
+  \draw[arista] (v3)--(v5);
+  \draw[arista] (v5)--(v4);
+  \draw[arista] (v4)--(v1);
+
+  % Twins: cada twin se conecta con la vecindad de su original
+  % 6 ~ twin de 1 (vecinos 2,4)
+  \draw[arista] (v6)--(v2); \draw[arista] (v6)--(v4);
+  % 7 ~ twin de 2 (vecinos 1,3)
+  \draw[arista] (v7)--(v1); \draw[arista] (v7)--(v3);
+  % 8 ~ twin de 3 (vecinos 2,5)
+  \draw[arista] (v8)--(v2); \draw[arista] (v8)--(v5);
+  % 9 ~ twin de 4 (vecinos 1,5)
+  \draw[arista] (v9)--(v1); \draw[arista] (v9)--(v5);
+  % 10 ~ twin de 5 (vecinos 3,4)
+  \draw[arista] (v10)--(v3); \draw[arista] (v10)--(v4);
+
+  % Vertice universal a todos los twins
+  \foreach \i in {6,7,8,9,10}
+    \draw[arista] (v11) -- (v\i);
+\end{tikzpicture}
+
+\end{center}
+\end{columns}
+
+\end{frame}
+
+
+% =====================================================================
+
+\begin{frame}{Adaptaci\'on del VNS al $k$-GCP \hfill}
+
+\vspace{-10pt}
+\begin{columns}[T]
+\column{0.52\textwidth}
+
+\begin{exampleblock}{Representaci\'on de la soluci\'on}
+Una $k$-coloraci\'on es una funci\'on:
+\[
+  c: V \to \{1, \dots, k\}, \quad
+  V_r = \{x \in V \mid c(x) = r\}
+\]
+\end{exampleblock}
+
+\begin{alertblock}{Funci\'on objetivo}
+\[
+  \boxed{\, f(s) = \sum_{r=1}^{k} |E_r| \,}
+\]
+\[
+  E_r = \bigl\{ \{u,v\} \in E \mid c(u)=c(v)=r \bigr\}
+\]
+$V$ = v\'ertices, $r$ = color, $E_r$ = aristas con ambos extremos de color $r$.
+Objetivo: minimizar hasta $\boxed{f(s)=0}$ (coloraci\'on legal).
+
+\end{alertblock}
+
+\column{0.44\textwidth}
+\begin{block}{6 vecindarios utilizados}
+\footnotesize
+\textbf{V\'ertice} (cambian color de v\'ertices conflictivos):
+\begin{enumerate}
+  \item[2.] \azul{Cadena}
+  \item[3.] \azul{Granada}
+  \item[4.] \azul{Fuego artificial}
+\end{enumerate}
+\vspace{-2pt}
+\textbf{Clase} (vac\'ian/modifican una clase de color):
+\begin{enumerate}
+  \item[6.] \azul{Vaciar-rellenar}
+  \item[7.] \azul{Conjunto estable}
+  \item[8.] \azul{Clase vac\'ia}
+\end{enumerate}
+\end{block}
+
+\vspace{1pt}
+\begin{block}{Fuente}
+\footnotesize
+\textbf{Avanthay, C., Hertz, A. \& Zufferey, N.} (2003).
+\textit{A variable neighborhood search for graph coloring.}
+European Journal of Operational Research, 151(2), 379--388.
+\end{block}
+
+\end{columns}
+\end{frame}
+
+% =====================================================================
+
+%\begin{frame}{Pseudoc\'odigo: VNS para $k$-GCP \hfill \footnotesize\textit{\gris{Avanthay et al.\ (2003, Tabla 3)}}}
+%\begin{algorithm}[H]
+%\caption{VNS para minimizar $f(s)$ con $k$ colores fijo}
+%\begin{algorithmic}[1]
+%\scriptsize
+%\Require Grafo $G=(V,E)$, entero $k$
+%\Ensure Mejor $k$-coloraci\'on $s^*$
+
+%\State Generar aleatoriamente una $k$-coloraci\'on inicial $s$
+%\State $I_{\text{VNS}} \gets 0$; \quad $t \gets 1$
+%\State Elegir permutaci\'on aleatoria $p$ de $\{2,3,4,6,7,8\}$ \Comment{6 vecindarios}
+%\Repeat
+%  \State $I_{\text{VNS}} \gets I_{\text{VNS}} + 1$
+%  \State $s' \gets$ \textbf{Shake}$(s, p(t))$ \Comment{Perturbaci\'on aleatoria en $N^{(p(t))}$}
+%  \State $s'' \gets$ \textbf{Tabucol}$(s')$ \Comment{BL: b\'usqueda tab\'u, para tras $10|V|$ iter.\ sin mejora}
+%  \If{$f(s'') < f(s)$} \Comment{¡Mejora!}
+%    \State $s \gets s''$; \quad $s^* \gets s$; \quad $t \gets 1$; \quad $I_{\text{VNS}} \gets 0$
+%  \Else
+%    \If{$I_{\text{VNS}}$ es m\'ultiplo de $\lceil |V|/6 \rceil$}
+%      \State $t \gets t + 1$ \Comment{Cambiar de vecindario}
+%    \EndIf
+%  \EndIf
+%\Until{$I_{\text{VNS}} = |V|$} \Comment{Sin mejora en $|V|$ iteraciones}
+%\State \Return $s^*$
+%\end{algorithmic}
+%\end{algorithm}
+%\end{frame}
+
+
+% =====================================================================
+
+\begin{frame}{Resultados experimentales \hfill}
+\begin{block}{Dise\~no experimental}
+\footnotesize
+\textbf{Benchmark}: instancias \textbf{DIMACS} + 4 grafos aleatorios R500.x.
+%\textbf{VNS}: 6 vecindarios + Tabucol, 4 corridas/instancia, SGI Indigo2 195 MHz.
+\end{block}
+
+\vspace{2pt}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}l r r r r r r c@{}}
+\toprule
+\textbf{Instancia} & $|V|$ & \textbf{Tabucol} & \textbf{VNS} & \textbf{GH}\textsuperscript{*} & \textbf{Best}  \\
+ & & $\chi$ & $\chi$ & $\chi$ & known  \\
+\midrule
+\texttt{DSJC500.5}  & 500  & 51 & \azul{49} & \naranja{48} & 48 \\
+\texttt{DSJC1000.5} & 1000 & 94 & \azul{90} & \naranja{83} & 83  \\
+\texttt{le450.15c}   & 450  & 18 & \azul{15} & \naranja{15} & 15 \\
+\texttt{le450.15d}   & 450  & 18 & \azul{15} & --- & 15  \\
+\texttt{flat300.28}  & 300  & 32 & \azul{31} & \naranja{31} & 31 \\
+\texttt{flat300.26}  & 300  & 32 & \azul{31} & --- & 26  \\
+\texttt{flat1000.76} & 1000 & 93 & \azul{89} & \naranja{83} & 83  \\
+\texttt{R500.1}      & 500  & 50 & \azul{49} & --- & ---  \\
+\texttt{R500.2}      & 500  & 51 & \azul{50} & --- & --- \\
+\texttt{R500.3}      & 500  & 51 & \azul{50} & --- & ---  \\
+\texttt{R500.4}      & 500  & 51 & \azul{50} & --- & ---  \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+{\fontsize{6}{7}\selectfont \textsuperscript{*}\textbf{GH}: algoritmo gen\'etico h\'ibrido de Galinier \& Hao (1999)}
+
+\end{frame}
+
+
+%Interpretación de los resultados
+%«Como se puede observar, el algoritmo VNS siempre produce mejores resultados que Tabucol. Nótese que VNS usa repetidamente Tabucol cada vez que entra en el paso 2.b. Esto demuestra claramente que el uso de más de un vecindario puede ser muy útil para escapar de óptimos locales.»
+%«El algoritmo VNS sin embargo no es competitivo con GH, lo que significa que un buen intercambio de información entre una población de soluciones parece ser más importante que el uso de varios vecindarios sobre una única solución.»*
+
+% =====================================================================
+\section{Conclusiones}
+% =====================================================================
+
+\begin{frame}{Conclusiones}
+\vspace{-4pt}
+\begin{block}{Ventajas}
+\begin{itemize}
+  \item \textbf{Simplicidad}: fácil de entender e implementar.
+  \item \textbf{Pocos parámetros}: GVNS solo necesita $k_{\max}$, $k'_{\max}$ , $t_{\max}$.
+  \item \textbf{Intensificación/diversificación sin parámetros extra}.
+\end{itemize}
+\end{block}
+
+\begin{alertblock}{Desventajas}
+\begin{itemize}
+  \item Depende críticamente de una \textbf{buena elección de vecindarios}.
+  \item Requiere \textbf{conocimiento del problema} para diseñar vecindarios efectivos.
+  \item La búsqueda local puede \textbf{estancarse} en vecindarios muy pequeños.
+  \item La búsqueda local puede ser \textbf{demasiado costosa} en vecindarios muy grandes
+\end{itemize}
+\end{alertblock}
+
+\end{frame}
+
+
+% ─── CIERRE ──────────────────────────────────────────────────────────
+\begin{frame}[plain]
+\vfill
+\begin{center}
+{\Huge\bfseries\azul{Gracias}}\\[10pt]
+{\large ¿Preguntas?}\\[18pt]
+\footnotesize
+\href{mailto:sergio.espinoza.g@usach.cl}{sergio.espinoza.g@usach.cl} \quad\textbar\quad
+\href{mailto:ivan.fernandez.g@usach.cl}{ivan.fernandez.g@usach.cl}
+\end{center}
+\vfill
+\end{frame}
+
+\end{document}

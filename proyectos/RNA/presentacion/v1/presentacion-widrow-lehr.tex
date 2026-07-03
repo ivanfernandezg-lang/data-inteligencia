@@ -1,0 +1,757 @@
+% =====================================================================
+%  PRESENTACION-WIDROW-LEHR.TEX
+%  30 Años de Redes Neuronales Adaptativas: Perceptrón, Madaline y
+%  Backpropagation (Widrow & Lehr, 1990).
+%  Magíster en Ingeniería Informática USACH — Inteligencia Computacional 2026-1.
+%
+%  Estilo (colores, tema, márgenes, índice, portada) tomado de
+%  example-presentation.tex (plantilla USACH).
+%
+%  Compilación:  pdflatex presentacion-widrow-lehr.tex   (x2)
+% =====================================================================
+
+\documentclass[aspectratio=169, 11pt, xcolor={dvipsnames,table}]{beamer}
+
+% ── Paquetes base ────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish, es-tabla, es-noshorthands]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath, amssymb, mathtools, bm}
+\usepackage{graphicx}
+\usepackage{booktabs, array, multirow}
+\usepackage{multicol}
+\usepackage{caption}
+\captionsetup{font=footnotesize, labelfont=bf}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, calc, shapes.geometric, fit, backgrounds}
+\hypersetup{hidelinks}
+\usepackage{xcolor}
+
+% ── Paleta USACH ─────────────────────────────────────────────────────
+\definecolor{UsachAzul}{RGB}{7,27,73}
+\definecolor{UsachNaranja}{RGB}{221,121,0}
+\definecolor{UsachGris}{RGB}{57,64,73}
+\definecolor{UsachGrisClaro}{RGB}{230,230,230}
+
+% ── Theme + colores Beamer ───────────────────────────────────────────
+\usetheme{Madrid}
+\useinnertheme{rectangles}
+\useoutertheme{infolines}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{navigation symbols}{}
+
+% --- Reducir espacio entre bloques para aprovechar mejor la diapositiva ---
+\setlength{\medskipamount}{3pt plus 1pt minus 1pt}
+
+% --- AUTO-SHRINK MODERADO + MARGEN INFERIOR -------------------------
+\makeatletter
+\let\beamer@@frameORIG\beamer@@frame
+\def\beamer@@frame[#1]{\beamer@@frameORIG[shrink=55,#1]}
+\makeatother
+
+% --- FOOTLINE COMPACTA -----------------------------------------------
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.33\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.34\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.33\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\setbeamercolor{structure}{fg=UsachAzul}
+\setbeamercolor{palette primary}{bg=UsachAzul, fg=white}
+\setbeamercolor{palette secondary}{bg=UsachAzul!80, fg=white}
+\setbeamercolor{palette tertiary}{bg=UsachAzul, fg=white}
+\setbeamercolor{title}{fg=UsachAzul, bg=white}
+\setbeamercolor{frametitle}{fg=white, bg=UsachAzul}
+\setbeamercolor{section in head/foot}{bg=UsachAzul, fg=white}
+\setbeamercolor{subsection in head/foot}{bg=UsachAzul!80, fg=white}
+\setbeamercolor{author in head/foot}{bg=UsachAzul, fg=white}
+\setbeamercolor{title in head/foot}{bg=UsachAzul!85, fg=white}
+\setbeamercolor{date in head/foot}{bg=UsachAzul, fg=white}
+\setbeamercolor{itemize item}{fg=UsachNaranja}
+\setbeamercolor{itemize subitem}{fg=UsachNaranja!80}
+\setbeamercolor{enumerate item}{fg=UsachNaranja}
+\setbeamercolor{block title}{bg=UsachAzul, fg=white}
+\setbeamercolor{block body}{bg=UsachAzul!5, fg=black}
+\setbeamercolor{block title alerted}{bg=UsachNaranja, fg=white}
+\setbeamercolor{block body alerted}{bg=UsachNaranja!8, fg=black}
+\setbeamercolor{block title example}{bg=UsachGris, fg=white}
+\setbeamercolor{block body example}{bg=UsachGris!8, fg=black}
+\setbeamercovered{transparent=25}
+\usefonttheme[onlymath]{serif}
+
+\newcommand{\azul}[1]{\textcolor{UsachAzul}{#1}}
+\newcommand{\naranja}[1]{\textcolor{UsachNaranja}{#1}}
+\newcommand{\gris}[1]{\textcolor{UsachGris}{#1}}
+
+% ── Cajas destacadas ─────────────────────────────────────────────────
+\newtcolorbox{ideaclave}[1][]{
+  colback=UsachNaranja!8, colframe=UsachNaranja!80!black,
+  fonttitle=\bfseries, title=Idea clave, #1
+}
+\newtcolorbox{tipbox}[1][]{
+  colback=green!5!white, colframe=green!50!black,
+  fonttitle=\bfseries, title=Nota, #1
+}
+
+% ── Estilos TikZ (Adaline / taxonomía) ───────────────────────────────
+\tikzset{%
+  nodo/.style     ={circle, draw=UsachAzul!70, line width=0.7pt,
+                    minimum size=16pt, inner sep=0pt, font=\scriptsize},
+  suma/.style     ={circle, draw=UsachAzul!80, fill=UsachAzul!8,
+                    line width=0.8pt, minimum size=20pt, font=\small},
+  cuant/.style    ={rectangle, draw=UsachAzul!80, fill=UsachGrisClaro,
+                    line width=0.8pt, minimum width=13pt, minimum height=18pt},
+  peso/.style     ={circle, draw=UsachNaranja!80, fill=UsachNaranja!12,
+                    minimum size=12pt, inner sep=0pt, font=\tiny},
+  flarr/.style    ={-{Stealth[length=4pt]}, line width=0.6pt, draw=black!70},
+  cat/.style      ={draw, rounded corners, fill=UsachAzul!10, align=center,
+                    inner sep=4pt, font=\small\bfseries},
+  arch/.style     ={draw, align=center, inner sep=3pt, font=\footnotesize},
+  act/.style      ={align=center, font=\footnotesize\itshape},
+  alg/.style      ={draw, rounded corners, fill=UsachNaranja!12, align=center,
+                    inner sep=3pt, font=\footnotesize\bfseries},
+  ln/.style       ={-, draw=black!65}
+}
+
+% ── Metadatos ────────────────────────────────────────────────────────
+\title[Redes Neuronales Adaptativas: Perceptron, Madaline, Backprop]{%
+  \textbf{30 Años de Redes Neuronales Adaptativas}}
+\subtitle{Perceptrón, Madaline y Backpropagation \;(\textmd{Widrow \& Lehr, 1990})}
+\author[I. Fernández G.]{%
+  Iván Fernández G.}
+\institute[USACH]{%
+  \footnotesize Magíster en Ingeniería Informática --- Universidad de Santiago de Chile\\
+  Inteligencia Computacional 2026-1 \quad\textbar\quad Prof.\ Gonzalo Acuña Leiva}
+\date{Julio 2026}
+
+% =====================================================================
+\begin{document}
+% =====================================================================
+
+% ─── PORTADA ─────────────────────────────────────────────────────────
+{
+\setbeamertemplate{background}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[UsachAzul]
+      (current page.north west) rectangle
+      ([yshift=-1.6cm]current page.north east);
+    \fill[UsachNaranja]
+      ([yshift=-1.6cm]current page.north west) rectangle
+      ([yshift=-1.75cm]current page.north east);
+    \fill[UsachGris]
+      ([yshift=0.55cm]current page.south west) rectangle
+      ([yshift=0.65cm]current page.south east);
+    \node[anchor=north west, xshift=8mm, yshift=-6mm,
+          font=\bfseries\Large, text=white]
+      at (current page.north west) {USACH};
+    \node[anchor=north east, xshift=-8mm, yshift=-6mm,
+          font=\footnotesize, text=white, align=right]
+      at (current page.north east)
+      {Magíster en Ingeniería Informática \;\textbullet\; Inteligencia Computacional 2026-1};
+  \end{tikzpicture}}
+\setbeamertemplate{footline}{}
+\begin{frame}[plain,noframenumbering]
+  \vspace*{1.2cm}
+  \titlepage
+\end{frame}
+}
+
+% ─── CONTENIDO GLOBAL ────────────────────────────────────────────────
+\begin{frame}{Contenido}
+    \begin{center}
+      \tableofcontents
+    \end{center}
+\end{frame}
+
+% ─── DIAPOSITIVAS DE TÍTULO ENTRE SECCIONES ─────────────────────────
+\AtBeginSection[]{%
+  \begin{frame}[plain]
+    \vspace*{2.5cm}
+    \centering
+    {\color{UsachAzul}\Huge\bfseries\insertsectionhead\par}
+    \vspace{0.6cm}
+    \textcolor{UsachNaranja}{\rule{0.25\textwidth}{2.5pt}}
+    \vfill
+  \end{frame}
+}
+
+% =====================================================================
+\section{Introducción e historia}
+% =====================================================================
+
+\begin{frame}{El problema: aprendizaje supervisado en RNA feedforward}
+\begin{block}{¿Qué aborda el artículo?}
+Cómo \textbf{adaptar los pesos} de una red de elementos simples para que aproxime una función de
+\azul{clasificación} o \azul{regresión} a partir de ejemplos. Es una \textbf{revisión} (\emph{survey})
+de 30 años de reglas de aprendizaje, desde el Perceptrón (1958) hasta \emph{backpropagation} (1986).
+\end{block}
+\begin{columns}[T]
+\column{0.62\textwidth}
+\begin{block}{¿Por qué redes neuronales?}
+\begin{itemize}
+  \item \naranja{Paralelismo masivo}: muchos elementos simples resolviendo en conjunto.
+  \item \naranja{Aprendizaje por ejemplos}: sin programar reglas explícitas.
+  \item \naranja{Generalización}: clasifican patrones no vistos.
+\end{itemize}
+\end{block}
+\column{0.36\textwidth}
+\begin{tipbox}
+Aplicaciones históricas: \textbf{NETtalk}, el \emph{truck backer-upper} y los ecualizadores LMS
+de módems (primer uso comercial masivo).
+\end{tipbox}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Treinta años de evolución (1960--1990)}
+\begin{block}{Línea de tiempo}
+\begin{itemize}
+  \item \textbf{1960} --- Algoritmo \azul{LMS} (Widrow \& Hoff) y regla del \azul{Perceptrón} (Rosenblatt), desarrollados de forma independiente.
+  \item \textbf{Mediados 60s} --- \azul{Madaline Rule I} (MRI): primera red en capas entrenable; voz, clima, patrones.
+  \item \textbf{1971--1974} --- \azul{Backpropagation} (Werbos); ignorada, redescubierta por Parker (1982) y popularizada por Rumelhart, Hinton \& Williams (1986).
+  \item \textbf{1987} --- \azul{Madaline Rule II} (MRII): adapta redes multicapa con cuantizadores duros.
+  \item \textbf{1988} --- \azul{Madaline Rule III} (MRIII, Andes); Widrow \emph{et al.} descubren que es \textbf{equivalente a backpropagation}.
+\end{itemize}
+\end{block}
+\begin{tipbox}
+El artículo delimita su foco a los algoritmos de Stanford y a \emph{backprop}; deja fuera ART,
+Hopfield, Boltzmann, Kohonen y el Neocognitron.
+\end{tipbox}
+\end{frame}
+
+\begin{frame}{El hilo conductor: principio de mínima perturbación}
+\begin{ideaclave}
+\textbf{Adaptar para reducir el error del patrón actual, con la mínima perturbación a las
+respuestas ya aprendidas.}
+\end{ideaclave}
+\begin{block}{Consecuencia geométrica}
+El cambio de pesos $\Delta W_k$ es siempre \textbf{colineal} con el vector de entrada $X_k$: se logra
+la corrección deseada con el cambio de \azul{menor magnitud posible}.
+\[
+  \Delta W_k \parallel X_k \quad\Longrightarrow\quad \min \lVert \Delta W_k \rVert
+\]
+\end{block}
+\begin{itemize}
+  \item Es el principio que condujo al descubrimiento de LMS y de las reglas Madaline.
+  \item \textbf{Todos} los algoritmos del artículo obedecen esta idea.
+\end{itemize}
+\end{frame}
+
+% =====================================================================
+\section{Conceptos fundamentales}
+% =====================================================================
+
+\begin{frame}{El bloque básico: combinador lineal y Adaline}
+\begin{columns}[T]
+\column{0.54\textwidth}
+\begin{center}
+\begin{tikzpicture}[scale=0.9, transform shape]
+  \node[peso] (w0) at (0,2.1) {$w_0$};
+  \node[peso] (w1) at (0,1.4) {$w_1$};
+  \node[peso] (w2) at (0,0.7) {$w_2$};
+  \node       (wd) at (0,0.15) {$\vdots$};
+  \node[peso] (wn) at (0,-0.4) {$w_n$};
+  \node[left=6pt of w0, font=\scriptsize] {$+1$};
+  \node[left=6pt of w1, font=\scriptsize] {$x_1$};
+  \node[left=6pt of w2, font=\scriptsize] {$x_2$};
+  \node[left=6pt of wn, font=\scriptsize] {$x_n$};
+  \node[suma] (S) at (1.9,0.85) {$\Sigma$};
+  \node[cuant] (Q) at (3.3,0.85) {};
+  \draw (3.16,0.72)--(3.3,0.72)--(3.3,0.98)--(3.44,0.98);
+  \foreach \w in {w0,w1,w2,wn}{\draw[flarr] (\w) -- (S);}
+  \draw[flarr] (S) -- node[above,font=\scriptsize]{$s_k$} (Q);
+  \draw[flarr] (Q) -- ++(1.1,0) node[right,font=\scriptsize]{$y_k$};
+\end{tikzpicture}
+\end{center}
+\begin{tipbox}
+El bias $w_0$ (entrada $+1$) controla el umbral. Con \emph{signum} la salida es binaria; con
+$\tanh$ es diferenciable.
+\end{tipbox}
+\column{0.44\textwidth}
+\begin{block}{Ecuaciones}
+Combinador lineal (producto interno):
+\[ s_k = X_k^{T} W_k \]
+Adaline con cuantizador duro:
+\[ y_k = \operatorname{sgn}(s_k) \in \{\pm 1\} \]
+Variante diferenciable:
+\[ y_k = \tanh(s_k) \]
+\end{block}
+\begin{itemize}
+  \item \azul{Adaline} = \emph{Adaptive Linear Element}: bloque de casi toda RNA.
+  \item La condición $s=0$ define un \textbf{hiperplano separador}.
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Separabilidad lineal: el límite del Adaline}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\begin{block}{Un Adaline solo resuelve funciones separables}
+Con $n=2$ entradas binarias implementa \textbf{14 de 16} funciones lógicas. Las dos imposibles:
+\azul{XOR} y \azul{XNOR}.
+\[
+\begin{array}{c}
+(+1,+1)\to+1 \quad (+1,-1)\to-1\\
+(-1,+1)\to-1 \quad (-1,-1)\to+1
+\end{array}
+\]
+No existe una recta que separe estos cuatro puntos.
+\end{block}
+\column{0.45\textwidth}
+\begin{alertblock}{Consecuencia}
+La incapacidad de realizar \emph{todas} las funciones no es un defecto fatal: \textbf{limita la
+capacidad y por eso mejora la generalización}. Para XOR se necesita \azul{no linealidad}:
+preprocesamiento o varias capas.
+\end{alertblock}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Capacidad de patrones: el teorema de Cover}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{center}
+  \includegraphics[width=\textwidth, keepaspectratio]{figuras/fig_cover.png}
+\end{center}
+\column{0.5\textwidth}
+\begin{block}{Probabilidad de separabilidad}
+\[
+P(N_p,N_w)=2^{1-N_p}\!\sum_{i=0}^{N_w-1}\!\binom{N_p-1}{i},\quad N_p>N_w
+\]
+\end{block}
+\begin{itemize}
+  \item Capacidad determinística: $C_d = N_w$ (garantía).
+  \item Capacidad estadística: $\azul{C_s \approx 2N_w}$ (promedio).
+  \item Baum extendió la cota a redes multicapa.
+\end{itemize}
+\begin{ideaclave}
+\emph{Trade-off} capacidad--generalización: entrenar con $N_p \gg N_w/N_y$ para generalizar en vez
+de memorizar.
+\end{ideaclave}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Clasificadores no lineales (I): preprocesador polinomial}
+\begin{block}{Un solo Adaline + preprocesador fijo}
+Expandiendo la entrada a términos polinomiales $[x_1^2,\,x_1,\,x_1x_2,\,x_2,\,x_2^2]$, la condición
+de umbral se vuelve:
+\[
+s = w_0 + x_1 w_1 + x_1^2 w_{11} + x_1 x_2 w_{12} + x_2^2 w_{22} + x_2 w_2 = 0
+\]
+\end{block}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\begin{itemize}
+  \item La frontera puede ser una \azul{elipse} $\Rightarrow$ \textbf{resuelve XNOR/XOR} con un único elemento.
+  \item Método PDM de Specht: entrenamiento no iterativo (una pasada).
+  \item Los pesos aproximan coeficientes de una \emph{serie de Taylor} de la respuesta deseada.
+\end{itemize}
+\column{0.42\textwidth}
+\begin{tipbox}
+Salvo que las no linealidades se ajusten con cuidado, suele generalizar mejor una red con
+\textbf{más de una capa adaptativa}.
+\end{tipbox}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Clasificadores no lineales (II): Madaline I y redes feedforward}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{Madaline I (MRI)}
+\begin{itemize}
+  \item Capa de Adalines (\emph{signum}) $\to$ \azul{lógica fija} de salida (AND, OR o mayoría).
+  \item Primera red en capas entrenable.
+  \item \emph{Load-sharing}: ``asignar la responsabilidad a quien pueda asumirla más fácilmente''.
+\end{itemize}
+\end{block}
+\column{0.5\textwidth}
+\begin{block}{Red feedforward}
+\begin{itemize}
+  \item \textbf{Todas} las capas son adaptativas.
+  \item Salida: error directo y fácil de adaptar.
+  \item \alert{Dificultad clave}: obtener \azul{señales de error} para las capas \textbf{ocultas}.
+\end{itemize}
+\end{block}
+\end{columns}
+\begin{ideaclave}
+\emph{Backpropagation} y \emph{Madaline Rule III} son precisamente los dos mecanismos que resuelven
+el problema de las señales de error en capas ocultas.
+\end{ideaclave}
+\end{frame}
+
+% =====================================================================
+\section{Reglas de aprendizaje}
+% =====================================================================
+
+\begin{frame}{Dos familias de reglas y su taxonomía}
+\begin{columns}[T]
+\column{0.4\textwidth}
+\begin{block}{Corrección de error}
+Corrigen una \azul{proporción del error} en la respuesta al patrón presente.
+\end{block}
+\begin{block}{Descenso más pronunciado}
+Minimizan el \azul{MSE promediado} sobre todo el conjunto, por gradiente.
+\end{block}
+\column{0.58\textwidth}
+\begin{center}
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[every node/.style={font=\footnotesize}]
+  \node (root) at (0,4.2) {\textbf{Reglas de aprendizaje}};
+  \node[cat] (sd) at (-3.2,3.2) {Descenso más\\pronunciado};
+  \node[cat] (ec) at (3.2,3.2) {Corrección\\de error};
+  \draw[ln] (root)--(sd); \draw[ln] (root)--(ec);
+  \node[arch] (sdL) at (-4.7,2.2) {Red};
+  \node[arch] (sdS) at (-1.9,2.2) {Único};
+  \node[arch] (ecL) at (1.9,2.2) {Red};
+  \node[arch] (ecS) at (4.7,2.2) {Único};
+  \draw[ln] (sd)--(sdL);\draw[ln] (sd)--(sdS);\draw[ln] (ec)--(ecL);\draw[ln] (ec)--(ecS);
+  \node[act] (a1) at (-4.7,1.4) {sigmoide};
+  \node[act] (a2) at (-2.5,1.4) {sigmoide};
+  \node[act] (a3) at (-1.2,1.4) {lineal};
+  \node[act] (a4) at (1.9,1.4) {signum};
+  \node[act] (a5) at (4.1,1.4) {signum};
+  \node[act] (a6) at (5.4,1.4) {lineal};
+  \draw[ln] (sdL)--(a1);\draw[ln] (sdS)--(a2);\draw[ln] (sdS)--(a3);
+  \draw[ln] (ecL)--(a4);\draw[ln] (ecS)--(a5);\draw[ln] (ecS)--(a6);
+  \node[alg] at (-4.7,0.5) {MRIII\\Backprop};
+  \node[alg] at (-2.5,0.5) {MRIII\\Backprop};
+  \node[alg] at (-1.2,0.5) {$\mu$-LMS};
+  \node[alg] at (1.9,0.5) {MRI\\MRII};
+  \node[alg] at (4.1,0.5) {Perc.\\Mays};
+  \node[alg] at (5.4,0.5) {$\alpha$-LMS};
+  \foreach \x in {-4.7,-2.5,-1.2,1.9,4.1,5.4}{\draw[ln] (\x,1.15)--(\x,0.85);}
+\end{tikzpicture}}
+
+{\scriptsize Reproducción de la Fig.~33 del artículo.}
+\end{center}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Corrección de error lineal: $\alpha$-LMS}
+\begin{block}{Regla delta de Widrow-Hoff (única regla lineal de corrección)}
+\[
+W_{k+1} = W_k + \alpha\,\frac{\varepsilon_k}{\lVert X_k\rVert^{2}}\,X_k,
+\qquad \varepsilon_k = d_k - X_k^{T} W_k
+\]
+\end{block}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{itemize}
+  \item Corrección proporcional al \azul{error lineal} $\varepsilon_k$.
+  \item $\Delta W_k$ colineal con $X_k$ (mínima perturbación).
+  \item \naranja{Auto-normalizante}: $\alpha$ no depende de la magnitud de las entradas.
+\end{itemize}
+\column{0.5\textwidth}
+\begin{tipbox}
+Estabilidad $0<\alpha<2$; rango práctico $0.1<\alpha<1.0$. El cambio en el error es
+$\Delta\varepsilon_k = -\alpha\,\varepsilon_k$.
+\end{tipbox}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Corrección de error no lineal: regla del Perceptrón}
+\begin{block}{Rosenblatt}
+\[
+W_{k+1} = W_k + \alpha\,\frac{\tilde{\varepsilon}_k}{2}\,X_k,
+\qquad \tilde{\varepsilon}_k = d_k - y_k \in \{-2,0,+2\}
+\]
+\end{block}
+\begin{itemize}
+  \item Usa el \azul{error del cuantizador} $\tilde{\varepsilon}_k$; \textbf{solo adapta si $y_k\neq d_k$}.
+  \item \naranja{Teorema de convergencia}: separa en pasos finitos \textbf{si los datos son linealmente separables}.
+  \item Si \textbf{no} lo son, el vector de pesos ``gravita hacia cero'' y el algoritmo continúa indefinidamente.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{$\alpha$-LMS \textit{vs.} Perceptrón}
+\renewcommand{\arraystretch}{1.25}
+\begin{center}
+\begin{tabular}{@{}p{0.46\textwidth}|p{0.46\textwidth}@{}}
+\toprule
+\azul{\textbf{$\alpha$-LMS}} & \azul{\textbf{Perceptrón}} \\
+\midrule
+$\alpha$ controla estabilidad y convergencia & $\alpha$ solo afecta el tiempo si $W_0\neq0$ \\
+Respuestas binarias \textbf{y} continuas & Solo respuestas binarias \\
+Puede \textbf{fallar} en separar un conjunto separable & Separa \textbf{cualquier} conjunto separable \\
+No da soluciones absurdas con datos no separables & No converge con datos no separables \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{tipbox}
+Objetivos distintos: $\alpha$-LMS reduce el \emph{error lineal}; el Perceptrón busca \emph{separar}.
+\end{tipbox}
+\end{frame}
+
+\begin{frame}{Reglas de Mays: la ``zona muerta''}
+\begin{block}{Adaptación por incremento con zona muerta $\gamma$}
+\[
+W_{k+1} =
+\begin{cases}
+W_k + \alpha\,\tilde{\varepsilon}_k\,\dfrac{X_k}{2\lVert X_k\rVert^{2}} & |s_k| \geq \gamma \\[8pt]
+W_k + \alpha\,d_k\,\dfrac{X_k}{\lVert X_k\rVert^{2}} & |s_k| < \gamma
+\end{cases}
+\]
+\end{block}
+\begin{itemize}
+  \item Si es separable: converge en pasos finitos (como el Perceptrón).
+  \item Si \textbf{no} lo es: una zona muerta grande \azul{aleja el vector de pesos de cero} $\Rightarrow$ \textbf{mejor que el Perceptrón}.
+  \item Casos límite: $\gamma\to0$ recupera el Perceptrón; $\gamma\to\infty$ (relajación) recupera $\alpha$-LMS.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Redes multicapa por corrección de error: Madaline Rule II}
+\begin{block}{MRII (Widrow, Winter \& Baxter, 1987) --- adapta \emph{todas} las capas}
+Para cada patrón erróneo:
+\begin{enumerate}
+  \item Ordenar las Adalines por $|s|$ creciente (mínima perturbación).
+  \item \azul{Flip tentativo} de la salida de una Adalina; si reduce el \textbf{error de Hamming}, se acepta.
+  \item Reforzar con corrección colineal por $\alpha$-LMS; si no, probar \emph{pares} de Adalines.
+  \item Entrenar la capa de salida con $\alpha$-LMS.
+\end{enumerate}
+\end{block}
+\begin{alertblock}{Limitación}
+MRII puede \textbf{estancarse en óptimos locales}. Remedio del artículo: \azul{ruido esporádico} en
+los pesos o reentrenar con distintas semillas (\emph{random restarts}).
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Descenso más pronunciado lineal: $\mu$-LMS y la superficie de MSE}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\begin{block}{Regla $\mu$-LMS}
+\[ W_{k+1} = W_k + 2\mu\,\varepsilon_k\,X_k \]
+Superficie de MSE (paraboloide \azul{convexo}):
+\[ \xi(W)=\mathbb{E}[d^2]-2P^{T}W+W^{T}RW \]
+Mínimo único: solución de Wiener
+\[ W^{*}=R^{-1}P \]
+\end{block}
+\column{0.46\textwidth}
+\begin{itemize}
+  \item Gradiente instantáneo $-2\varepsilon_k X_k$: estimador \azul{insesgado} del verdadero.
+  \item Estabilidad: $0<\mu<1/\operatorname{tr}[R]$.
+  \item Frente a $\alpha$-LMS: $\mu$-LMS converge al \textbf{mínimo MSE} (Wiener); $\alpha$-LMS, a una solución sesgada.
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Por qué el gradiente exige activaciones diferenciables}
+\begin{center}
+  \includegraphics[width=0.96\textwidth, keepaspectratio]{figuras/fig_superficies_mse.png}
+\end{center}
+\vspace{-4pt}
+\begin{columns}[T]
+\column{0.32\textwidth}
+\begin{tipbox}
+\textbf{Lineal}: paraboloide convexo, mínimo global garantizado.
+\end{tipbox}
+\column{0.32\textwidth}
+\begin{tipbox}
+\textbf{Sigmoide}: suave y navegable; posibles mínimos locales.
+\end{tipbox}
+\column{0.32\textwidth}
+\begin{alertblock}{Signum}
+Escalonado, con \textbf{mesetas} de gradiente nulo: el descenso se detiene.
+\end{alertblock}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Descenso más pronunciado no lineal: Backpropagation}
+\begin{block}{Propagación del error hacia atrás}
+Salida (Eq.~79) y capas ocultas (Eq.~87):
+\[
+\delta^{(L)}_j = \varepsilon_j\,(1-y_j^{2}),
+\qquad
+\delta^{(l)} = \big(W^{(l+1)T}\delta^{(l+1)}\big)\odot\big(1-(y^{(l)})^{2}\big)
+\]
+Actualización con \azul{momentum}:
+\[
+\Delta W_k = \eta\,\Delta W_{k-1} + (1-\eta)\,2\mu\,\delta_k X_k^{T},\qquad \eta\approx 0.8\text{--}0.9
+\]
+\end{block}
+\begin{ideaclave}
+$\delta$ \textbf{no es un error}: es una \emph{señal de gradiente} que indica cómo mover cada peso
+para reducir el error cuadrático de salida $\varepsilon^2$.
+\end{ideaclave}
+\end{frame}
+
+\begin{frame}{Madaline Rule III $\equiv$ Backpropagation}
+\begin{block}{MRIII (Andes, 1988): gradiente por perturbación del sumidero}
+Se perturba la suma $s_j$ en $\Delta s$ y se mide el efecto sobre $\varepsilon^2$:
+\[
+\frac{\partial \varepsilon^2}{\partial s_j} \approx
+\frac{\varepsilon^2_{\text{perturbado}} - \varepsilon^2_{\text{base}}}{\Delta s}
+\]
+\end{block}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{ideaclave}
+Cuando $\Delta s \to 0$, MRIII es \textbf{matemáticamente equivalente a backpropagation}.
+\end{ideaclave}
+\column{0.5\textwidth}
+\begin{itemize}
+  \item No requiere conocer la derivada de la sigmoide.
+  \item \azul{Robusto} para hardware analógico (existió un chip comercial).
+  \item Costo: $1+N_{\text{Adalines}}$ pasadas hacia adelante (más caro en digital).
+\end{itemize}
+\end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Experimentos}
+% =====================================================================
+
+\begin{frame}{Diseño experimental e hipótesis}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{Implementación}
+\begin{itemize}
+  \item Seis algoritmos \textbf{desde cero en NumPy puro}.
+  \item \emph{scikit-learn} solo para datos y métricas.
+  \item Reproducible: \texttt{SEED=1990}.
+\end{itemize}
+\end{block}
+\column{0.5\textwidth}
+\begin{block}{Hipótesis}
+\begin{itemize}
+  \item \azul{H1}: $C_s\approx2N_w$, $C_d=N_w$.
+  \item \azul{H2}: Perceptrón converge solo si es separable; $\mu$-LMS $\to$ Wiener.
+  \item \azul{H3}: XOR solo por multicapa; óptimos locales.
+  \item \azul{H4}: MRIII $\equiv$ backprop.
+\end{itemize}
+\end{block}
+\end{columns}
+\begin{tipbox}
+Siete experimentos (E1--E7) sobre datos sintéticos y reales (Iris, Wine, MNIST-04, two-moons).
+\end{tipbox}
+\end{frame}
+
+\begin{frame}{E1--E3: capacidad de Cover y reglas lineales}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{center}
+  \includegraphics[width=\textwidth, keepaspectratio]{figuras/fig_cover.png}\\
+  {\scriptsize E1: empírico (puntos) \emph{vs.} teoría de Cover.}
+\end{center}
+\column{0.5\textwidth}
+\begin{center}
+  \includegraphics[width=\textwidth, keepaspectratio]{figuras/fig_fronteras.png}\\
+  {\scriptsize E2: fronteras \emph{vs.} óptimo de Wiener.}
+\end{center}
+\end{columns}
+\begin{block}{Resultados}
+\textbf{H1 confirmada} (desviación media $\leq 0.034$). \textbf{H2 confirmada}: el Perceptrón
+converge en 2 épocas pero queda a $20.6^\circ$ de Wiener; $\mu$-LMS a $3.5^\circ$. En datos no
+separables, $\mu$-LMS es el mejor ($79.6\%$ \emph{vs.} Wiener $81.0\%$) y el de menor varianza.
+\end{block}
+\end{frame}
+
+\begin{frame}{E5: XOR --- MRII \textit{vs.} MLP-Backpropagation}
+\begin{columns}[T]
+\column{0.58\textwidth}
+\begin{center}
+  \includegraphics[width=\textwidth, keepaspectratio]{figuras/fig_xor.png}
+\end{center}
+\column{0.42\textwidth}
+\renewcommand{\arraystretch}{1.15}
+\begin{center}
+{\footnotesize
+\begin{tabular}{@{}lc@{}}
+\toprule
+Configuración & Éxito \\
+\midrule
+MRII 2-2-1 sin ruido & 0/20 \\
+MRII 2-3-1 + ruido & 0/20 \\
+MLP-BP 2-2-1 & 6/20 \\
+MLP-BP 2-3-1 & 11/20 \\
+\bottomrule
+\end{tabular}}
+\end{center}
+\begin{alertblock}{H3 confirmada}
+XOR solo por multicapa; tanto MRII como \emph{backprop} sufren óptimos locales. La superficie
+sigmoide es más navegable que la del signum.
+\end{alertblock}
+\end{columns}
+\end{frame}
+
+\begin{frame}{E6--E7: datasets reales y equivalencia MRIII $\equiv$ Backprop}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{center}
+  \includegraphics[width=\textwidth, keepaspectratio]{figuras/fig_iris_mlp.png}\\
+  {\scriptsize E6: MLP 4-8-3 en Iris (91.1\% test).}
+\end{center}
+\column{0.5\textwidth}
+\begin{center}
+  \includegraphics[width=\textwidth, keepaspectratio]{figuras/fig_mriii_bp.png}\\
+  {\scriptsize E7: error del gradiente y costo.}
+\end{center}
+\end{columns}
+\begin{block}{Resultados}
+Iris $91.1\%$, two-moons $93.3\%$, Wine $98.1\%$, MNIST-04 $98.5\%$. \textbf{H4 confirmada}: el
+gradiente de MRIII converge al de \emph{backprop} con error relativo mínimo de
+$\azul{5.05\times10^{-8}}$; su costo crece como $\mathcal{O}(N_{\text{Adalines}})$.
+\end{block}
+\end{frame}
+
+% =====================================================================
+\section{Conclusiones}
+% =====================================================================
+
+\begin{frame}{Conclusiones}
+\begin{block}{Aporte del artículo}
+\begin{itemize}
+  \item \textbf{Unifica 30 años} de algoritmos bajo un principio común: la \azul{mínima perturbación}.
+  \item El linaje Perceptrón $\to$ Adaline $\to$ Madaline $\to$ Backprop es una \textbf{progresión lógica}, no una colección arbitraria.
+  \item La equivalencia \azul{MRIII $\equiv$ backprop} muestra que un descubrimiento llega por caminos independientes.
+\end{itemize}
+\end{block}
+\begin{alertblock}{Evaluación de hipótesis}
+\textbf{H1--H4 confirmadas}. Matiz en H3: MRII resultó más frágil ante óptimos locales que el MLP
+(0/20 por semilla única), tal como el propio artículo anticipa.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Vigencia: por qué sigue importando hoy}
+\begin{columns}[T]
+\column{0.6\textwidth}
+\begin{block}{Los fundamentos siguen vivos}
+\begin{itemize}
+  \item El \azul{SGD} del \emph{deep learning} es $\mu$-LMS generalizado a redes profundas.
+  \item El \azul{momentum} (Eqs.~96--97) sigue en optimizadores como Adam.
+  \item La perturbación de MRIII anticipa la \azul{optimización de orden cero} (cuando no hay gradiente).
+\end{itemize}
+\end{block}
+\column{0.4\textwidth}
+\begin{ideaclave}
+Comprender la \textbf{geometría del aprendizaje} —hiperplano separador, paraboloide de MSE, mesetas
+del signum— es esencial para diseñar y depurar cualquier sistema de ML.
+\end{ideaclave}
+\end{columns}
+\end{frame}
+
+% ─── CIERRE ──────────────────────────────────────────────────────────
+\begin{frame}[plain]
+\vfill
+\begin{center}
+{\Huge\bfseries\azul{Gracias}}\\[10pt]
+{\large ¿Preguntas?}\\[18pt]
+\footnotesize
+30 Years of Adaptive Neural Networks: Perceptron, Madaline, and Backpropagation\\
+\emph{B.\ Widrow \& M.\ A.\ Lehr}, Proceedings of the IEEE, 78(9), 1990.
+\end{center}
+\vfill
+\end{frame}
+
+\end{document}
