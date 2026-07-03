@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.26)  3 JUL 2026 16:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.26)  3 JUL 2026 17:24
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1598,7 +1598,7 @@ Overfull \hbox (6.0719pt too wide) in paragraph at lines 845--845
  [][][][]  
  []
 
-<figuras/fig_datasets.png, id=689, 1074.6549pt x 351.59355pt>
+<figuras/fig_datasets.png, id=690, 1074.6549pt x 351.59355pt>
 File: figuras/fig_datasets.png Graphic file (type png)
 <use figuras/fig_datasets.png>
 Package pdftex.def Info: figuras/fig_datasets.png  used on input line 845.
@@ -1615,12 +1615,12 @@ Overfull \hbox (6.0719pt too wide) in paragraph at lines 866--866
  [][][][]  
  []
 
-<figuras/fig_iris_clases.png, id=722, 548.7702pt x 186.4566pt>
+<figuras/fig_iris_clases.png, id=723, 548.7702pt x 186.4566pt>
 File: figuras/fig_iris_clases.png Graphic file (type png)
 <use figuras/fig_iris_clases.png>
 Package pdftex.def Info: figuras/fig_iris_clases.png  used on input line 866.
 (pdftex.def)             Requested size: 216.74092pt x 73.64243pt.
-<figuras/fig_mnist04_clases.png, id=723, 534.3162pt x 125.7498pt>
+<figuras/fig_mnist04_clases.png, id=724, 534.3162pt x 125.7498pt>
 File: figuras/fig_mnist04_clases.png Graphic file (type png)
 <use figuras/fig_mnist04_clases.png>
 Package pdftex.def Info: figuras/fig_mnist04_clases.png  used on input line 866.
@@ -1637,7 +1637,7 @@ Overfull \hbox (6.0719pt too wide) in paragraph at lines 887--887
  [][][][]  
  []
 
-<figuras/paper_cover.png, id=733, 545.03625pt x 343.2825pt>
+<figuras/paper_cover.png, id=734, 545.03625pt x 343.2825pt>
 File: figuras/paper_cover.png Graphic file (type png)
 <use figuras/paper_cover.png>
 Package pdftex.def Info: figuras/paper_cover.png  used on input line 887.
@@ -1658,7 +1658,7 @@ Overfull \hbox (6.0719pt too wide) in paragraph at lines 898--898
  [][][][]  
  []
 
-<figuras/fig_fronteras.png, id=741, 1074.6549pt x 351.59355pt>
+<figuras/fig_fronteras.png, id=742, 1074.6549pt x 351.59355pt>
 File: figuras/fig_fronteras.png Graphic file (type png)
 <use figuras/fig_fronteras.png>
 Package pdftex.def Info: figuras/fig_fronteras.png  used on input line 898.
@@ -1675,7 +1675,7 @@ Overfull \hbox (6.0719pt too wide) in paragraph at lines 909--909
  [][][][]  
  []
 
-<figuras/fig_noseparable.png, id=751, 1002.02354pt x 351.2322pt>
+<figuras/fig_noseparable.png, id=752, 1002.02354pt x 351.2322pt>
 File: figuras/fig_noseparable.png Graphic file (type png)
 <use figuras/fig_noseparable.png>
 Package pdftex.def Info: figuras/fig_noseparable.png  used on input line 909.
@@ -1688,15 +1688,18 @@ Overfull \hbox (6.78024pt too wide) has occurred while \output is active
 [37
 
  <./figuras/fig_noseparable.png>]
-Overfull \hbox (6.0719pt too wide) in paragraph at lines 924--924
+Overfull \hbox (6.0719pt too wide) in paragraph at lines 933--933
  [][][][]  
  []
 
-<figuras/fig_convergencia.png, id=761, 639.95085pt x 351.2322pt>
-File: figuras/fig_convergencia.png Graphic file (type png)
-<use figuras/fig_convergencia.png>
-Package pdftex.def Info: figuras/fig_convergencia.png  used on input line 924.
-(pdftex.def)             Requested size: 243.92598pt x 133.87692pt.
+File: figuras/fig_superficies_mse.png Graphic file (type png)
+<use figuras/fig_superficies_mse.png>
+Package pdftex.def Info: figuras/fig_superficies_mse.png  used on input line 933.
+(pdftex.def)             Requested size: 381.46806pt x 114.3376pt.
+
+Overfull \vbox (0.11519pt too high) detected at line 933
+ []
+
 
 Overfull \hbox (6.78024pt too wide) has occurred while \output is active
  [][][][]  
@@ -1704,15 +1707,15 @@ Overfull \hbox (6.78024pt too wide) has occurred while \output is active
 
 [38
 
- <./figuras/fig_convergencia.png>]
-Overfull \hbox (6.0719pt too wide) in paragraph at lines 951--951
+]
+Overfull \hbox (6.0719pt too wide) in paragraph at lines 960--960
  [][][][]  
  []
 
-<figuras/fig_xor.png, id=770, 1291.4649pt x 351.2322pt>
+<figuras/fig_xor.png, id=782, 1291.4649pt x 351.2322pt>
 File: figuras/fig_xor.png Graphic file (type png)
 <use figuras/fig_xor.png>
-Package pdftex.def Info: figuras/fig_xor.png  used on input line 951.
+Package pdftex.def Info: figuras/fig_xor.png  used on input line 960.
 (pdftex.def)             Requested size: 251.41096pt x 68.37477pt.
 
 Overfull \hbox (6.78024pt too wide) has occurred while \output is active
@@ -1722,14 +1725,14 @@ Overfull \hbox (6.78024pt too wide) has occurred while \output is active
 [39
 
  <./figuras/fig_xor.png>]
-Overfull \hbox (6.0719pt too wide) in paragraph at lines 962--962
+Overfull \hbox (6.0719pt too wide) in paragraph at lines 971--971
  [][][][]  
  []
 
-<figuras/fig_iris_mlp.png, id=791, 1273.03606pt x 351.2322pt>
+<figuras/fig_iris_mlp.png, id=803, 1273.03606pt x 351.2322pt>
 File: figuras/fig_iris_mlp.png Graphic file (type png)
 <use figuras/fig_iris_mlp.png>
-Package pdftex.def Info: figuras/fig_iris_mlp.png  used on input line 962.
+Package pdftex.def Info: figuras/fig_iris_mlp.png  used on input line 971.
 (pdftex.def)             Requested size: 433.46756pt x 119.59422pt.
 
 Overfull \hbox (6.78024pt too wide) has occurred while \output is active
@@ -1739,15 +1742,15 @@ Overfull \hbox (6.78024pt too wide) has occurred while \output is active
 [40
 
  <./figuras/fig_iris_mlp.png>]
-Overfull \hbox (6.0719pt too wide) in paragraph at lines 973--973
+Overfull \hbox (6.0719pt too wide) in paragraph at lines 986--986
  [][][][]  
  []
 
-<figuras/fig_mnist.png, id=800, 1001.30086pt x 351.2322pt>
-File: figuras/fig_mnist.png Graphic file (type png)
-<use figuras/fig_mnist.png>
-Package pdftex.def Info: figuras/fig_mnist.png  used on input line 973.
-(pdftex.def)             Requested size: 346.94647pt x 121.70045pt.
+<figuras/fig_moons.png, id=812, 568.7649pt x 424.2249pt>
+File: figuras/fig_moons.png Graphic file (type png)
+<use figuras/fig_moons.png>
+Package pdftex.def Info: figuras/fig_moons.png  used on input line 986.
+(pdftex.def)             Requested size: 179.483pt x 133.87105pt.
 
 Overfull \hbox (6.78024pt too wide) has occurred while \output is active
  [][][][]  
@@ -1755,15 +1758,15 @@ Overfull \hbox (6.78024pt too wide) has occurred while \output is active
 
 [41
 
- <./figuras/fig_mnist.png>]
-Overfull \hbox (6.0719pt too wide) in paragraph at lines 984--984
+ <./figuras/fig_moons.png>]
+Overfull \hbox (6.0719pt too wide) in paragraph at lines 997--997
  [][][][]  
  []
 
-<figuras/fig_wine.png, id=809, 1002.02354pt x 351.2322pt>
+<figuras/fig_wine.png, id=821, 1002.02354pt x 351.2322pt>
 File: figuras/fig_wine.png Graphic file (type png)
 <use figuras/fig_wine.png>
-Package pdftex.def Info: figuras/fig_wine.png  used on input line 984.
+Package pdftex.def Info: figuras/fig_wine.png  used on input line 997.
 (pdftex.def)             Requested size: 347.19688pt x 121.70045pt.
 
 Overfull \hbox (6.78024pt too wide) has occurred while \output is active
@@ -1773,15 +1776,15 @@ Overfull \hbox (6.78024pt too wide) has occurred while \output is active
 [42
 
  <./figuras/fig_wine.png>]
-Overfull \hbox (6.0719pt too wide) in paragraph at lines 999--999
+Overfull \hbox (6.0719pt too wide) in paragraph at lines 1008--1008
  [][][][]  
  []
 
-<figuras/fig_moons.png, id=818, 568.7649pt x 424.2249pt>
-File: figuras/fig_moons.png Graphic file (type png)
-<use figuras/fig_moons.png>
-Package pdftex.def Info: figuras/fig_moons.png  used on input line 999.
-(pdftex.def)             Requested size: 179.483pt x 133.87105pt.
+<figuras/fig_mnist.png, id=830, 1001.30086pt x 351.2322pt>
+File: figuras/fig_mnist.png Graphic file (type png)
+<use figuras/fig_mnist.png>
+Package pdftex.def Info: figuras/fig_mnist.png  used on input line 1008.
+(pdftex.def)             Requested size: 346.94647pt x 121.70045pt.
 
 Overfull \hbox (6.78024pt too wide) has occurred while \output is active
  [][][][]  
@@ -1789,15 +1792,15 @@ Overfull \hbox (6.78024pt too wide) has occurred while \output is active
 
 [43
 
- <./figuras/fig_moons.png>]
-Overfull \hbox (6.0719pt too wide) in paragraph at lines 1010--1010
+ <./figuras/fig_mnist.png>]
+Overfull \hbox (6.0719pt too wide) in paragraph at lines 1019--1019
  [][][][]  
  []
 
-<figuras/fig_mriii_bp.png, id=828, 1000.9395pt x 349.42545pt>
+<figuras/fig_mriii_bp.png, id=840, 1000.9395pt x 349.42545pt>
 File: figuras/fig_mriii_bp.png Graphic file (type png)
 <use figuras/fig_mriii_bp.png>
-Package pdftex.def Info: figuras/fig_mriii_bp.png  used on input line 1010.
+Package pdftex.def Info: figuras/fig_mriii_bp.png  used on input line 1019.
 (pdftex.def)             Requested size: 320.73483pt x 111.96771pt.
 
 Overfull \hbox (6.78024pt too wide) has occurred while \output is active
@@ -1807,14 +1810,14 @@ Overfull \hbox (6.78024pt too wide) has occurred while \output is active
 [44
 
  <./figuras/fig_mriii_bp.png>]
-Overfull \hbox (6.0719pt too wide) in paragraph at lines 1013--1013
+Overfull \hbox (6.0719pt too wide) in paragraph at lines 1022--1022
  [][][][]  
  []
 
 [45
 
 ]
-Overfull \hbox (6.0719pt too wide) in paragraph at lines 1029--1029
+Overfull \hbox (6.0719pt too wide) in paragraph at lines 1038--1038
  [][][][]  
  []
 
@@ -1826,7 +1829,7 @@ Overfull \hbox (6.78024pt too wide) has occurred while \output is active
 [46
 
 ]
-Overfull \hbox (6.0719pt too wide) in paragraph at lines 1059--1059
+Overfull \hbox (6.0719pt too wide) in paragraph at lines 1068--1068
  [][][][]  
  []
 
@@ -1854,18 +1857,18 @@ Package rerunfilecheck Info: File `presentacion-widrow-lehr.out' has not changed
 (rerunfilecheck)             Checksum: DB54B5F992D8B90ACB12C77DD5202AE0;2267.
  ) 
 Here is how much of TeX's memory you used:
- 36665 strings out of 467349
- 752956 string characters out of 5419856
+ 36655 strings out of 467349
+ 752859 string characters out of 5419856
  1201978 words of memory out of 5000000
  64707 multiletter control sequences out of 15000+600000
- 775560 words of font info for 271 fonts, out of 8000000 for 9000
+ 775081 words of font info for 266 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  128i,15n,123p,1082b,1108s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmmi12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmmi6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmmi8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmmi9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmss10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmss12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmss8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmss9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmssbx10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsso10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsso12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsso8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsso9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsy8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsy9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on build/presentacion-widrow-lehr.pdf (47 pages, 4694052 bytes).
+<c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmmi12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmmi6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmmi8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmmi9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmss10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmss12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmss8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmss9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmssbx10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsso10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsso12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsso8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsso9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsy6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsy8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsy9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on build/presentacion-widrow-lehr.pdf (47 pages, 4642729 bytes).
 PDF statistics:
- 1011 PDF objects out of 1200 (max. 8388607)
- 610 compressed objects within 7 object streams
+ 1031 PDF objects out of 1200 (max. 8388607)
+ 622 compressed objects within 7 object streams
  109 named destinations out of 1000 (max. 500000)
- 90510 words of extra memory for PDF output out of 106986 (max. 10000000)
+ 90541 words of extra memory for PDF output out of 106986 (max. 10000000)
 

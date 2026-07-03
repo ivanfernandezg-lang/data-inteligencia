@@ -475,7 +475,7 @@ Minimizan el \azul{MSE promediado} sobre todo el conjunto, por gradiente.
   \node[alg] at (-2.5,0.5) {MRIII\\Backprop};
   \node[alg] at (-0.8,0.5) {$\mu$-LMS};
   \node[alg] at (1.9,0.5) {MRI\\MRII};
-  \node[alg] at (3.6,0.5) {Perceptron.\\Mays};
+  \node[alg] at (3.6,0.5) {Perceptr\'on\\Mays};
   \node[alg] at (5.4,0.5) {$\alpha$-LMS};
   \foreach \x in {-4.7,-2.5,-1.2,1.9,4.1,5.4}{\draw[ln] (\x,1.15)--(\x,0.85);}
 \end{tikzpicture}}
@@ -784,7 +784,7 @@ convergencia, no linealidad y la equivalencia MRIII$\equiv$backprop. Todo se imp
 \textbf{Hip.} & \textbf{Descripción} \\
 \midrule
 \azul{H1} & Un Adaline de $N_w$ pesos almacena en promedio $C_s\approx 2N_w$ patrones aleatorios y garantiza $C_d=N_w$ (fórmula de separabilidad de Cover). \\
-\azul{H2} & El Perceptrón converge en pasos finitos \emph{solo} si los datos son separables; el $\mu$-LMS converge (en media) a la solución de Wiener y minimiza el MSE aun sin separabilidad. \\
+\azul{H2} & El Perceptr\'on converge en pasos finitos \emph{solo} si los datos son separables (oscila y diverge en norma si no lo son); $\alpha$-LMS y $\mu$-LMS son estables en ambos reg\'imenes, con $\mu$-LMS convergiendo al \'optimo de Wiener $W^*=R^{-1}P$. \\
 \azul{H3} & Problemas no separables (XOR) exigen redes multicapa; su entrenamiento cae en óptimos locales y la superficie sigmoide es más navegable que la del signum. \\
 \azul{H4} & El gradiente estimado por MRIII (perturbación) coincide numéricamente con el de backpropagation cuando $\Delta s\to 0$. \\
 \bottomrule
@@ -800,15 +800,15 @@ convergencia, no linealidad y la equivalencia MRIII$\equiv$backprop. Todo se imp
 \toprule
 \textbf{Exp.} & \textbf{Problema a evaluar} & \textbf{Algoritmos} & \textbf{Dataset} & \textbf{Hip.} \\
 \midrule
-E1  & Capacidad de almacenamiento del Adaline & Adaline ($\alpha$-LMS) & Binarios aleatorios & \azul{H1} \\
+E1  & Separabilidad lineal de patrones aleatorios & Programaci\'on Lineal (Monte Carlo) & Binarios aleatorios & \azul{H1} \\
 E2  & Fronteras aprendidas \emph{vs.}\ Wiener (separable) & Perceptrón, $\alpha$/$\mu$-LMS & Gaussianos separables & \azul{H2} \\
-E3  & Reglas lineales en datos no separables & Perceptrón, $\mu$-LMS, Wiener & Gaussianos solapados & \azul{H2} \\
-E4  & Velocidad y estabilidad de convergencia & $\alpha$-LMS, Perceptrón, Mays & Gaussianos separables & \azul{H2} \\
+E3  & Reglas lineales en datos no separables & Perceptr\'on, $\alpha$-LMS, $\mu$-LMS & Gaussianos solapados & \azul{H2} \\
+E4  & Superficies de MSE (lineal, sigmoide, signum) & Adaline 2D (sin bias) & 6 patrones aleatorios & --- \\
 E5  & Capacidad no lineal (XOR) & MRII \emph{vs.}\ MLP-backprop & XOR ($2^2$) & \azul{H3} \\
-E6  & Generalización (flores) & MLP-backprop & Iris & \azul{H3} \\
-E6b & Generalización (dígitos) & MLP-backprop & MNIST-04 & \azul{H3} \\
-E6c & Generalización (química) & MLP-backprop & Wine & \azul{H3} \\
-E6d & Generalización (no lineal 2D) & MLP-backprop & two-moons & \azul{H3} \\
+E6a & Generalización (flores) & MLP-backprop & Iris & \azul{H3} \\
+E6b & Generalización (no lineal 2D) & MLP-backprop & two-moons & \azul{H3} \\
+E6c & Clasificación lineal (química) & $\alpha$-LMS, $\mu$-LMS, Wiener & Wine & \azul{H3} \\
+E6d & Generalización (dígitos) & MLP-backprop & MNIST-04 & \azul{H3} \\
 E7  & Equivalencia de gradientes & MRIII \emph{vs.}\ backprop & Red sigmoide (Iris) & \azul{H4} \\
 \bottomrule
 \end{tabular}
@@ -909,17 +909,26 @@ Permiten \textbf{conocer la respuesta óptima} (Wiener, Cover) y medir cuánto s
 \end{frame}
 
 % ---------- 8. E4 ----------
-\begin{frame}{E4 --- Velocidad y estabilidad de convergencia}
-\begin{columns}[T]
-\column{0.58\textwidth}
+\begin{frame}{E4 --- Superficies de MSE}
 \begin{center}
-  \includegraphics[width=\textwidth,height=0.55\textheight,keepaspectratio]{figuras/fig_convergencia.png}\\
-  {\scriptsize Error por época de las reglas de corrección (datos separables).}
+  \includegraphics[width=0.88\textwidth, keepaspectratio]{figuras/fig_superficies_mse.png}\\
+  {\scriptsize Superficies de MSE para un Adaline de 2 pesos (sin bias) sobre 6 patrones aleatorios.}
 \end{center}
-\column{0.42\textwidth}
-\begin{ideaclave}
-\textbf{H2 (convergencia)}: en datos separables las reglas de corrección alcanzan error cero en pasos finitos; la \emph{zona muerta} de Mays estabiliza la trayectoria y el $\alpha$-LMS reduce el error lineal de forma monótona.
-\end{ideaclave}
+\vspace{-4pt}
+\footnotesize
+\begin{columns}[T]
+\column{0.32\textwidth}
+\begin{tipbox}
+\textbf{Lineal} ($\min=0.936$): paraboloide convexo, mínimo global garantizado.
+\end{tipbox}
+\column{0.32\textwidth}
+\begin{tipbox}
+\textbf{Sigmoide} ($\min=0.940$): suave y navegable; posibles mínimos locales.
+\end{tipbox}
+\column{0.32\textwidth}
+\begin{alertblock}{Signum ($\min=1.333$)}
+Escalonado, con \textbf{mesetas} de gradiente nulo $\Rightarrow$ algoritmos como MRII requieren ruido esporádico.
+\end{alertblock}
 \end{columns}
 \end{frame}
 
@@ -950,8 +959,8 @@ Solo multicapa resuelve XOR; MRII y backprop sufren óptimos locales.
 \end{columns}
 \end{frame}
 
-% ---------- 10. E6 Iris ----------
-\begin{frame}{E6 --- Generalización: Iris}
+% ---------- 10. E6a Iris ----------
+\begin{frame}{E6a --- Generalización: Iris}
 \begin{center}
   \includegraphics[width=\textwidth,height=0.5\textheight,keepaspectratio]{figuras/fig_iris_mlp.png}\\
   {\scriptsize MLP 4-8-3 (backpropagation) sobre \textbf{Iris}: fronteras y matriz de confusión.}
@@ -961,30 +970,8 @@ Solo multicapa resuelve XOR; MRII y backprop sufren óptimos locales.
 \end{ideaclave}
 \end{frame}
 
-% ---------- 11. E6b MNIST ----------
-\begin{frame}{E6b --- Generalización: MNIST-04}
-\begin{center}
-  \includegraphics[width=\textwidth,height=0.5\textheight,keepaspectratio]{figuras/fig_mnist.png}\\
-  {\scriptsize MLP-backpropagation sobre \textbf{MNIST-04} (dígitos $0$--$4$, imágenes $8\times8$).}
-\end{center}
-\begin{ideaclave}
-\textbf{H3 confirmada}: $98.5\%$ en test sobre 5 clases de dígitos $\Rightarrow$ el backprop escala a entradas de mayor dimensión (64 rasgos) sin perder capacidad de generalización.
-\end{ideaclave}
-\end{frame}
-
-% ---------- 12. E6c Wine ----------
-\begin{frame}{E6c --- Generalización: Wine}
-\begin{center}
-  \includegraphics[width=\textwidth,height=0.5\textheight,keepaspectratio]{figuras/fig_wine.png}\\
-  {\scriptsize MLP-backpropagation sobre \textbf{Wine} (13 rasgos químicos, 3 cultivares).}
-\end{center}
-\begin{ideaclave}
-\textbf{H3 confirmada}: $98.1\%$ en test. Con rasgos continuos bien escalados la red logra clases casi perfectamente separables en el espacio interno aprendido.
-\end{ideaclave}
-\end{frame}
-
-% ---------- 13. E6d two-moons ----------
-\begin{frame}{E6d --- Generalización: two-moons}
+% ---------- 11. E6b two-moons ----------
+\begin{frame}{E6b --- Generalización: two-moons}
 \begin{columns}[T]
 \column{0.56\textwidth}
 \begin{center}
@@ -996,6 +983,28 @@ Solo multicapa resuelve XOR; MRII y backprop sufren óptimos locales.
 \textbf{H3 confirmada}: $93.3\%$ en test. El MLP traza una frontera \azul{curva} que un clasificador lineal no puede $\Rightarrow$ evidencia directa del poder de la no linealidad.
 \end{ideaclave}
 \end{columns}
+\end{frame}
+
+% ---------- 12. E6c Wine ----------
+\begin{frame}{E6c --- Clasificación lineal: Wine}
+\begin{center}
+  \includegraphics[width=\textwidth,height=0.5\textheight,keepaspectratio]{figuras/fig_wine.png}\\
+  {\scriptsize Clasificadores lineales ($\alpha$-LMS, $\mu$-LMS, Wiener) sobre \textbf{Wine} (13 rasgos químicos, 3 cultivares).}
+\end{center}
+\begin{ideaclave}
+\textbf{H3 confirmada}: $98.1\%$ en test con clasificadores lineales. La clase 0 es mayoritariamente separable en el espacio de 13 atributos; Wiener y $\mu$-LMS logran el mejor desempeño.
+\end{ideaclave}
+\end{frame}
+
+% ---------- 13. E6d MNIST ----------
+\begin{frame}{E6d --- Generalización: MNIST-04}
+\begin{center}
+  \includegraphics[width=\textwidth,height=0.5\textheight,keepaspectratio]{figuras/fig_mnist.png}\\
+  {\scriptsize MLP-backpropagation sobre \textbf{MNIST-04} (dígitos $0$--$4$, imágenes $8\times8$).}
+\end{center}
+\begin{ideaclave}
+\textbf{H3 confirmada}: $98.5\%$ en test sobre 5 clases de dígitos $\Rightarrow$ el backprop escala a entradas de mayor dimensión (64 rasgos) sin perder capacidad de generalización.
+\end{ideaclave}
 \end{frame}
 
 % ---------- 14. E7 ----------
