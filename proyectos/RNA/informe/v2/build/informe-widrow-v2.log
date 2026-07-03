@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.26)  2 JUL 2026 21:54
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.26)  3 JUL 2026 17:07
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -656,89 +656,91 @@ File: ../../notebook/v1/figs/fig_cover.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_cover.png>
 Package pdftex.def Info: ../../notebook/v1/figs/fig_cover.png  used on input line 506.
 (pdftex.def)             Requested size: 338.58632pt x 224.00632pt.
-<../../notebook/v1/figs/fig_datasets.png, id=287, 1074.6549pt x 351.59355pt>
+ [7 <../../notebook/v1/figs/fig_cover.png>]
+<../../notebook/v1/figs/fig_datasets.png, id=297, 1074.6549pt x 351.59355pt>
 File: ../../notebook/v1/figs/fig_datasets.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_datasets.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_datasets.png  used on input line 517.
+Package pdftex.def Info: ../../notebook/v1/figs/fig_datasets.png  used on input line 524.
 (pdftex.def)             Requested size: 290.22107pt x 94.95297pt.
-<../../notebook/v1/figs/fig_fronteras.png, id=288, 1074.6549pt x 351.59355pt>
+<../../notebook/v1/figs/fig_fronteras.png, id=298, 1074.6549pt x 351.59355pt>
 File: ../../notebook/v1/figs/fig_fronteras.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_fronteras.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_fronteras.png  used on input line 520.
+Package pdftex.def Info: ../../notebook/v1/figs/fig_fronteras.png  used on input line 527.
 (pdftex.def)             Requested size: 377.28296pt x 123.43512pt.
-<../../notebook/v1/figs/fig_convergencia.png, id=289, 639.95085pt x 351.2322pt>
+<../../notebook/v1/figs/fig_convergencia.png, id=300, 639.95085pt x 351.2322pt>
 File: ../../notebook/v1/figs/fig_convergencia.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_convergencia.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_convergencia.png  used on input line 524.
+Package pdftex.def Info: ../../notebook/v1/figs/fig_convergencia.png  used on input line 536.
 (pdftex.def)             Requested size: 377.28296pt x 207.06978pt.
- [7 <../../notebook/v1/figs/fig_cover.png>] [8 <../../notebook/v1/figs/fig_datasets.png> <../../notebook/v1/figs/fig_fronteras.png> <../../notebook/v1/figs/fig_convergencia.png>]
-<../../notebook/v1/figs/fig_noseparable.png, id=311, 1002.02354pt x 351.2322pt>
+ [8 <../../notebook/v1/figs/fig_datasets.png> <../../notebook/v1/figs/fig_fronteras.png> <../../notebook/v1/figs/fig_convergencia.png>]
+<../../notebook/v1/figs/fig_noseparable.png, id=313, 1002.02354pt x 351.2322pt>
 File: ../../notebook/v1/figs/fig_noseparable.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_noseparable.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_noseparable.png  used on input line 539.
+Package pdftex.def Info: ../../notebook/v1/figs/fig_noseparable.png  used on input line 552.
 (pdftex.def)             Requested size: 348.26233pt x 122.0756pt.
  (../../notebook/v1/tabs/tab_lineales.tex)
-<../../notebook/v1/figs/fig_superficies_mse.png, id=314, 1186.31206pt x 355.5684pt>
+<../../notebook/v1/figs/fig_superficies_mse.png, id=315, 1186.31206pt x 355.5684pt>
 File: ../../notebook/v1/figs/fig_superficies_mse.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_superficies_mse.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_superficies_mse.png  used on input line 557.
+Package pdftex.def Info: ../../notebook/v1/figs/fig_superficies_mse.png  used on input line 570.
 (pdftex.def)             Requested size: 377.28296pt x 113.07889pt.
- [9 <../../notebook/v1/figs/fig_noseparable.png> <../../notebook/v1/figs/fig_superficies_mse.png>]
-<../../notebook/v1/figs/fig_xor.png, id=326, 1291.4649pt x 351.2322pt>
+ [9 <../../notebook/v1/figs/fig_noseparable.png> <../../notebook/v1/figs/fig_superficies_mse.png>] (../../notebook/v1/tabs/tab_xor.tex)
+<../../notebook/v1/figs/fig_xor.png, id=327, 1291.4649pt x 351.2322pt>
 File: ../../notebook/v1/figs/fig_xor.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_xor.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_xor.png  used on input line 569.
+Package pdftex.def Info: ../../notebook/v1/figs/fig_xor.png  used on input line 594.
 (pdftex.def)             Requested size: 377.28296pt x 102.60503pt.
- (../../notebook/v1/tabs/tab_xor.tex)
-<../../notebook/v1/figs/fig_iris_mlp.png, id=328, 1273.03606pt x 351.2322pt>
+ [10 <../../notebook/v1/figs/fig_xor.png>]
+<../../notebook/v1/figs/fig_iris_mlp.png, id=342, 1273.03606pt x 351.2322pt>
 File: ../../notebook/v1/figs/fig_iris_mlp.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_iris_mlp.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_iris_mlp.png  used on input line 590.
+Package pdftex.def Info: ../../notebook/v1/figs/fig_iris_mlp.png  used on input line 613.
 (pdftex.def)             Requested size: 377.28296pt x 104.08958pt.
-<../../notebook/v1/figs/fig_moons.png, id=329, 568.7649pt x 424.2249pt>
+ (../../notebook/v1/tabs/tab_iris.tex) (../../notebook/v1/tabs/tab_relevancia.tex) [11 <../../notebook/v1/figs/fig_iris_mlp.png>]
+<../../notebook/v1/figs/fig_moons.png, id=352, 568.7649pt x 424.2249pt>
 File: ../../notebook/v1/figs/fig_moons.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_moons.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_moons.png  used on input line 592.
+Package pdftex.def Info: ../../notebook/v1/figs/fig_moons.png  used on input line 627.
 (pdftex.def)             Requested size: 266.03474pt x 198.42769pt.
-<../../notebook/v1/figs/fig_wine.png, id=330, 1002.02354pt x 351.2322pt>
+<../../notebook/v1/figs/fig_wine.png, id=353, 1002.02354pt x 351.2322pt>
 File: ../../notebook/v1/figs/fig_wine.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_wine.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_wine.png  used on input line 595.
-(pdftex.def)             Requested size: 290.22107pt x 101.7261pt.
-<../../notebook/v1/figs/fig_mnist.png, id=331, 1001.30086pt x 351.2322pt>
+Package pdftex.def Info: ../../notebook/v1/figs/fig_wine.png  used on input line 630.
+(pdftex.def)             Requested size: 386.95897pt x 135.64015pt.
+<../../notebook/v1/figs/fig_mnist.png, id=354, 1001.30086pt x 351.2322pt>
 File: ../../notebook/v1/figs/fig_mnist.png Graphic file (type png)
 <use ../../notebook/v1/figs/fig_mnist.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_mnist.png  used on input line 597.
-(pdftex.def)             Requested size: 280.54506pt x 98.40865pt.
- (../../notebook/v1/tabs/tab_iris.tex) (../../notebook/v1/tabs/tab_relevancia.tex) [10 <../../notebook/v1/figs/fig_xor.png> <../../notebook/v1/figs/fig_iris_mlp.png>] [11 <../../notebook/v1/figs/fig_moons.png> <../../notebook/v1/figs/fig_wine.png> <../../notebook/v1/figs/fig_mnist.png>]
+Package pdftex.def Info: ../../notebook/v1/figs/fig_mnist.png  used on input line 632.
+(pdftex.def)             Requested size: 386.95897pt x 135.73663pt.
+ [12 <../../notebook/v1/figs/fig_moons.png> <../../notebook/v1/figs/fig_wine.png> <../../notebook/v1/figs/fig_mnist.png>]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 621.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\equiv' on input line 621.
+(hyperref)                removing `math shift' on input line 636.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 621.
+(hyperref)                removing `\equiv' on input line 636.
 
-<../../notebook/v1/figs/fig_mriii_bp.png, id=360, 1000.9395pt x 349.42545pt>
-File: ../../notebook/v1/figs/fig_mriii_bp.png Graphic file (type png)
-<use ../../notebook/v1/figs/fig_mriii_bp.png>
-Package pdftex.def Info: ../../notebook/v1/figs/fig_mriii_bp.png  used on input line 626.
-(pdftex.def)             Requested size: 377.28296pt x 131.71135pt.
-(../../notebook/v1/tabs/tab_mriii.tex)
-Overfull \hbox (27.70767pt too wide) in paragraph at lines 636--644
-[]\T1/cmr/m/n/10.95 La Fi-gu-ra [][]13[][](b) y la Ta-bla [][]6[][] cuan-ti-fi-can el cos-to de esa equi-va-len-cia. La ra-zón MRIII/\T1/cmr/m/it/10.95 backpropagation \T1/cmr/bx/n/10.95 cre-
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 636.
+
+
+Overfull \hbox (5.27504pt too wide) in paragraph at lines 643--651
+[]\T1/cmr/m/n/10.95 La Fi-gu-ra [][]13[][](b) y la Ta-bla [][]6[][] cuan-ti-fi-can el cos-to de esa equi-va-len-cia. La ra-zón MRIII:backpropagation
  []
 
-(../../notebook/v1/tabs/tab_resumen.tex
+<../../notebook/v1/figs/fig_mriii_bp.png, id=368, 1000.9395pt x 349.42545pt>
+File: ../../notebook/v1/figs/fig_mriii_bp.png Graphic file (type png)
+<use ../../notebook/v1/figs/fig_mriii_bp.png>
+Package pdftex.def Info: ../../notebook/v1/figs/fig_mriii_bp.png  used on input line 656.
+(pdftex.def)             Requested size: 377.28296pt x 131.71135pt.
+(../../notebook/v1/tabs/tab_mriii.tex) [13 <../../notebook/v1/figs/fig_mriii_bp.png>] (../../notebook/v1/tabs/tab_resumen.tex
 Underfull \hbox (badness 3977) in paragraph at lines 10--11
 []\T1/cmr/m/n/10 Mejor acc test=91.1$ $% ($\OML/cmm/m/it/10 ^^V$\T1/cmr/m/n/10 =0.05,
  []
 
-) [12 <../../notebook/v1/figs/fig_mriii_bp.png>] [13] [14] [15] (build/informe-widrow-v2.aux
+) [14] [15] [16] (build/informe-widrow-v2.aux
 LaTeX Info: Redefining \. on input line 11.
 LaTeX Info: Redefining \% on input line 11.
 )
@@ -750,18 +752,18 @@ Package rerunfilecheck Info: File `informe-widrow-v2.out' has not changed.
 (rerunfilecheck)             Checksum: 644734508602FB2A34EB8CE2CCDAED3C;8631.
  ) 
 Here is how much of TeX's memory you used:
- 24842 strings out of 467349
- 458025 string characters out of 5419856
+ 24843 strings out of 467349
+ 458032 string characters out of 5419856
  874117 words of memory out of 5000000
  53404 multiletter control sequences out of 15000+600000
  657345 words of font info for 109 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,12n,104p,582b,843s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbi1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx0800.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx0900.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm0900.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfti0900.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfti1000.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfti1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sftt1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfxc1095.pfb>
-Output written on build/informe-widrow-v2.pdf (15 pages, 3618508 bytes).
+Output written on build/informe-widrow-v2.pdf (16 pages, 3618915 bytes).
 PDF statistics:
- 579 PDF objects out of 1000 (max. 8388607)
- 461 compressed objects within 5 object streams
- 109 named destinations out of 1000 (max. 500000)
+ 583 PDF objects out of 1000 (max. 8388607)
+ 464 compressed objects within 5 object streams
+ 110 named destinations out of 1000 (max. 500000)
  401 words of extra memory for PDF output out of 10000 (max. 10000000)
 
