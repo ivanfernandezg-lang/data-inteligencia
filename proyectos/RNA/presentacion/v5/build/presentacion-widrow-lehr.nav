@@ -102,19 +102,31 @@
 \headcommand {\beamer@framepages {37}{37}}
 \headcommand {\slideentry {4}{2}{4}{38/38}{Resultados}{0}}
 \headcommand {\beamer@framepages {38}{38}}
-\headcommand {\beamer@sectionpages {30}{38}}
-\headcommand {\beamer@subsectionpages {35}{38}}
-\headcommand {\sectionentry {5}{Conclusiones}{39}{Conclusiones}{0}}
-\headcommand {\slideentry {5}{0}{1}{39/39}{}{0}}
+\headcommand {\slideentry {4}{2}{5}{39/39}{Resultados}{0}}
 \headcommand {\beamer@framepages {39}{39}}
-\headcommand {\beamer@subsectionpages {39}{39}}
-\headcommand {\beamer@subsectionentry {0}{5}{1}{40}{Síntesis y vigencia}}
-\headcommand {\slideentry {5}{1}{1}{40/40}{Síntesis y vigencia}{0}}
+\headcommand {\slideentry {4}{2}{6}{40/40}{Resultados}{0}}
 \headcommand {\beamer@framepages {40}{40}}
-\headcommand {\slideentry {5}{1}{2}{41/41}{Síntesis y vigencia}{0}}
+\headcommand {\slideentry {4}{2}{7}{41/41}{Resultados}{0}}
 \headcommand {\beamer@framepages {41}{41}}
-\headcommand {\beamer@partpages {1}{41}}
-\headcommand {\beamer@subsectionpages {40}{41}}
-\headcommand {\beamer@sectionpages {39}{41}}
-\headcommand {\beamer@documentpages {41}}
-\headcommand {\gdef \inserttotalframenumber {40}}
+\headcommand {\slideentry {4}{2}{8}{42/42}{Resultados}{0}}
+\headcommand {\beamer@framepages {42}{42}}
+\headcommand {\slideentry {4}{2}{9}{43/43}{Resultados}{0}}
+\headcommand {\beamer@framepages {43}{43}}
+\headcommand {\slideentry {4}{2}{10}{44/44}{Resultados}{0}}
+\headcommand {\beamer@framepages {44}{44}}
+\headcommand {\beamer@sectionpages {30}{44}}
+\headcommand {\beamer@subsectionpages {35}{44}}
+\headcommand {\sectionentry {5}{Conclusiones}{45}{Conclusiones}{0}}
+\headcommand {\slideentry {5}{0}{1}{45/45}{}{0}}
+\headcommand {\beamer@framepages {45}{45}}
+\headcommand {\beamer@subsectionpages {45}{45}}
+\headcommand {\beamer@subsectionentry {0}{5}{1}{46}{Síntesis y vigencia}}
+\headcommand {\slideentry {5}{1}{1}{46/46}{Síntesis y vigencia}{0}}
+\headcommand {\beamer@framepages {46}{46}}
+\headcommand {\slideentry {5}{1}{2}{47/47}{Síntesis y vigencia}{0}}
+\headcommand {\beamer@framepages {47}{47}}
+\headcommand {\beamer@partpages {1}{47}}
+\headcommand {\beamer@subsectionpages {46}{47}}
+\headcommand {\beamer@sectionpages {45}{47}}
+\headcommand {\beamer@documentpages {47}}
+\headcommand {\gdef \inserttotalframenumber {46}}

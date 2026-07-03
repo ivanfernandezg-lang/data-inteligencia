@@ -11,5 +11,5 @@
 \beamer@sectionintoc {4}{Experimentos}{30}{0}{4}
 \beamer@subsectionintoc {4}{1}{Diseño y conjuntos de datos}{31}{0}{4}
 \beamer@subsectionintoc {4}{2}{Resultados}{35}{0}{4}
-\beamer@sectionintoc {5}{Conclusiones}{39}{0}{5}
-\beamer@subsectionintoc {5}{1}{Síntesis y vigencia}{40}{0}{5}
+\beamer@sectionintoc {5}{Conclusiones}{45}{0}{5}
+\beamer@subsectionintoc {5}{1}{Síntesis y vigencia}{46}{0}{5}
