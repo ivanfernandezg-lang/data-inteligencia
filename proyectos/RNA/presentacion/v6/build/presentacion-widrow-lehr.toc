@@ -1,0 +1,11 @@
+\babel@toc {spanish}{}\relax 
+\beamer@sectionintoc {1}{Introducción e historia}{3}{0}{1}
+\beamer@subsectionintoc {1}{1}{Motivación y línea histórica}{3}{0}{1}
+\beamer@sectionintoc {2}{Conceptos fundamentales}{5}{0}{2}
+\beamer@subsectionintoc {2}{1}{Adaline, separabilidad y arquitecturas}{5}{0}{2}
+\beamer@sectionintoc {3}{Reglas de aprendizaje}{8}{0}{3}
+\beamer@subsectionintoc {3}{1}{Corrección de error y descenso de gradiente}{8}{0}{3}
+\beamer@sectionintoc {4}{Experimentos}{15}{0}{4}
+\beamer@subsectionintoc {4}{1}{Diseño y resultados}{15}{0}{4}
+\beamer@sectionintoc {5}{Conclusiones}{21}{0}{5}
+\beamer@subsectionintoc {5}{1}{Síntesis}{21}{0}{5}
